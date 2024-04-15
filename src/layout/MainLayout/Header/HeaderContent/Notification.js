@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 
-// material-ui
 import { useTheme } from '@mui/material/styles';
 import {
   Avatar,
@@ -20,14 +19,11 @@ import {
   useMediaQuery
 } from '@mui/material';
 
-// project import
 import MainCard from 'components/MainCard';
 import Transitions from 'components/@extended/Transitions';
 
-// assets
 import { BellOutlined, CloseOutlined, GiftOutlined, MessageOutlined, SettingOutlined } from '@ant-design/icons';
 
-// sx styles
 const avatarSX = {
   width: 36,
   height: 36,
@@ -43,8 +39,6 @@ const actionSX = {
 
   transform: 'none'
 };
-
-// ==============================|| HEADER CONTENT - NOTIFICATION ||============================== //
 
 const Notification = () => {
   const theme = useTheme();

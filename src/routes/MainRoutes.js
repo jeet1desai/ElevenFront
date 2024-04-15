@@ -24,14 +24,18 @@ const MainRoutes = {
       path: 'color',
       element: <Color />
     },
+    // {
+    //   path: 'home',
+    //   children: [
+    //     {
+    //       path: 'default',
+    //       element: <DashboardDefault />
+    //     }
+    //   ]
+    // },
     {
-      path: 'dashboard',
-      children: [
-        {
-          path: 'default',
-          element: <DashboardDefault />
-        }
-      ]
+      path: 'home',
+      element: <DashboardDefault />
     },
     {
       path: 'sample-page',

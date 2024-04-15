@@ -1,5 +1,5 @@
 const config = {
-  defaultPath: '/dashboard/default',
+  defaultPath: '/home',
   fontFamily: `'Public Sans', sans-serif`,
   i18n: 'en',
   miniDrawer: false,
@@ -7,8 +7,8 @@ const config = {
   mode: 'light',
   presetColor: 'default',
   themeDirection: 'ltr',
-  borderRadius: 8,
-  rtlLayout: false,
+  borderRadius: '8px',
+  rtlLayout: false
 };
 
 export default config;

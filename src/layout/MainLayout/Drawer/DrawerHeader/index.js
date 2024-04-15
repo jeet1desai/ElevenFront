@@ -1,32 +1,57 @@
 import PropTypes from 'prop-types';
 
-// material-ui
 import { useTheme } from '@mui/material/styles';
-import { Stack, Chip } from '@mui/material';
+import { Stack, Select, MenuItem, IconButton } from '@mui/material';
 
-// project import
+import { PlusOutlined } from '@ant-design/icons';
+
 import DrawerHeaderStyled from './DrawerHeaderStyled';
-import Logo from 'components/Logo';
+import config from 'config';
 
-// ==============================|| DRAWER HEADER ||============================== //
+const status = [
+  {
+    value: 'today',
+    label: 'Today'
+  },
+  {
+    value: 'month',
+    label: 'This Month'
+  },
+  {
+    value: 'year',
+    label: 'This Year'
+  }
+];
 
 const DrawerHeader = ({ open }) => {
   const theme = useTheme();
 
+  const iconBackColorOpen = 'grey.100';
+
   return (
-    // only available in paid version
     <DrawerHeaderStyled theme={theme} open={open}>
-      <Stack direction="row" spacing={1} alignItems="center">
-        <Logo />
-        <Chip
-          label={process.env.REACT_APP_VERSION}
-          size="small"
-          sx={{ height: 16, '& .MuiChip-label': { fontSize: '0.625rem', py: 0.25 } }}
-          component="a"
-          href="https://github.com/codedthemes/mantis-free-react-admin-template"
-          target="_blank"
-          clickable
-        />
+      <Stack direction="row" spacing={1} alignItems="center" sx={{ width: '100%' }}>
+        <Select value="today" sx={{ '& .MuiInputBase-input': { py: 1, fontSize: '0.875rem' }, width: '100%' }}>
+          {status.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))}
+        </Select>
+        <IconButton
+          disableRipple
+          color="secondary"
+          sx={{
+            color: 'text.primary',
+            // bgcolor: iconBackColorOpen,
+            border: '1px solid',
+            borderRadius: config.borderRadius,
+            borderColor: theme.palette.mode === 'dark' ? theme.palette.divider : theme.palette.grey.A800,
+            '&:hover': { bgcolor: iconBackColorOpen }
+          }}
+        >
+          <PlusOutlined />
+        </IconButton>
       </Stack>
     </DrawerHeaderStyled>
   );
