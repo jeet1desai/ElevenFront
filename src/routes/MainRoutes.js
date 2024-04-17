@@ -20,10 +20,6 @@ const MainRoutes = {
       path: '/',
       element: <DashboardDefault />
     },
-    {
-      path: 'color',
-      element: <Color />
-    },
     // {
     //   path: 'home',
     //   children: [
@@ -33,6 +29,10 @@ const MainRoutes = {
     //     }
     //   ]
     // },
+    {
+      path: 'color',
+      element: <Color />
+    },
     {
       path: 'home',
       element: <DashboardDefault />
