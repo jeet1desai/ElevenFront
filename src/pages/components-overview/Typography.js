@@ -1,11 +1,7 @@
-// material-ui
 import { Breadcrumbs, Divider, Grid, Link, Stack, Typography } from '@mui/material';
 
-// project import
 import ComponentSkeleton from './ComponentSkeleton';
 import MainCard from 'components/MainCard';
-
-// ==============================|| COMPONENTS - TYPOGRAPHY ||============================== //
 
 const ComponentTypography = () => (
   <ComponentSkeleton>
@@ -182,7 +178,7 @@ const ComponentTypography = () => (
           </MainCard>
           <MainCard title="Link" codeHighlight>
             <Stack spacing={1.5}>
-              <Link href="#">www.mantis.com</Link>
+              <Link href="#">https://elevencpm.netlify.app/</Link>
               <Breadcrumbs aria-label="breadcrumb">
                 <Typography variant="h6">Size: 12px</Typography>
                 <Typography variant="h6">Weight: Regular</Typography>
