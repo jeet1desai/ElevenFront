@@ -10,7 +10,7 @@ import Header from './Header';
 import navigation from 'menu-items';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 
-import { openDrawer } from 'store/reducers/menu';
+import { openDrawer } from 'store/slices/menu';
 
 const MainLayout = () => {
   const theme = useTheme();

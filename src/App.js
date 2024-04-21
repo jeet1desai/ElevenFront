@@ -5,6 +5,7 @@ import ScrollTop from 'components/ScrollTop';
 import RTLLayout from 'layout/RTLLayout';
 import Locales from 'components/Locales';
 import { ConfigProvider } from 'contexts/ConfigContext';
+import { JWTProvider } from 'contexts/JWTContext';
 
 const App = () => {
   return (
@@ -13,7 +14,9 @@ const App = () => {
         <RTLLayout>
           <Locales>
             <ScrollTop>
-              <Routes />
+              <JWTProvider>
+                <Routes />
+              </JWTProvider>
             </ScrollTop>
           </Locales>
         </RTLLayout>

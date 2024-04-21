@@ -5,7 +5,7 @@ import { ButtonBase } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 
 import config from 'config';
-import { activeItem } from 'store/reducers/menu';
+import { activeItem } from 'store/slices/menu';
 
 const LogoSection = ({ sx, to }) => {
   const { defaultId } = useSelector((state) => state.menu);
