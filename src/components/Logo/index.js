@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { ButtonBase } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 
-import Logo from './Logo';
 import config from 'config';
 import { activeItem } from 'store/reducers/menu';
 
@@ -18,9 +17,7 @@ const LogoSection = ({ sx, to }) => {
       onClick={() => dispatch(activeItem({ openItem: [defaultId] }))}
       to={!to ? config.defaultPath : to}
       sx={sx}
-    >
-      <Logo />
-    </ButtonBase>
+    ></ButtonBase>
   );
 };
 
