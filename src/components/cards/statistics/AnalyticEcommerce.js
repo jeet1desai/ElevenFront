@@ -1,15 +1,10 @@
 import PropTypes from 'prop-types';
 
-// material-ui
 import { Box, Chip, Grid, Stack, Typography } from '@mui/material';
 
-// project import
 import MainCard from 'components/MainCard';
 
-// assets
 import { RiseOutlined, FallOutlined } from '@ant-design/icons';
-
-// ==============================|| STATISTICS - ECOMMERCE CARD  ||============================== //
 
 const AnalyticEcommerce = ({ color, title, count, percentage, isLoss, extra }) => (
   <MainCard contentSX={{ p: 2.25 }}>

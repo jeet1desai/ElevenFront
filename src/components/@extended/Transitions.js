@@ -1,10 +1,7 @@
 import PropTypes from 'prop-types';
 import { forwardRef } from 'react';
 
-// material-ui
-import { Fade, Box, Grow } from '@mui/material';
-
-// ==============================|| TRANSITIONS ||============================== //
+import { Fade, Box, Grow, Collapse, Zoom } from '@mui/material';
 
 const Transitions = forwardRef(({ children, position, type, ...others }, ref) => {
   let positionSX = {
@@ -13,10 +10,35 @@ const Transitions = forwardRef(({ children, position, type, ...others }, ref) =>
 
   switch (position) {
     case 'top-right':
+      positionSX = {
+        transformOrigin: 'top right'
+      };
+      break;
     case 'top':
+      positionSX = {
+        transformOrigin: 'top'
+      };
+      break;
     case 'bottom-left':
+      positionSX = {
+        transformOrigin: 'bottom left'
+      };
+      break;
     case 'bottom-right':
+      positionSX = {
+        transformOrigin: 'bottom right'
+      };
+      break;
     case 'bottom':
+      positionSX = {
+        transformOrigin: 'bottom'
+      };
+      break;
+    case 'top-center':
+      positionSX = {
+        transformOrigin: 'center top'
+      };
+      break;
     case 'top-left':
     default:
       positionSX = {
@@ -32,6 +54,11 @@ const Transitions = forwardRef(({ children, position, type, ...others }, ref) =>
           <Box sx={positionSX}>{children}</Box>
         </Grow>
       )}
+      {type === 'collapse' && (
+        <Collapse {...others} sx={positionSX}>
+          {children}
+        </Collapse>
+      )}
       {type === 'fade' && (
         <Fade
           {...others}
@@ -43,6 +70,11 @@ const Transitions = forwardRef(({ children, position, type, ...others }, ref) =>
         >
           <Box sx={positionSX}>{children}</Box>
         </Fade>
+      )}
+      {type === 'zoom' && (
+        <Zoom {...others}>
+          <Box sx={positionSX}>{children}</Box>
+        </Zoom>
       )}
     </Box>
   );

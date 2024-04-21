@@ -1,12 +1,10 @@
-// assets
+import { FormattedMessage } from 'react-intl';
+
 import { DashboardOutlined } from '@ant-design/icons';
 
-// icons
 const icons = {
   DashboardOutlined
 };
-
-// ==============================|| MENU ITEMS - DASHBOARD ||============================== //
 
 const dashboard = {
   id: 'group-home',
@@ -15,7 +13,7 @@ const dashboard = {
   children: [
     {
       id: 'home',
-      title: 'Home',
+      title: <FormattedMessage id="home" />,
       type: 'item',
       url: '/home',
       icon: icons.DashboardOutlined,

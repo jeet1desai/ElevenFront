@@ -87,7 +87,7 @@ const Profile = () => {
         sx={{
           p: 0.25,
           bgcolor: open ? iconBackColorOpen : 'transparent',
-          borderRadius: 1,
+          borderRadius: '8px',
           '&:hover': { bgcolor: 'secondary.lighter' }
         }}
         aria-label="open profile"

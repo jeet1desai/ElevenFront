@@ -1,20 +1,14 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 
-// material-ui
 import { Box, CardActions, Collapse, Divider, IconButton, Tooltip } from '@mui/material';
 
-// third-party
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import reactElementToJSXString from 'react-element-to-jsx-string';
 
-// project import
 import SyntaxHighlight from 'utils/SyntaxHighlight';
 
-// assets
 import { CodeOutlined, CopyOutlined } from '@ant-design/icons';
-
-// ==============================|| CLIPBOARD & HIGHLIGHTER   ||============================== //
 
 const Highlighter = ({ children }) => {
   const [highlight, setHighlight] = useState(false);

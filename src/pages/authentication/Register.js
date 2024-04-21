@@ -1,13 +1,9 @@
 import { Link } from 'react-router-dom';
 
-// material-ui
 import { Grid, Stack, Typography } from '@mui/material';
 
-// project import
 import FirebaseRegister from './auth-forms/AuthRegister';
 import AuthWrapper from './AuthWrapper';
-
-// ================================|| REGISTER ||================================ //
 
 const Register = () => (
   <AuthWrapper>
