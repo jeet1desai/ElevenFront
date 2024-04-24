@@ -1,15 +1,25 @@
 import { configureStore } from '@reduxjs/toolkit';
+import reducers from './rootReducer';
 import { useDispatch as useAppDispatch, useSelector as useAppSelector } from 'react-redux';
 
-import rootReducers from './rootReducer';
+// import storage from 'redux-persist/lib/storage';
+// import { persistReducer } from 'redux-persist';
 
-const store = configureStore({
-  reducer: rootReducers
-});
+// const persistConfig = {
+//   key: 'root',
+//   storage,
+//   whitelist: ['account']
+// };
 
-const { dispatch } = store;
+// const persistedReducer = persistReducer(persistConfig, reducers);
 
 const useDispatch = () => useAppDispatch();
 const useSelector = useAppSelector;
 
-export { store, dispatch, useSelector, useDispatch };
+const store = configureStore({
+  reducer: reducers
+});
+
+const { dispatch } = store;
+
+export { store, useDispatch, useSelector, dispatch };
