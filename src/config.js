@@ -1,5 +1,5 @@
 const config = {
-  defaultPath: '/home',
+  defaultPath: '/dashboard',
   fontFamily: `'Public Sans', sans-serif`,
   miniDrawer: false,
   container: true,
