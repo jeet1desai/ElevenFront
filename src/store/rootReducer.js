@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 
 import menuReducer from './slices/menu';
 import accountReducer from './slices/account';
+import snackbarReducer from './slices/snackbar';
 // import { persistReducer } from 'redux-persist';
 // import storage from 'redux-persist/lib/storage';
 
@@ -12,6 +13,6 @@ import accountReducer from './slices/account';
 
 // const persistedReducer = persistReducer(persistConfig, accountReducer);
 
-const reducers = combineReducers({ menu: menuReducer, account: accountReducer });
+const reducers = combineReducers({ menu: menuReducer, account: accountReducer, snackbar: snackbarReducer });
 
 export default reducers;

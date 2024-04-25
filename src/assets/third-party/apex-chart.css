@@ -2,3 +2,12 @@
   left: -4px !important;
   top: 2px !important;
 }
+
+fieldset {
+  border-color: #e6ebf1 !important;
+  border-radius: 8px !important;
+}
+
+button {
+  border-radius: 8px !important;
+}

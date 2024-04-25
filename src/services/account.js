@@ -12,3 +12,14 @@ export const loginService = (email, password) => {
     }
   };
 };
+
+export const meUserService = () => {
+  return async () => {
+    try {
+      const response = await axios.get('user/me/');
+      dispatch(loginSuccess(response.data.data));
+    } catch (error) {
+      dispatch(logoutSuccess());
+    }
+  };
+};

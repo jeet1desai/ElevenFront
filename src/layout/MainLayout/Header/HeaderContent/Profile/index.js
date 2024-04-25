@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import { useRef, useState } from 'react';
 
-// material-ui
 import { useTheme } from '@mui/material/styles';
 import {
   Avatar,
@@ -19,17 +18,18 @@ import {
   Typography
 } from '@mui/material';
 
-// project import
 import MainCard from 'components/MainCard';
 import Transitions from 'components/@extended/Transitions';
 import ProfileTab from './ProfileTab';
 import SettingTab from './SettingTab';
 
-// assets
-import avatar1 from 'assets/images/users/avatar-1.png';
+import avatar from 'assets/images/users/avatar.png';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 
-// tab panel wrapper
+import { useDispatch, useSelector } from 'store/index';
+import { logoutSuccess } from 'store/slices/account';
+import { ROLES } from 'utils/enum';
+
 function TabPanel({ children, value, index, ...other }) {
   return (
     <div role="tabpanel" hidden={value !== index} id={`profile-tabpanel-${index}`} aria-labelledby={`profile-tab-${index}`} {...other}>
@@ -51,13 +51,14 @@ function a11yProps(index) {
   };
 }
 
-// ==============================|| HEADER CONTENT - PROFILE ||============================== //
-
 const Profile = () => {
+  const dispatch = useDispatch();
   const theme = useTheme();
 
+  const { user } = useSelector((state) => state.account);
+
   const handleLogout = async () => {
-    // logout
+    dispatch(logoutSuccess());
   };
 
   const anchorRef = useRef(null);
@@ -82,13 +83,24 @@ const Profile = () => {
   const iconBackColorOpen = 'grey.300';
 
   return (
-    <Box sx={{ flexShrink: 0, ml: 0.75 }}>
+    <Box
+      sx={{
+        flexShrink: 0,
+        ml: 0.75,
+        [theme.breakpoints.down('md')]: {
+          width: '100%'
+        }
+      }}
+    >
       <ButtonBase
         sx={{
           p: 0.25,
           bgcolor: open ? iconBackColorOpen : 'transparent',
           borderRadius: '8px',
-          '&:hover': { bgcolor: 'secondary.lighter' }
+          '&:hover': { bgcolor: 'secondary.lighter' },
+          [theme.breakpoints.down('md')]: {
+            width: '100%'
+          }
         }}
         aria-label="open profile"
         ref={anchorRef}
@@ -97,8 +109,8 @@ const Profile = () => {
         onClick={handleToggle}
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-          <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
-          <Typography variant="subtitle1">John Doe</Typography>
+          <Avatar alt="profile user" src={avatar} sx={{ width: 32, height: 32 }} />
+          <Typography sx={{ textTransform: 'capitalize' }} variant="subtitle1">{`${user.first_name} ${user.last_name}`}</Typography>
         </Stack>
       </ButtonBase>
       <Popper
@@ -139,11 +151,14 @@ const Profile = () => {
                       <Grid container justifyContent="space-between" alignItems="center">
                         <Grid item>
                           <Stack direction="row" spacing={1.25} alignItems="center">
-                            <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
+                            <Avatar alt="profile user" src={avatar} sx={{ width: 32, height: 32 }} />
                             <Stack>
-                              <Typography variant="h6">John Doe</Typography>
+                              <Typography
+                                sx={{ textTransform: 'capitalize' }}
+                                variant="h6"
+                              >{`${user.first_name} ${user.last_name}`}</Typography>
                               <Typography variant="body2" color="textSecondary">
-                                UI/UX Designer
+                                {ROLES[user.role]}
                               </Typography>
                             </Stack>
                           </Stack>

@@ -12,6 +12,8 @@ import { Provider as ReduxProvider } from 'react-redux';
 import App from './App';
 import { store } from 'store';
 
+import Snackbar from 'components/Snackbar';
+
 // let persistor = persistStore(store);
 const container = document.getElementById('root');
 const root = createRoot(container);
@@ -22,6 +24,7 @@ root.render(
       {/* <PersistGate persistor={persistor}> */}
       <BrowserRouter>
         <App />
+        <Snackbar />
       </BrowserRouter>
       {/* </PersistGate> */}
     </ReduxProvider>
