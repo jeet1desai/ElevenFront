@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import useAuth from 'hooks/useAuth';
-import config from '../../config';
 
 import Loader from 'components/Loader';
 
@@ -12,7 +11,7 @@ const GuestGuard = ({ children }) => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate(config.defaultPath);
+      navigate('/projects');
     }
     // eslint-disable-next-line
   }, [isLoggedIn]);
