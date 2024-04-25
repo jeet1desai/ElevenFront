@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 import {
@@ -23,10 +23,15 @@ import AnimateButton from 'components/@extended/AnimateButton';
 
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 
+import useAuth from 'hooks/useAuth';
+
 const AuthLogin = () => {
-  const [checked, setChecked] = React.useState(false);
+  const [checked, setChecked] = useState(false);
+
+  const { login } = useAuth();
 
   const [showPassword, setShowPassword] = React.useState(false);
+
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -38,18 +43,16 @@ const AuthLogin = () => {
   return (
     <>
       <Formik
-        initialValues={{
-          email: '',
-          password: '',
-          submit: null
-        }}
+        initialValues={{ email: '', password: '' }}
         validationSchema={Yup.object().shape({
           email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
           try {
-            setStatus({ success: false });
+            await login(values.email, values.password);
+
+            setStatus({ success: true });
             setSubmitting(false);
           } catch (err) {
             setStatus({ success: false });
