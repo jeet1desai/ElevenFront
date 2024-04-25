@@ -2,17 +2,16 @@ import { combineReducers } from 'redux';
 
 import menuReducer from './slices/menu';
 import accountReducer from './slices/account';
-import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+// import { persistReducer } from 'redux-persist';
+// import storage from 'redux-persist/lib/storage';
 
-const persistConfig = {
-  key: 'account',
-  storage,
-  whitelist: ['user', 'loading']
-};
+// const persistConfig = {
+//   key: 'account',
+//   storage
+// };
 
-const persistedReducer = persistReducer(persistConfig, accountReducer);
+// const persistedReducer = persistReducer(persistConfig, accountReducer);
 
-const reducers = combineReducers({ menu: menuReducer, account: persistedReducer });
+const reducers = combineReducers({ menu: menuReducer, account: accountReducer });
 
 export default reducers;
