@@ -19,7 +19,7 @@ const ProjectRoutes = {
       element: <DashboardDefault />
     },
     {
-      path: 'projects/:id/team',
+      path: 'projects/:id/teams',
       element: <DashboardDefault />
     }
   ]

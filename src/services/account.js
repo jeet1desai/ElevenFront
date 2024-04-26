@@ -2,22 +2,11 @@ import { dispatch } from 'store/index';
 import { loginSuccess, logoutSuccess } from 'store/slices/account';
 import axios from 'utils/axios';
 
-export const loginService = (email, password) => {
-  return async () => {
-    try {
-      const response = await axios.post('user/login/', { email: email, password: password });
-      dispatch(loginSuccess(response.data.data));
-    } catch (error) {
-      dispatch(logoutSuccess());
-    }
-  };
-};
-
 export const meUserService = () => {
   return async () => {
     try {
-      const response = await axios.get('user/me/');
-      dispatch(loginSuccess(response.data.data));
+      const response = await axios.get('user/me');
+      dispatch(loginSuccess({ user: response.data.user }));
     } catch (error) {
       dispatch(logoutSuccess());
     }

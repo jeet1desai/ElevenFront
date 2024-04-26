@@ -56,6 +56,8 @@ const Profile = () => {
   const theme = useTheme();
 
   const { user } = useSelector((state) => state.account);
+  const { projects } = useSelector((state) => state.project);
+  console.log(projects);
 
   const handleLogout = async () => {
     dispatch(logoutSuccess());

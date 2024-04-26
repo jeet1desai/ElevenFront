@@ -19,14 +19,12 @@ const MainLayout = () => {
 
   const { drawerOpen } = useSelector((state) => state.menu);
 
-  // drawer toggler
   const [open, setOpen] = useState(drawerOpen);
   const handleDrawerToggle = () => {
     setOpen(!open);
     dispatch(openDrawer({ drawerOpen: !open }));
   };
 
-  // set media wise responsive drawer
   useEffect(() => {
     setOpen(!matchDownLG);
     dispatch(openDrawer({ drawerOpen: !matchDownLG }));

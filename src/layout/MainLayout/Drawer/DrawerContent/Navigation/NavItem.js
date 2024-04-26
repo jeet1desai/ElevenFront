@@ -18,15 +18,20 @@ const NavItem = ({ item, level }) => {
   const { pathname } = useLocation();
 
   const { drawerOpen, openItem } = useSelector((state) => state.menu);
+  const { projectId } = useSelector((state) => state.project);
+
+  console.log(projectId);
 
   let itemTarget = '_self';
   if (item.target) {
     itemTarget = '_blank';
   }
 
-  let listItemProps = { component: forwardRef((props, ref) => <Link ref={ref} {...props} to={item.url} target={itemTarget} />) };
+  let listItemProps = {
+    component: forwardRef((props, ref) => <Link ref={ref} {...props} to={`/projects/${projectId}/${item.url}`} target={itemTarget} />)
+  };
   if (item?.external) {
-    listItemProps = { component: 'a', href: item.url, target: itemTarget };
+    listItemProps = { component: 'a', href: `/projects/${projectId}/${item.url}`, target: itemTarget };
   }
 
   const itemHandler = (id) => {
@@ -39,7 +44,7 @@ const NavItem = ({ item, level }) => {
   const isSelected = openItem.findIndex((id) => id === item.id) > -1;
   // active menu item on page load
   useEffect(() => {
-    if (pathname.includes(item.url)) {
+    if (pathname.includes(`/projects/${projectId}/${item.url}`)) {
       dispatch(activeItem({ openItem: [item.id] }));
     }
     // eslint-disable-next-line

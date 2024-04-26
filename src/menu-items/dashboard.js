@@ -1,22 +1,31 @@
 import { FormattedMessage } from 'react-intl';
 
-import { DashboardOutlined } from '@ant-design/icons';
+import { DashboardOutlined, TeamOutlined } from '@ant-design/icons';
 
 const icons = {
-  DashboardOutlined
+  DashboardOutlined,
+  TeamOutlined
 };
 
 const dashboard = {
   id: 'group-home',
-  // title: 'Navigation',
+  title: 'Eleven - CPM',
   type: 'group',
   children: [
     {
       id: 'home',
       title: <FormattedMessage id="home" />,
       type: 'item',
-      url: '/home',
+      url: 'home',
       icon: icons.DashboardOutlined,
+      breadcrumbs: false
+    },
+    {
+      id: 'team',
+      title: <FormattedMessage id="team" />,
+      type: 'item',
+      url: 'teams',
+      icon: icons.TeamOutlined,
       breadcrumbs: false
     }
   ]
