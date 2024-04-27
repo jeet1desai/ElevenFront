@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import Loader from 'components/Loader';
 
 import axios from 'utils/axios';
+import { openErrorSnackbar } from 'utils/utilsFn';
 import { deleteCookie, getCookie, setCookie } from 'utils/cookie';
 
 import { meUserService } from 'services/account';
@@ -12,7 +13,6 @@ import { getProjectListService } from 'services/project';
 import { useSelector, useDispatch } from 'store/index';
 
 import { loginSuccess, logoutSuccess } from 'store/slices/account';
-import { openSnackbar } from 'store/slices/snackbar';
 import { getProjectSuccess } from 'store/slices/project';
 
 const verifyToken = (serviceToken) => {
@@ -45,8 +45,8 @@ export const JWTProvider = ({ children }) => {
         const serviceToken = getCookie('token');
         if (serviceToken && verifyToken(serviceToken)) {
           setSession(serviceToken);
-          dispatch(meUserService());
-          dispatch(getProjectListService());
+          await dispatch(meUserService());
+          await dispatch(getProjectListService());
         } else {
           dispatch(logoutSuccess());
         }
@@ -54,40 +54,22 @@ export const JWTProvider = ({ children }) => {
         dispatch(logoutSuccess());
       }
     };
-    init();
-  }, []);
+
+    if (!isLoggedIn) {
+      init();
+    }
+  }, [dispatch, isLoggedIn]);
 
   const login = async (email, password) => {
     try {
       const response = await axios.post('user/login', { email: email, password: password });
       setSession(response.data.token.access);
-      dispatch(loginSuccess({ user: response.data.user }));
+      dispatch(loginSuccess({ user: response.data.user, isCompany: response.data.is_company }));
       dispatch(getProjectSuccess({ projects: response.data.projects }));
 
-      dispatch(
-        openSnackbar({
-          open: true,
-          anchorOrigin: { vertical: 'bottom', horizontal: 'center' },
-          message: response.data.msg,
-          transition: 'SlideUp',
-          variant: 'alert',
-          close: true
-        })
-      );
+      openErrorSnackbar(response.data.msg, 'primary');
     } catch (err) {
-      dispatch(
-        openSnackbar({
-          open: true,
-          message: err.msg,
-          anchorOrigin: { vertical: 'bottom', horizontal: 'center' },
-          transition: 'SlideUp',
-          variant: 'alert',
-          alert: {
-            color: 'error'
-          },
-          close: true
-        })
-      );
+      openErrorSnackbar(err.msg, 'error');
     }
   };
 

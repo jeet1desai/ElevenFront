@@ -20,8 +20,6 @@ const NavItem = ({ item, level }) => {
   const { drawerOpen, openItem } = useSelector((state) => state.menu);
   const { projectId } = useSelector((state) => state.project);
 
-  console.log(projectId);
-
   let itemTarget = '_self';
   if (item.target) {
     itemTarget = '_blank';
@@ -48,7 +46,7 @@ const NavItem = ({ item, level }) => {
       dispatch(activeItem({ openItem: [item.id] }));
     }
     // eslint-disable-next-line
-  }, [pathname]);
+  }, [pathname, projectId]);
 
   const textColor = 'text.primary';
   const iconSelectedColor = 'primary.main';

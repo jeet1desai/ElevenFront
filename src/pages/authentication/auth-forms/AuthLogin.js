@@ -31,7 +31,6 @@ const AuthLogin = () => {
   const { login } = useAuth();
 
   const [showPassword, setShowPassword] = React.useState(false);
-
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };

@@ -3,7 +3,9 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   loading: true,
   projects: [],
-  projectId: '1'
+  projectId: '',
+  role: '',
+  project: null
 };
 
 const projectSlice = createSlice({

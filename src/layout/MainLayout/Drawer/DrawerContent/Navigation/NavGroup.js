@@ -1,13 +1,9 @@
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
-// material-ui
 import { Box, List, Typography } from '@mui/material';
 
-// project import
 import NavItem from './NavItem';
-
-// ==============================|| NAVIGATION - LIST GROUP ||============================== //
 
 const NavGroup = ({ item }) => {
   const menu = useSelector((state) => state.menu);
@@ -15,12 +11,6 @@ const NavGroup = ({ item }) => {
 
   const navCollapse = item.children?.map((menuItem) => {
     switch (menuItem.type) {
-      case 'collapse':
-        return (
-          <Typography key={menuItem.id} variant="caption" color="error" sx={{ p: 2.5 }}>
-            collapse - only available in paid version
-          </Typography>
-        );
       case 'item':
         return <NavItem key={menuItem.id} item={menuItem} level={1} />;
       default:
@@ -41,7 +31,6 @@ const NavGroup = ({ item }) => {
             <Typography variant="subtitle2" color="textSecondary">
               {item.title}
             </Typography>
-            {/* only available in paid version */}
           </Box>
         )
       }

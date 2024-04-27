@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { useTheme } from '@mui/material/styles';
@@ -11,11 +11,13 @@ import navigation from 'menu-items';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 
 import { openDrawer } from 'store/slices/menu';
+import { setProjectIdSuccess } from 'store/slices/project';
 
 const MainLayout = () => {
   const theme = useTheme();
   const matchDownLG = useMediaQuery(theme.breakpoints.down('lg'));
   const dispatch = useDispatch();
+  const { id } = useParams();
 
   const { drawerOpen } = useSelector((state) => state.menu);
 
@@ -24,6 +26,11 @@ const MainLayout = () => {
     setOpen(!open);
     dispatch(openDrawer({ drawerOpen: !open }));
   };
+
+  useEffect(() => {
+    dispatch(setProjectIdSuccess({ id: id }));
+    console.log('call');
+  }, [dispatch, id]);
 
   useEffect(() => {
     setOpen(!matchDownLG);

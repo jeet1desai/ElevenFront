@@ -26,7 +26,7 @@ const dashboard = {
       type: 'item',
       url: 'teams',
       icon: icons.TeamOutlined,
-      breadcrumbs: false
+      breadcrumbs: true
     }
   ]
 };
