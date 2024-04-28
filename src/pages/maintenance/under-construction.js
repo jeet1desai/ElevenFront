@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles';
 import { Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
 
 const CardMediaWrapper = styled('div')({
-  maxWidth: 540,
+  maxWidth: 480,
   margin: '0 auto',
   position: 'relative'
 });
@@ -18,6 +18,7 @@ const ConstructionCard = styled(Card)({
   justifyContent: 'center',
   border: '1px solid #e6ebf1',
   boxShadow: 'none',
+  height: '100%',
   borderRadius: '8px'
 });
 

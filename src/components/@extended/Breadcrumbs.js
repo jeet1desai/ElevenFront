@@ -7,7 +7,11 @@ import { Grid, Typography } from '@mui/material';
 
 import MainCard from '../MainCard';
 
+import { useSelector } from 'store/index';
+
 const Breadcrumbs = ({ navigation, title, ...others }) => {
+  const { projectId } = useSelector((state) => state.project);
+
   const location = useLocation();
   const [main, setMain] = useState();
   const [item, setItem] = useState();
@@ -19,7 +23,7 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
         if (collapse.type && collapse.type === 'collapse') {
           getCollapse(collapse);
         } else if (collapse.type && collapse.type === 'item') {
-          if (location.pathname === collapse.url) {
+          if (location.pathname === '/projects/' + projectId + '/' + collapse.url) {
             setMain(menu);
             setItem(collapse);
           }
@@ -37,11 +41,6 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
       return false;
     });
   });
-
-  // only used for component demo breadcrumbs
-  if (location.pathname === '/breadcrumbs') {
-    location.pathname = '/dashboard/analytics';
-  }
 
   let mainContent;
   let itemContent;
@@ -73,7 +72,13 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
           <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start" spacing={1}>
             <Grid item>
               <MuiBreadcrumbs aria-label="breadcrumb">
-                <Typography component={Link} to="/" color="textSecondary" variant="h6" sx={{ textDecoration: 'none' }}>
+                <Typography
+                  component={Link}
+                  to={'/projects/' + projectId + '/home'}
+                  color="textSecondary"
+                  variant="h6"
+                  sx={{ textDecoration: 'none' }}
+                >
                   Home
                 </Typography>
                 {mainContent}
@@ -81,8 +86,8 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
               </MuiBreadcrumbs>
             </Grid>
             {title && (
-              <Grid item sx={{ mt: 2 }}>
-                <Typography variant="h5">{item.title}</Typography>
+              <Grid item sx={{ mt: 1 }}>
+                <Typography variant="h2">{item.title}</Typography>
               </Grid>
             )}
           </Grid>

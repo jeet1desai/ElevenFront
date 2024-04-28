@@ -45,7 +45,7 @@ const dashboard = {
       type: 'item',
       url: 'tasks',
       icon: icons.OrderedListOutlined,
-      breadcrumbs: true
+      breadcrumbs: false
     },
     {
       id: 'RFIs',
@@ -53,7 +53,7 @@ const dashboard = {
       type: 'item',
       url: 'rfis',
       icon: icons.CommentOutlined,
-      breadcrumbs: true
+      breadcrumbs: false
     },
     {
       id: 'field-reports',
@@ -61,7 +61,7 @@ const dashboard = {
       type: 'item',
       url: 'field-reports',
       icon: icons.FileDoneOutlined,
-      breadcrumbs: true
+      breadcrumbs: false
     },
     {
       id: 'map',
@@ -69,7 +69,7 @@ const dashboard = {
       type: 'item',
       url: 'map',
       icon: icons.EnvironmentOutlined,
-      breadcrumbs: true
+      breadcrumbs: false
     },
     {
       id: 'document',
@@ -77,7 +77,7 @@ const dashboard = {
       type: 'item',
       url: 'document',
       icon: icons.PaperClipOutlined,
-      breadcrumbs: true
+      breadcrumbs: false
     },
     {
       id: 'team',
@@ -93,7 +93,7 @@ const dashboard = {
       type: 'item',
       url: 'chat',
       icon: icons.MessageOutlined,
-      breadcrumbs: true
+      breadcrumbs: false
     },
     {
       id: 'calender',
@@ -101,7 +101,7 @@ const dashboard = {
       type: 'item',
       url: 'calender',
       icon: icons.CalendarOutlined,
-      breadcrumbs: true
+      breadcrumbs: false
     },
     {
       id: 'setting',
@@ -109,7 +109,7 @@ const dashboard = {
       type: 'item',
       url: 'setting',
       icon: icons.SettingOutlined,
-      breadcrumbs: true
+      breadcrumbs: false
     }
   ]
 };

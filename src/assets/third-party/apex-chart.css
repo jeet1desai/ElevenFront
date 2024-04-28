@@ -23,3 +23,8 @@ button {
 .MuiDialog-root .MuiPaper-root {
   border-radius: 8px !important;
 }
+
+.ps__rail-x,
+.ps__rail-y {
+  display: none;
+}
