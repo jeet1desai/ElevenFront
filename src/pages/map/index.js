@@ -1,7 +1,12 @@
 import React from 'react';
+import UnderConstruction from 'pages/maintenance/under-construction';
 
 const Map = () => {
-  return <div>Map</div>;
+  return (
+    <>
+      <UnderConstruction />
+    </>
+  );
 };
 
 export default Map;

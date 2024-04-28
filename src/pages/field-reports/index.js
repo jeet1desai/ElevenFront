@@ -1,7 +1,12 @@
 import React from 'react';
+import UnderConstruction from 'pages/maintenance/under-construction';
 
 const FieldReports = () => {
-  return <div>FieldReports</div>;
+  return (
+    <>
+      <UnderConstruction />
+    </>
+  );
 };
 
 export default FieldReports;

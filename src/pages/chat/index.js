@@ -1,7 +1,12 @@
 import React from 'react';
+import UnderConstruction from 'pages/maintenance/under-construction';
 
 const Chat = () => {
-  return <div>Chat</div>;
+  return (
+    <>
+      <UnderConstruction />
+    </>
+  );
 };
 
 export default Chat;

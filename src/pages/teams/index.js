@@ -1,7 +1,12 @@
 import React from 'react';
+import UnderConstruction from 'pages/maintenance/under-construction';
 
 const Teams = () => {
-  return <div>Teams</div>;
+  return (
+    <>
+      <UnderConstruction />
+    </>
+  );
 };
 
 export default Teams;

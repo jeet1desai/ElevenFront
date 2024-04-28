@@ -39,6 +39,7 @@
     "react-router-dom": "^6.21.3",
     "react-scripts": "^5.0.1",
     "react-syntax-highlighter": "^15.5.0",
+    "react-timer-hook": "^3.0.7",
     "react-window": "^1.8.10",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",

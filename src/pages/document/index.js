@@ -1,7 +1,12 @@
 import React from 'react';
+import UnderConstruction from 'pages/maintenance/under-construction';
 
 const Document = () => {
-  return <div>Document</div>;
+  return (
+    <>
+      <UnderConstruction />
+    </>
+  );
 };
 
 export default Document;
