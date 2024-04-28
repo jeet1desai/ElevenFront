@@ -56,8 +56,7 @@ const Profile = () => {
   const theme = useTheme();
 
   const { user } = useSelector((state) => state.account);
-  const { projects } = useSelector((state) => state.project);
-  console.log(projects);
+  const { project } = useSelector((state) => state.project);
 
   const handleLogout = async () => {
     dispatch(logoutSuccess());
@@ -160,7 +159,7 @@ const Profile = () => {
                                 variant="h6"
                               >{`${user.first_name} ${user.last_name}`}</Typography>
                               <Typography variant="body2" color="textSecondary">
-                                {ROLES[user.role]}
+                                {ROLES[project?.user_role]}
                               </Typography>
                             </Stack>
                           </Stack>

@@ -1,4 +1,12 @@
 {
   "home": "Home",
+  "setting": "Setting",
+  "tasks": "Tasks",
+  "document": "Document",
+  "map": "Map",
+  "chat": "Chat",
+  "calender": "Calender",
+  "field-reports": "Field Reports",
+  "RFIs": "RFIs",
   "team": "Team"
 }

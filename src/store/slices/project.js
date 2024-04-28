@@ -16,20 +16,28 @@ const projectSlice = createSlice({
       const { projects } = action.payload;
       state.loading = false;
       state.projects = projects;
+
+      if (state.projectId !== '') {
+        state.project = projects.find((project) => project.id === Number(state.projectId));
+      }
+    },
+    createProjectSuccess(state, action) {
+      const { project } = action.payload;
+      state.loading = false;
+      state.projects = [...state.projects, project];
     },
     setProjectIdSuccess(state, action) {
       const { id } = action.payload;
-      state.loading = false;
+      state.project = state.projects.find((project) => project.id === Number(id));
       state.projectId = id;
+      state.loading = false;
     },
     hasError(state) {
       state.loading = false;
-      state.projects = [];
-      state.projectId = '';
     }
   }
 });
 
-export const { getProjectSuccess, setProjectIdSuccess, hasError } = projectSlice.actions;
+export const { getProjectSuccess, createProjectSuccess, setProjectIdSuccess, hasError } = projectSlice.actions;
 
 export default projectSlice.reducer;

@@ -4,7 +4,16 @@ import Loadable from 'components/Loadable';
 import MainLayout from 'layout/MainLayout';
 import AuthGuard from 'layout/RouteGuard/AuthGuard';
 
-const DashboardDefault = Loadable(lazy(() => import('pages/dashboard')));
+const Dashboard = Loadable(lazy(() => import('pages/dashboard')));
+const Teams = Loadable(lazy(() => import('pages/teams')));
+const Tasks = Loadable(lazy(() => import('pages/tasks')));
+const RequestInformation = Loadable(lazy(() => import('pages/request-information')));
+const FieldReports = Loadable(lazy(() => import('pages/field-reports')));
+const Map = Loadable(lazy(() => import('pages/map')));
+const Document = Loadable(lazy(() => import('pages/document')));
+const Chat = Loadable(lazy(() => import('pages/chat')));
+const Calender = Loadable(lazy(() => import('pages/calender')));
+const Setting = Loadable(lazy(() => import('pages/setting')));
 
 const ProjectRoutes = {
   path: '/',
@@ -16,11 +25,43 @@ const ProjectRoutes = {
   children: [
     {
       path: 'projects/:id/home',
-      element: <DashboardDefault />
+      element: <Dashboard />
+    },
+    {
+      path: 'projects/:id/tasks',
+      element: <Tasks />
+    },
+    {
+      path: 'projects/:id/rfis',
+      element: <RequestInformation />
+    },
+    {
+      path: 'projects/:id/field-reports',
+      element: <FieldReports />
+    },
+    {
+      path: 'projects/:id/map',
+      element: <Map />
+    },
+    {
+      path: 'projects/:id/document',
+      element: <Document />
     },
     {
       path: 'projects/:id/teams',
-      element: <DashboardDefault />
+      element: <Teams />
+    },
+    {
+      path: 'projects/:id/chat',
+      element: <Chat />
+    },
+    {
+      path: 'projects/:id/calender',
+      element: <Calender />
+    },
+    {
+      path: 'projects/:id/setting',
+      element: <Setting />
     }
   ]
 };

@@ -1,10 +1,29 @@
 import { FormattedMessage } from 'react-intl';
 
-import { DashboardOutlined, TeamOutlined } from '@ant-design/icons';
+import {
+  DashboardOutlined,
+  TeamOutlined,
+  SettingOutlined,
+  OrderedListOutlined,
+  CommentOutlined,
+  MessageOutlined,
+  EnvironmentOutlined,
+  PaperClipOutlined,
+  CalendarOutlined,
+  FileDoneOutlined
+} from '@ant-design/icons';
 
 const icons = {
   DashboardOutlined,
-  TeamOutlined
+  OrderedListOutlined,
+  TeamOutlined,
+  CommentOutlined,
+  MessageOutlined,
+  FileDoneOutlined,
+  EnvironmentOutlined,
+  PaperClipOutlined,
+  CalendarOutlined,
+  SettingOutlined
 };
 
 const dashboard = {
@@ -21,11 +40,75 @@ const dashboard = {
       breadcrumbs: false
     },
     {
+      id: 'tasks',
+      title: <FormattedMessage id="tasks" />,
+      type: 'item',
+      url: 'tasks',
+      icon: icons.OrderedListOutlined,
+      breadcrumbs: true
+    },
+    {
+      id: 'RFIs',
+      title: <FormattedMessage id="RFIs" />,
+      type: 'item',
+      url: 'rfis',
+      icon: icons.CommentOutlined,
+      breadcrumbs: true
+    },
+    {
+      id: 'field-reports',
+      title: <FormattedMessage id="field-reports" />,
+      type: 'item',
+      url: 'field-reports',
+      icon: icons.FileDoneOutlined,
+      breadcrumbs: true
+    },
+    {
+      id: 'map',
+      title: <FormattedMessage id="map" />,
+      type: 'item',
+      url: 'map',
+      icon: icons.EnvironmentOutlined,
+      breadcrumbs: true
+    },
+    {
+      id: 'document',
+      title: <FormattedMessage id="document" />,
+      type: 'item',
+      url: 'document',
+      icon: icons.PaperClipOutlined,
+      breadcrumbs: true
+    },
+    {
       id: 'team',
       title: <FormattedMessage id="team" />,
       type: 'item',
       url: 'teams',
       icon: icons.TeamOutlined,
+      breadcrumbs: true
+    },
+    {
+      id: 'chat',
+      title: <FormattedMessage id="chat" />,
+      type: 'item',
+      url: 'chat',
+      icon: icons.MessageOutlined,
+      breadcrumbs: true
+    },
+    {
+      id: 'calender',
+      title: <FormattedMessage id="calender" />,
+      type: 'item',
+      url: 'calender',
+      icon: icons.CalendarOutlined,
+      breadcrumbs: true
+    },
+    {
+      id: 'setting',
+      title: <FormattedMessage id="setting" />,
+      type: 'item',
+      url: 'setting',
+      icon: icons.SettingOutlined,
       breadcrumbs: true
     }
   ]

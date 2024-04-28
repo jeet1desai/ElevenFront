@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-// material-ui
 import {
   Avatar,
   AvatarGroup,
@@ -18,7 +17,6 @@ import {
   Typography
 } from '@mui/material';
 
-// project import
 import OrdersTable from './OrdersTable';
 import IncomeAreaChart from './IncomeAreaChart';
 import MonthlyBarChart from './MonthlyBarChart';
@@ -27,18 +25,17 @@ import SalesColumnChart from './SalesColumnChart';
 import MainCard from 'components/MainCard';
 import AnalyticEcommerce from 'components/cards/statistics/AnalyticEcommerce';
 
-// assets
 import { GiftOutlined, MessageOutlined, SettingOutlined } from '@ant-design/icons';
 import avatar from 'assets/images/users/avatar.png';
 
-// avatar style
+import { useSelector } from 'store/index';
+
 const avatarSX = {
   width: 36,
   height: 36,
   fontSize: '1rem'
 };
 
-// action style
 const actionSX = {
   mt: 0.75,
   ml: 1,
@@ -48,7 +45,6 @@ const actionSX = {
   transform: 'none'
 };
 
-// sales report status
 const status = [
   {
     value: 'today',
@@ -64,17 +60,16 @@ const status = [
   }
 ];
 
-// ==============================|| DASHBOARD - DEFAULT ||============================== //
-
 const DashboardDefault = () => {
   const [value, setValue] = useState('today');
   const [slot, setSlot] = useState('week');
 
+  const { project } = useSelector((state) => state.project);
+
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
-      {/* row 1 */}
       <Grid item xs={12} sx={{ mb: -2.25 }}>
-        <Typography variant="h5">Home - Today</Typography>
+        <Typography variant="h5">Home - {project?.name}</Typography>
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
         <AnalyticEcommerce title="Total Page Views" count="4,42,236" percentage={59.3} extra="35,000" />
