@@ -19,6 +19,11 @@ const teamSlice = createSlice({
       state.loading = false;
       state.teams = teams;
     },
+    getTeamMemberRoleSuccess(state, action) {
+      const { team } = action.payload;
+      state.loading = false;
+      state.teams = state.teams.map((teamMember) => (teamMember.id !== team.id ? teamMember : team));
+    },
     removeTeamMemberSuccess(state, action) {
       const { id } = action.payload;
       state.loading = false;
@@ -30,6 +35,7 @@ const teamSlice = createSlice({
   }
 });
 
-export const { inviteMemberSuccess, getTeamMembersSuccess, removeTeamMemberSuccess, hasError } = teamSlice.actions;
+export const { inviteMemberSuccess, getTeamMembersSuccess, removeTeamMemberSuccess, getTeamMemberRoleSuccess, hasError } =
+  teamSlice.actions;
 
 export default teamSlice.reducer;

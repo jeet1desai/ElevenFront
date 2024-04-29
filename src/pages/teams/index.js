@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
 import {
@@ -14,14 +14,18 @@ import {
   IconButton
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
+import _ from 'lodash';
 
 import { IconSearch, IconEye, IconTrash } from '@tabler/icons-react';
+import { MessageOutlined } from '@ant-design/icons';
 
 import MainCard from 'components/MainCard';
+import ViewMember from './ViewMember';
 import AddMember from './AddMember';
+import RemoveMember from './RemoveMember';
 
 import { useDispatch, useSelector } from 'store/index';
-import { getTeamsService, removeTeamMemberService } from 'services/team';
+import { getTeamsService } from 'services/team';
 
 import { ROLES } from 'utils/enum';
 
@@ -40,13 +44,53 @@ const Teams = () => {
 
   const dispatch = useDispatch();
   const { teams } = useSelector((state) => state.team);
+
   const [isAddMemberOpen, setAddMember] = useState(false);
+  const [deleteTeamDialogOpen, setDeleteTeamDialog] = useState(false);
+  const [viewTeamDialogOpen, setViewTeamDialog] = useState(false);
+
+  const [teamMember, setTeamMember] = useState(null);
+  const [teamList, setTeamList] = useState([]);
+  const [filterTeamList, setFilterTeamList] = useState([]);
 
   useEffect(() => {
     if (id) {
       dispatch(getTeamsService(id));
     }
   }, [id, dispatch]);
+
+  useEffect(() => {
+    setTeamList(teams);
+    setFilterTeamList(teams);
+  }, [teams]);
+
+  const handleCloseDeleteDialog = () => {
+    setTeamMember(null);
+    setDeleteTeamDialog((deleteTeamDialogOpen) => !deleteTeamDialogOpen);
+  };
+
+  const handleCloseViewDialog = () => {
+    setTeamMember(null);
+    setViewTeamDialog((viewTeamDialogOpen) => !viewTeamDialogOpen);
+  };
+
+  const handleFilterTeamMembers = useMemo(() => {
+    return _.debounce((e) => {
+      handleFilter(e.target.value);
+    }, 500);
+  }, []);
+
+  const handleFilter = (value) => {
+    const filteredTeams = teamList.filter((team) => {
+      return (
+        team.user.first_name.toLowerCase().includes(value.toLowerCase()) ||
+        team.user.last_name.toLowerCase().includes(value.toLowerCase()) ||
+        team.company.company.toLowerCase().includes(value.toLowerCase()) ||
+        team.user.email.toLowerCase().includes(value.toLowerCase())
+      );
+    });
+    setFilterTeamList(filteredTeams);
+  };
 
   return (
     <>
@@ -63,6 +107,7 @@ const Teams = () => {
             placeholder="Search team member"
             size="small"
             sx={{ '& input': { paddingLeft: '2px' } }}
+            onChange={handleFilterTeamMembers}
           />
           <Button variant="contained" color="success" onClick={() => setAddMember(true)}>
             Add Team Member
@@ -96,7 +141,7 @@ const Teams = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {teams.map((team) => {
+              {filterTeamList.map((team) => {
                 return (
                   <TableRow key={team.id}>
                     <TableCell align="left">{team.user.first_name + ' ' + team.user.last_name}</TableCell>
@@ -107,11 +152,26 @@ const Teams = () => {
                       {team.user.country_code && team.user.phone_number ? team.user.country_code + ' ' + team.user.phone_number : 'Na'}
                     </TableCell>
                     <TableCell align="center">
-                      <IconButton color="primary">
+                      <IconButton>
+                        <MessageOutlined />
+                      </IconButton>
+                      <IconButton
+                        color="primary"
+                        onClick={() => {
+                          setTeamMember(team);
+                          setViewTeamDialog(true);
+                        }}
+                      >
                         <IconEye />
                       </IconButton>
                       {ROLES[team.role] !== ROLES[4] && (
-                        <IconButton color="error" onClick={() => dispatch(removeTeamMemberService(team.id, team.project.id, team.user.id))}>
+                        <IconButton
+                          color="error"
+                          onClick={() => {
+                            setTeamMember(team);
+                            setDeleteTeamDialog(true);
+                          }}
+                        >
                           <IconTrash />
                         </IconButton>
                       )}
@@ -119,7 +179,7 @@ const Teams = () => {
                   </TableRow>
                 );
               })}
-              {teams.length === 0 && (
+              {filterTeamList.length === 0 && (
                 <TableRow>
                   <TableCell colSpan="6" align="center">
                     No data
@@ -131,7 +191,11 @@ const Teams = () => {
         </TableContainer>
       </MainCard>
 
+      <ViewMember open={viewTeamDialogOpen} onClose={handleCloseViewDialog} teamMember={teamMember} />
+
       <AddMember open={isAddMemberOpen} onClose={() => setAddMember(false)} />
+
+      <RemoveMember open={deleteTeamDialogOpen} onClose={handleCloseDeleteDialog} teamMember={teamMember} />
     </>
   );
 };

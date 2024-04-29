@@ -4,7 +4,6 @@ const initialState = {
   loading: true,
   projects: [],
   projectId: '',
-  role: '',
   project: null
 };
 

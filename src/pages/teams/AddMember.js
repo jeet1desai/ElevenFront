@@ -56,7 +56,7 @@ const AddMember = ({ open, onClose }) => {
   return (
     <>
       <Dialog open={open} scroll="paper" fullWidth>
-        <Grid container spacing={2} justifyContent="space-between" alignItems="center">
+        <Grid container spacing={2} justifyContent="space-between" alignItems="center" sx={{ flexWrap: 'nowrap' }}>
           <Grid item>
             <DialogTitle sx={{ fontSize: '1.3rem', fontWeight: '500' }}>Add team member to {project?.name?.toLowerCase()}</DialogTitle>
           </Grid>

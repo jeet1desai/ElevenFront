@@ -1,4 +1,4 @@
-import { StrictMode } from 'react';
+// import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -19,14 +19,14 @@ const container = document.getElementById('root');
 const root = createRoot(container);
 
 root.render(
-  <StrictMode>
-    <ReduxProvider store={store}>
-      {/* <PersistGate persistor={persistor}> */}
-      <BrowserRouter>
-        <App />
-        <Snackbar />
-      </BrowserRouter>
-      {/* </PersistGate> */}
-    </ReduxProvider>
-  </StrictMode>
+  // <StrictMode>
+  <ReduxProvider store={store}>
+    {/* <PersistGate persistor={persistor}> */}
+    <BrowserRouter>
+      <App />
+      <Snackbar />
+    </BrowserRouter>
+    {/* </PersistGate> */}
+  </ReduxProvider>
+  // </StrictMode>
 );
