@@ -77,7 +77,7 @@ const dashboard = {
       type: 'item',
       url: 'document',
       icon: icons.PaperClipOutlined,
-      breadcrumbs: false
+      breadcrumbs: true
     },
     {
       id: 'team',

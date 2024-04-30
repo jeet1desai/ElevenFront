@@ -48,9 +48,11 @@ export const JWTProvider = ({ children }) => {
           await dispatch(meUserService());
           await dispatch(getProjectListService());
         } else {
+          deleteCookie('token');
           dispatch(logoutSuccess());
         }
       } catch (err) {
+        deleteCookie('token');
         dispatch(logoutSuccess());
       }
     };
@@ -74,6 +76,7 @@ export const JWTProvider = ({ children }) => {
   };
 
   const logout = () => {
+    deleteCookie('token');
     setSession(null);
     dispatch(logoutSuccess());
   };
