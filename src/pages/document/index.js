@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import MainCard from 'components/MainCard';
 
 import { styled } from '@mui/material/styles';
-import { Box, Button, IconButton, Menu, MenuItem, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Button, IconButton, Tab, Tabs, Typography } from '@mui/material';
 import dayjs from 'dayjs';
+import { Menu, MenuItem } from '@szhsin/react-menu';
 
 import {
   IconDotsVertical,
@@ -25,7 +26,8 @@ import { DropZone } from './DropZone';
 import AddDocument from './AddDocument';
 
 import { useSelector, useDispatch } from 'store/index';
-import { getMyDocumentService } from 'services/document';
+import { deleteDocumentService, getMyDocumentService, getTeamDocumentService, publishDocumentService } from 'services/document';
+
 import { downloadFile } from 'utils/utilsFn';
 
 const StyledRow = styled('div')({
@@ -61,6 +63,23 @@ const StyledDropZoneContainer = styled('div')({
   width: '100%'
 });
 
+const StyledNoContent = styled('div')({
+  alignItems: 'center',
+  justifyContent: 'center',
+  display: 'flex',
+  gap: '12px',
+  height: '500px',
+  width: '100%'
+});
+
+const StyledNoDocumentTitle = styled('p')({
+  color: '#333333',
+  fontSize: '1.23rem',
+  fontWeight: '500',
+  lineHeight: '1.2',
+  marginBottom: '8px'
+});
+
 const IconMapping = {
   Archive: IconFileZip,
   Audio: IconHeadphones,
@@ -79,28 +98,40 @@ const Document = () => {
   const [documentList, setDocumentList] = useState([]);
 
   const [value, setValue] = useState(0);
-  const [anchorEl, setAnchorEl] = React.useState(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
 
-  const { projectId } = useSelector((state) => state.project);
-  const { myDocument } = useSelector((state) => state.document);
+  const { project, projectId } = useSelector((state) => state.project);
+  const { myDocument, teamDocument } = useSelector((state) => state.document);
 
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  console.log(myDocument);
+  console.log(teamDocument);
 
   const handleDownload = (document) => {
     downloadFile(document.url, document.name);
-    setAnchorEl(null);
   };
 
-  const handleChange = (event, newValue) => {
+  const handleDelete = (document) => {
+    dispatch(
+      deleteDocumentService({
+        docId: Number(document.id),
+        role: project.user_role,
+        projectId: Number(projectId)
+      })
+    );
+  };
+
+  const handlePublish = (document) => {
+    dispatch(
+      publishDocumentService({
+        docId: Number(document.id),
+        role: project.user_role,
+        projectId: Number(projectId),
+        isPublish: !document.is_published
+      })
+    );
+  };
+
+  const handleChange = (_, newValue) => {
     setValue(newValue);
   };
 
@@ -120,14 +151,22 @@ const Document = () => {
       if (value === 1) {
         dispatch(getMyDocumentService(projectId));
       } else {
-        setDocumentList([]);
+        dispatch(getTeamDocumentService(projectId));
       }
     }
   }, [dispatch, projectId, value]);
 
   useEffect(() => {
-    setDocumentList(myDocument);
+    if (value === 1) {
+      setDocumentList(myDocument);
+    }
   }, [myDocument]);
+
+  useEffect(() => {
+    if (value === 0) {
+      setDocumentList(teamDocument);
+    }
+  }, [teamDocument]);
 
   return (
     <>
@@ -152,6 +191,7 @@ const Document = () => {
           ) : (
             <>
               {documentList.map((document) => {
+                console.log(document.is_published);
                 const Icon = IconMapping[document.type];
                 return (
                   <StyledRow key={document.id}>
@@ -171,25 +211,23 @@ const Document = () => {
                     </StyledContent>
                     <StyledContent>
                       <Typography variant="body2">{dayjs(document.modified_date).format('MMM DD, YYYY')}</Typography>
-                      <IconButton sx={{ borderRadius: '8px' }} onClick={handleClick}>
-                        <IconDotsVertical />
-                      </IconButton>
-
                       <Menu
-                        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
                         className="menu-list"
+                        menuButton={
+                          <IconButton sx={{ borderRadius: '8px' }}>
+                            <IconDotsVertical />
+                          </IconButton>
+                        }
+                        direction="left"
+                        align="start"
                       >
                         <MenuItem onClick={() => handleDownload(document)}>
                           <IconDownload /> Download
                         </MenuItem>
-                        <MenuItem onClick={handleClose}>
+                        <MenuItem onClick={() => handlePublish(document)}>
                           <IconStackPush /> {document.is_published ? 'Un Publish' : 'Publish'}
                         </MenuItem>
-                        <MenuItem onClick={handleClose}>
+                        <MenuItem onClick={() => handleDelete(document)}>
                           <IconTrash /> Delete
                         </MenuItem>
                       </Menu>
@@ -197,8 +235,11 @@ const Document = () => {
                   </StyledRow>
                 );
               })}
-              {value === 0 && documentList.length === 0 && <>No Document</>}
-              {value === 1 && documentList.length === 0 && <>No Document</>}
+              {(value === 0 || value === 1) && documentList.length === 0 && (
+                <StyledNoContent>
+                  <StyledNoDocumentTitle>No Document Found</StyledNoDocumentTitle>
+                </StyledNoContent>
+              )}
             </>
           )}
         </MainCard>

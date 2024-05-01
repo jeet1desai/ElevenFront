@@ -12,6 +12,7 @@
     "@mui/material": "^5.15.6",
     "@mui/x-date-pickers": "^7.3.1",
     "@reduxjs/toolkit": "^2.1.0",
+    "@szhsin/react-menu": "^4.1.0",
     "@tabler/icons": "^3.2.0",
     "@tabler/icons-react": "^3.2.0",
     "@testing-library/jest-dom": "^6.4.0",

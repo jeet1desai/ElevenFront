@@ -2,6 +2,11 @@ import { useDropzone } from 'react-dropzone';
 import { IconUpload } from '@tabler/icons-react';
 import { styled } from '@mui/material/styles';
 
+import { getFileType, uploadDocument } from 'utils/utilsFn';
+
+import { useDispatch, useSelector } from 'store/index';
+import { addNewDocumentService } from 'services/document';
+
 const StyledContainer = styled('div')({
   alignItems: 'center',
   background: '#fcfcfc',
@@ -30,6 +35,11 @@ const StyledUploadIcon = styled(IconUpload)({
 });
 
 export const DropZone = ({ setIsDraggingFile }) => {
+  const dispatch = useDispatch();
+
+  const { projectId } = useSelector((state) => state.project);
+  const { user } = useSelector((state) => state.account);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     noClick: true,
     noKeyboard: true,
@@ -44,7 +54,17 @@ export const DropZone = ({ setIsDraggingFile }) => {
       setIsDraggingFile(false);
     },
     onDropAccepted: async ([file]) => {
-      console.log(file);
+      const url = await uploadDocument('eleven/document', file);
+      const body = {
+        name: file.name,
+        url: url,
+        type: getFileType(file.name),
+        userId: Number(user.id),
+        projectId: Number(projectId),
+        is_published: false
+      };
+      dispatch(addNewDocumentService(body));
+
       setIsDraggingFile(false);
     }
   });

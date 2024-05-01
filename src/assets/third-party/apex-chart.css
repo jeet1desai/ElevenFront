@@ -29,16 +29,12 @@ button {
   display: none;
 }
 
-.menu-list .MuiPaper-root {
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+.menu-list ul {
+  padding: 0;
+  top: -17px;
 }
 
-.menu-list ul.MuiMenu-list {
-  min-width: 160px;
-  border-radius: 8px;
-}
-
-.menu-list li {
+.menu-list ul li {
   gap: 10px;
   padding: 8px 16px;
   align-items: center;

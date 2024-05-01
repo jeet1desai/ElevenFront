@@ -15,7 +15,7 @@ import {
   OutlinedInput,
   Stack,
   Typography
-} from '../../../node_modules/@mui/material/index';
+} from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 
 import { IconX, IconPlus, IconUpload } from '@tabler/icons-react';
@@ -135,7 +135,7 @@ const AddDocument = ({ open, onClose }) => {
       type: getFileType(formValue.file.name),
       userId: Number(user.id),
       projectId: Number(projectId),
-      is_published: false
+      is_published: formValue.isPublish
     };
     dispatch(addNewDocumentService(body));
 

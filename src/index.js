@@ -4,6 +4,8 @@ import { BrowserRouter } from 'react-router-dom';
 
 import 'simplebar/src/simplebar.css';
 import 'assets/third-party/apex-chart.css';
+import '@szhsin/react-menu/dist/index.css';
+import '@szhsin/react-menu/dist/transitions/slide.css';
 
 import { Provider as ReduxProvider } from 'react-redux';
 // import { PersistGate } from 'redux-persist/integration/react';
