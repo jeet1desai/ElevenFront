@@ -1,5 +1,8 @@
+import { storage } from '../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { openSnackbar } from 'store/slices/snackbar';
 import { dispatch } from 'store/index';
+import { FileExtensionMapping } from './enum';
 
 export const openErrorSnackbar = (message, type) => {
   dispatch(
@@ -24,5 +27,49 @@ export const MenuProps = {
       border: '1px solid #e6ebf1',
       maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP
     }
+  }
+};
+
+export const getFileType = (fileName) => {
+  const fileExtension = fileName.split('.').at(-1);
+  if (!fileExtension) {
+    return 'Other';
+  }
+  return FileExtensionMapping[fileExtension.toLowerCase()] ?? 'Other';
+};
+
+export const uploadDocument = (folder, file) => {
+  return new Promise((resolve, reject) => {
+    if (file === null) {
+      resolve('');
+    }
+
+    const imageRef = ref(storage, `${folder}/${file.name} + ${Date.now()}`);
+    uploadBytes(imageRef, file)
+      .then((snapshot) => {
+        getDownloadURL(snapshot.ref)
+          .then((url) => {
+            resolve(url);
+          })
+          .catch(reject);
+      })
+      .catch(reject);
+  });
+};
+
+export const downloadFile = (fullPath, fileName) => {
+  try {
+    const url = fullPath;
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = fullPath;
+    a.target = '__blank';
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error downloading file:', error);
   }
 };

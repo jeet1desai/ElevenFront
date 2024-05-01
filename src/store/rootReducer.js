@@ -5,6 +5,7 @@ import accountReducer from './slices/account';
 import snackbarReducer from './slices/snackbar';
 import projectReducer from './slices/project';
 import teamReducer from './slices/team';
+import documentSlice from './slices/document';
 // import { persistReducer } from 'redux-persist';
 // import storage from 'redux-persist/lib/storage';
 
@@ -20,6 +21,7 @@ const reducers = combineReducers({
   account: accountReducer,
   snackbar: snackbarReducer,
   project: projectReducer,
+  document: documentSlice,
   team: teamReducer
 });
 

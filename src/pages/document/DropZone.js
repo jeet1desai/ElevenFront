@@ -14,20 +14,15 @@ const StyledContainer = styled('div')({
   textAlign: 'center'
 });
 
-// const StyledUploadDragTitle = styled.div`
-//   color: ${({ theme }) => theme.font.color.primary};
-//   font-size: ${({ theme }) => theme.font.size.lg};
-//   font-weight: ${({ theme }) => theme.font.weight.medium};
-//   line-height: ${({ theme }) => theme.text.lineHeight.md};
-//   margin-bottom: 8px;
-// `;
+const StyledUploadDragTitle = styled('div')({
+  color: '#333333',
+  fontSize: '1.23rem',
+  fontWeight: '500',
+  lineHeight: '1.2',
+  marginBottom: '8px'
+});
 
-// const StyledUploadDragSubTitle = styled.div`
-//   color: ${({ theme }) => theme.font.color.tertiary};
-//   font-size: ${({ theme }) => theme.font.size.md};
-//   font-weight: ${({ theme }) => theme.font.weight.regular};
-//   line-height: ${({ theme }) => theme.text.lineHeight.md};
-// `;
+const StyledUploadDragSubTitle = styled('div')({ color: '#999999', fontSize: '1rem', fontWeight: '400', lineHeight: '1.2' });
 
 const StyledUploadIcon = styled(IconUpload)({
   color: '#999999',
@@ -60,8 +55,8 @@ export const DropZone = ({ setIsDraggingFile }) => {
         <>
           <input {...getInputProps()} />
           <StyledUploadIcon />
-          {/* <StyledUploadDragTitle>Upload a file</StyledUploadDragTitle>
-          <StyledUploadDragSubTitle>Drag and Drop Here</StyledUploadDragSubTitle> */}
+          <StyledUploadDragTitle>Upload a file</StyledUploadDragTitle>
+          <StyledUploadDragSubTitle>Drag and Drop Here</StyledUploadDragSubTitle>
         </>
       )}
     </StyledContainer>

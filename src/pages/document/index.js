@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import MainCard from 'components/MainCard';
 
 import { styled } from '@mui/material/styles';
 import { Box, Button, IconButton, Menu, MenuItem, Tab, Tabs, Typography } from '@mui/material';
+import dayjs from 'dayjs';
 
 import {
   IconDotsVertical,
@@ -19,7 +20,13 @@ import {
   IconStackPush,
   IconVideo
 } from '@tabler/icons-react';
+
 import { DropZone } from './DropZone';
+import AddDocument from './AddDocument';
+
+import { useSelector, useDispatch } from 'store/index';
+import { getMyDocumentService } from 'services/document';
+import { downloadFile } from 'utils/utilsFn';
 
 const StyledRow = styled('div')({
   alignItems: 'center',
@@ -27,7 +34,7 @@ const StyledRow = styled('div')({
   borderBottom: '1px solid #f1f1f1',
   display: 'flex',
   justifyContent: 'space-between',
-  padding: '8px',
+  padding: '14px',
   '&:last-child': {
     borderBottom: '0'
   }
@@ -66,16 +73,30 @@ const IconMapping = {
 };
 
 const Document = () => {
+  const dispatch = useDispatch();
+
+  const [isAddDocumentOpen, setAddDocumentOpen] = useState(false);
+  const [documentList, setDocumentList] = useState([]);
+
   const [value, setValue] = useState(0);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isDraggingFile, setIsDraggingFile] = useState(false);
+
+  const { projectId } = useSelector((state) => state.project);
+  const { myDocument } = useSelector((state) => state.document);
 
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleDownload = (document) => {
+    downloadFile(document.url, document.name);
     setAnchorEl(null);
   };
 
@@ -94,68 +115,97 @@ const Document = () => {
     Other: '#cccccc'
   };
 
-  const Icon = IconMapping['Audio'];
+  useEffect(() => {
+    if (projectId) {
+      if (value === 1) {
+        dispatch(getMyDocumentService(projectId));
+      } else {
+        setDocumentList([]);
+      }
+    }
+  }, [dispatch, projectId, value]);
+
+  useEffect(() => {
+    setDocumentList(myDocument);
+  }, [myDocument]);
 
   return (
-    <MainCard>
-      <Tabs value={value} variant="scrollable" onChange={handleChange} sx={{ px: 1, width: '100%', borderBottom: '1px solid #e6ebf1' }}>
-        <Tab sx={{ textTransform: 'none' }} label="Team Documents" />
-        <Tab sx={{ textTransform: 'none' }} label="My Documents" />
-      </Tabs>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2, mx: 1 }}>
-        <Typography variant="h4">
-          All <span style={{ color: '#d9d9d9' }}>(3)</span>
-        </Typography>
-        <Button variant="contained" color="success">
-          Add Document
-        </Button>
-      </Box>
-      <MainCard contentSX={{ p: '0 !important' }} onDragEnter={() => setIsDraggingFile(true)}>
-        {isDraggingFile ? (
-          <StyledDropZoneContainer>
-            <DropZone setIsDraggingFile={setIsDraggingFile} />
-          </StyledDropZoneContainer>
-        ) : (
-          <>
-            <StyledRow>
-              <StyledContent>
-                <IconButton sx={{ bgcolor: IconColors['Audio'], color: '#ffffff' }}>
-                  <Icon />
-                </IconButton>
-                <StyledLink href={'/'} target="__blank">
-                  Name
-                </StyledLink>
-              </StyledContent>
-              <StyledContent>
-                <Typography variant="body2">Document Name</Typography>
-                <IconButton sx={{ bgcolor: open ? 'grey.300' : '', borderRadius: '8px' }} onClick={handleClick}>
-                  <IconDotsVertical />
-                </IconButton>
+    <>
+      <MainCard>
+        <Tabs value={value} variant="scrollable" onChange={handleChange} sx={{ px: 1, width: '100%', borderBottom: '1px solid #e6ebf1' }}>
+          <Tab sx={{ textTransform: 'none' }} label="Team Documents" />
+          <Tab sx={{ textTransform: 'none' }} label="My Documents" />
+        </Tabs>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2, mx: 1 }}>
+          <Typography variant="h4">
+            All <span style={{ color: '#d9d9d9' }}>({documentList.length})</span>
+          </Typography>
+          <Button variant="contained" color="success" onClick={() => setAddDocumentOpen(true)}>
+            Add Document
+          </Button>
+        </Box>
+        <MainCard contentSX={{ p: '0 !important' }} onDragEnter={() => setIsDraggingFile(true)}>
+          {value === 1 && isDraggingFile ? (
+            <StyledDropZoneContainer>
+              <DropZone setIsDraggingFile={setIsDraggingFile} />
+            </StyledDropZoneContainer>
+          ) : (
+            <>
+              {documentList.map((document) => {
+                const Icon = IconMapping[document.type];
+                return (
+                  <StyledRow key={document.id}>
+                    <StyledContent>
+                      <IconButton
+                        sx={{
+                          bgcolor: IconColors[document.type],
+                          color: '#ffffff',
+                          '&:hover': { bgcolor: IconColors[document.type], color: '#ffffff' }
+                        }}
+                      >
+                        <Icon />
+                      </IconButton>
+                      <StyledLink href={document.url} target="__blank">
+                        {document.name}
+                      </StyledLink>
+                    </StyledContent>
+                    <StyledContent>
+                      <Typography variant="body2">{dayjs(document.modified_date).format('MMM DD, YYYY')}</Typography>
+                      <IconButton sx={{ borderRadius: '8px' }} onClick={handleClick}>
+                        <IconDotsVertical />
+                      </IconButton>
 
-                <Menu
-                  anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                  anchorEl={anchorEl}
-                  open={open}
-                  onClose={handleClose}
-                  className="menu-list"
-                >
-                  <MenuItem onClick={handleClose}>
-                    <IconDownload /> Download
-                  </MenuItem>
-                  <MenuItem onClick={handleClose}>
-                    <IconStackPush /> Publish
-                  </MenuItem>
-                  <MenuItem onClick={handleClose}>
-                    <IconTrash /> Delete
-                  </MenuItem>
-                </Menu>
-              </StyledContent>
-            </StyledRow>
-          </>
-        )}
+                      <Menu
+                        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
+                        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        className="menu-list"
+                      >
+                        <MenuItem onClick={() => handleDownload(document)}>
+                          <IconDownload /> Download
+                        </MenuItem>
+                        <MenuItem onClick={handleClose}>
+                          <IconStackPush /> {document.is_published ? 'Un Publish' : 'Publish'}
+                        </MenuItem>
+                        <MenuItem onClick={handleClose}>
+                          <IconTrash /> Delete
+                        </MenuItem>
+                      </Menu>
+                    </StyledContent>
+                  </StyledRow>
+                );
+              })}
+              {value === 0 && documentList.length === 0 && <>No Document</>}
+              {value === 1 && documentList.length === 0 && <>No Document</>}
+            </>
+          )}
+        </MainCard>
       </MainCard>
-    </MainCard>
+
+      <AddDocument open={isAddDocumentOpen} onClose={() => setAddDocumentOpen(false)} />
+    </>
   );
 };
 

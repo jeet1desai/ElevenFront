@@ -86,7 +86,6 @@ const NewProject = ({ isProjectModalOpen, setProjectModal }) => {
           }}
         >
           {({ errors, handleBlur, handleChange, handleSubmit, touched, values, isSubmitting }) => {
-            console.log(values);
             return (
               <Form noValidate onSubmit={handleSubmit}>
                 <Grid container spacing={2} justifyContent="space-between" alignItems="center">
