@@ -44,9 +44,7 @@ const ViewMember = ({ open, onClose, teamMember }) => {
           <>
             <Grid container spacing={2} justifyContent="space-between" alignItems="center" sx={{ flexWrap: 'nowrap' }}>
               <Grid item>
-                <DialogTitle sx={{ fontSize: '1.3rem', fontWeight: '500' }}>
-                  View {teamMember.user.first_name} {teamMember.user.last_name} Details
-                </DialogTitle>
+                <DialogTitle sx={{ fontSize: '1.3rem', fontWeight: '500' }}>View Details</DialogTitle>
               </Grid>
               <Grid item sx={{ mr: 1.5 }}>
                 <IconButton color="secondary" onClick={onClose}>
@@ -56,7 +54,7 @@ const ViewMember = ({ open, onClose, teamMember }) => {
             </Grid>
             <DialogContent dividers>
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Typography variant="body1" sx={{ color: '#8c8c8c' }}>
                     Name
                   </Typography>
@@ -64,19 +62,19 @@ const ViewMember = ({ open, onClose, teamMember }) => {
                     {teamMember.user.first_name} {teamMember.user.last_name}
                   </Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Typography variant="body1" sx={{ color: '#8c8c8c' }}>
                     Email
                   </Typography>
                   <Typography variant="body1">{teamMember.user.email}</Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Typography variant="body1" sx={{ color: '#8c8c8c' }}>
                     Compony
                   </Typography>
                   <Typography variant="body1">{teamMember.company.company}</Typography>
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <Typography variant="body1" sx={{ color: '#8c8c8c' }}>
                     Phone Number
                   </Typography>

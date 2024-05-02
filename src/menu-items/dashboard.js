@@ -45,7 +45,7 @@ const dashboard = {
       type: 'item',
       url: 'tasks',
       icon: icons.OrderedListOutlined,
-      breadcrumbs: false
+      breadcrumbs: true
     },
     {
       id: 'RFIs',
@@ -61,14 +61,6 @@ const dashboard = {
       type: 'item',
       url: 'field-reports',
       icon: icons.FileDoneOutlined,
-      breadcrumbs: false
-    },
-    {
-      id: 'map',
-      title: <FormattedMessage id="map" />,
-      type: 'item',
-      url: 'map',
-      icon: icons.EnvironmentOutlined,
       breadcrumbs: false
     },
     {

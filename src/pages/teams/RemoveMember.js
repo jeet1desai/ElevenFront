@@ -23,7 +23,11 @@ const RemoveMember = ({ open, onClose, teamMember }) => {
                 <Stack direction="column" alignItems="center" spacing={1.5}>
                   <Typography variant="h4">Are you sure you want to remove?</Typography>
                   <Typography variant="body">
-                    Are you sure you want to remove {teamMember.user.first_name} {teamMember.user.last_name} from your team member?
+                    Are you sure you want to remove{' '}
+                    {teamMember.user.first_name && teamMember.user.last_name
+                      ? `'${teamMember.user.first_name} ${teamMember.user.last_name}'`
+                      : "'Na'"}{' '}
+                    from your team members?
                   </Typography>
                 </Stack>
                 <Stack direction="row" spacing={1} sx={{ width: '100%' }}>

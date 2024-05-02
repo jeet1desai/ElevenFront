@@ -70,7 +70,7 @@ const Chat = () => {
         }}
         variant={matchDownLG ? 'temporary' : 'persistent'}
         anchor="left"
-        open={true}
+        open={false}
         ModalProps={{ keepMounted: true }}
       >
         <MainCard

@@ -172,8 +172,8 @@ const Document = () => {
     <>
       <MainCard>
         <Tabs value={value} variant="scrollable" onChange={handleChange} sx={{ px: 1, width: '100%', borderBottom: '1px solid #e6ebf1' }}>
-          <Tab sx={{ textTransform: 'none' }} label="Team Documents" />
-          <Tab sx={{ textTransform: 'none' }} label="My Documents" />
+          <Tab sx={{ textTransform: 'none' }} label="Team's Published Documents" />
+          <Tab sx={{ textTransform: 'none' }} label="Personal Documents" />
         </Tabs>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2, mx: 1 }}>
           <Typography variant="h4">

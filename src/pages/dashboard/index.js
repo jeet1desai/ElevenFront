@@ -1,70 +1,91 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
+import { styled } from '@mui/material/styles';
 import {
   Avatar,
   AvatarGroup,
-  Box,
   Button,
   Grid,
-  List,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemSecondaryAction,
-  ListItemText,
-  MenuItem,
   Stack,
-  TextField,
-  Typography
+  CardContent,
+  Typography,
+  CardActions,
+  Divider,
+  IconButton,
+  OutlinedInput
 } from '@mui/material';
 
-import OrdersTable from './OrdersTable';
-import IncomeAreaChart from './IncomeAreaChart';
-import MonthlyBarChart from './MonthlyBarChart';
-import ReportAreaChart from './ReportAreaChart';
-import SalesColumnChart from './SalesColumnChart';
-import MainCard from 'components/MainCard';
-import AnalyticEcommerce from 'components/cards/statistics/AnalyticEcommerce';
+import PerfectScrollbar from 'react-perfect-scrollbar';
 
-import { GiftOutlined, MessageOutlined, SettingOutlined } from '@ant-design/icons';
+import OrdersTable from './OrdersTable';
+import MainCard from 'components/MainCard';
+import ReportCard from 'components/cards/statistics/ReportCard';
+
 import avatar from 'assets/images/users/avatar.png';
 
-import { useSelector } from 'store/index';
+import { useSelector, useDispatch } from 'store/index';
+import { checkedTodoSuccess, createTodoSuccess, deleteTodoSuccess } from 'store/slices/todo';
 
-const avatarSX = {
-  width: 36,
-  height: 36,
-  fontSize: '1rem'
-};
+import { IconCalendarEvent, IconUsers, IconFileInvoice, IconFileDollar, IconPlus, IconSend, IconX, IconTrash } from '@tabler/icons-react';
+import { Checkbox, FormControlLabel } from '../../../node_modules/@mui/material/index';
 
-const actionSX = {
-  mt: 0.75,
-  ml: 1,
-  top: 'auto',
-  right: 'auto',
-  alignSelf: 'flex-start',
-  transform: 'none'
-};
+const StyledCrossIcon = styled(IconButton)({
+  background: '#1677ff',
+  color: '#ffffff',
+  '&:hover': { background: '#1677ff', color: '#ffffff' }
+});
 
-const status = [
-  {
-    value: 'today',
-    label: 'Today'
-  },
-  {
-    value: 'month',
-    label: 'This Month'
-  },
-  {
-    value: 'year',
-    label: 'This Year'
+const StyledPlusIcon = styled(IconButton)({
+  position: 'absolute',
+  bottom: '15px',
+  right: '20px',
+  background: '#1677ff',
+  color: '#ffffff',
+  '&:hover': { background: '#1677ff', color: '#ffffff' }
+});
+
+const StyledRow = styled('div')({
+  alignItems: 'center',
+  alignSelf: 'stretch',
+  borderBottom: '1px solid #f1f1f1',
+  display: 'flex',
+  justifyContent: 'space-between',
+  padding: '10px 18px',
+  '&:last-child': {
+    borderBottom: '0'
   }
-];
+});
+
+const StyledColText = styled('p')({
+  textAlign: 'center',
+  width: '100%',
+  color: '#333333',
+  fontSize: '1rem',
+  fontWeight: '500'
+});
 
 const DashboardDefault = () => {
-  const [value, setValue] = useState('today');
-  const [slot, setSlot] = useState('week');
-
+  const dispatch = useDispatch();
   const { project } = useSelector((state) => state.project);
+  const { todo } = useSelector((state) => state.todo);
+
+  const [isTodoOpen, setTodoOpen] = useState(false);
+  const [todoTitle, setTodoTitle] = useState('');
+
+  const handleSubmitTodo = () => {
+    dispatch(createTodoSuccess({ todo: { id: Math.random(), title: todoTitle, checked: false } }));
+
+    setTodoTitle('');
+    setTodoOpen((isTodoOpen) => !isTodoOpen);
+  };
+
+  const handleDeleteTodo = (id) => {
+    dispatch(deleteTodoSuccess({ id }));
+  };
+
+  const handleCheckedTodo = (todo, checked) => {
+    dispatch(checkedTodoSuccess({ todo, checked }));
+  };
 
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
@@ -72,78 +93,176 @@ const DashboardDefault = () => {
         <Typography variant="h5">Home - {project?.name}</Typography>
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce title="Total Page Views" count="4,42,236" percentage={59.3} extra="35,000" />
+        <ReportCard secondary="Total Team Member" primary="0" iconPrimary={IconUsers} color="secondary" />
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce title="Total Users" count="78,250" percentage={70.5} extra="8,900" />
+        <ReportCard secondary="Total Tasks" primary="0" iconPrimary={IconCalendarEvent} color="error" />
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce title="Total Order" count="18,800" percentage={27.4} isLoss color="warning" extra="1,943" />
+        <ReportCard secondary="Total Documents" primary="0" iconPrimary={IconFileInvoice} color="success" />
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce title="Total Sales" count="$35,078" percentage={27.4} isLoss color="warning" extra="$20,395" />
+        <ReportCard secondary="Total Invoices" primary="0" iconPrimary={IconFileDollar} color="primary" />
       </Grid>
 
       <Grid item md={8} sx={{ display: { sm: 'none', md: 'block', lg: 'none' } }} />
 
-      {/* row 2 */}
+      {/* Todo */}
       <Grid item xs={12} md={7} lg={8}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
-            <Typography variant="h5">Unique Visitor</Typography>
+            <Typography variant="h5">Todos</Typography>
           </Grid>
-          <Grid item>
-            <Stack direction="row" alignItems="center" spacing={0}>
-              <Button
-                size="small"
-                onClick={() => setSlot('month')}
-                color={slot === 'month' ? 'primary' : 'secondary'}
-                variant={slot === 'month' ? 'outlined' : 'text'}
-              >
-                Month
-              </Button>
-              <Button
-                size="small"
-                onClick={() => setSlot('week')}
-                color={slot === 'week' ? 'primary' : 'secondary'}
-                variant={slot === 'week' ? 'outlined' : 'text'}
-              >
-                Week
-              </Button>
-            </Stack>
-          </Grid>
+          <Grid item />
         </Grid>
-        <MainCard content={false} sx={{ mt: 1.5 }}>
-          <Box sx={{ pt: 1, pr: 2 }}>
-            <IncomeAreaChart slot={slot} />
-          </Box>
+        <MainCard sx={{ mt: 2, position: 'relative' }} content={false}>
+          <PerfectScrollbar style={{ height: isTodoOpen ? 480 : 546, padding: 0 }}>
+            <CardContent sx={{ p: 0 }}>
+              {todo.length === 0 && (
+                <StyledRow>
+                  <StyledColText>No todo available</StyledColText>
+                </StyledRow>
+              )}
+              {todo.map((todoItem, index) => {
+                return (
+                  <StyledRow key={index} sx={{ '& .Mui-checked + span': { textDecoration: 'line-through' } }}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={todoItem.checked}
+                          color="primary"
+                          onChange={(e) => handleCheckedTodo(todoItem, e.target.checked)}
+                          name="checkedA"
+                        />
+                      }
+                      label={todoItem.title}
+                    />
+                    <IconButton color="error" onClick={() => handleDeleteTodo(todoItem.id)}>
+                      <IconTrash />
+                    </IconButton>
+                  </StyledRow>
+                );
+              })}
+            </CardContent>
+          </PerfectScrollbar>
+          {isTodoOpen ? (
+            <>
+              <Divider />
+              <CardActions>
+                <OutlinedInput
+                  value={todoTitle}
+                  fullWidth
+                  placeholder="Add a todo"
+                  onChange={(e) => setTodoTitle(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSubmitTodo()}
+                  endAdornment={
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <IconButton color="success" onClick={() => handleSubmitTodo()}>
+                        <IconSend />
+                      </IconButton>
+                      <StyledCrossIcon onClick={() => setTodoOpen((isTodoOpen) => !isTodoOpen)}>
+                        <IconX />
+                      </StyledCrossIcon>
+                    </Stack>
+                  }
+                  sx={{ padding: '4px 12px', '& input': { paddingLeft: '0' } }}
+                />
+              </CardActions>
+            </>
+          ) : (
+            <StyledPlusIcon onClick={() => setTodoOpen(() => !isTodoOpen)}>
+              <IconPlus />
+            </StyledPlusIcon>
+          )}
         </MainCard>
       </Grid>
+
       <Grid item xs={12} md={5} lg={4}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
-            <Typography variant="h5">Income Overview</Typography>
+            <Typography variant="h5">Feeds</Typography>
           </Grid>
           <Grid item />
         </Grid>
         <MainCard sx={{ mt: 2 }} content={false}>
-          <Box sx={{ p: 3, pb: 0 }}>
-            <Stack spacing={2}>
-              <Typography variant="h6" color="textSecondary">
-                This Week Statistics
-              </Typography>
-              <Typography variant="h3">$7,650</Typography>
-            </Stack>
-          </Box>
-          <MonthlyBarChart />
+          <PerfectScrollbar style={{ height: 546, padding: 0 }}>
+            <CardContent>
+              <Grid
+                container
+                spacing={2}
+                alignItems="center"
+                sx={{
+                  position: 'relative',
+                  '&>*': {
+                    position: 'relative',
+                    zIndex: '5'
+                  },
+                  '&:after': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 35,
+                    width: 2,
+                    height: '100%',
+                    background: '#ebebeb',
+                    zIndex: '1'
+                  }
+                }}
+              >
+                <Grid item xs={12}>
+                  <Grid container spacing={2}>
+                    <Grid item>
+                      <Avatar color="success" size="sm" sx={{ top: 10 }}>
+                        <IconUsers />
+                      </Avatar>
+                    </Grid>
+                    <Grid item xs zeroMinWidth>
+                      <Grid container spacing={0} sx={{ pt: 1 }}>
+                        <Grid item xs={12}>
+                          <Typography align="left" variant="caption">
+                            8:50
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography align="left" variant="body2">
+                            You’re getting more and more followers, keep it up!
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+                <Grid item xs={12}>
+                  <Grid container spacing={2}>
+                    <Grid item>
+                      <Avatar color="primary" size="sm" sx={{ top: 10 }}></Avatar>
+                    </Grid>
+                    <Grid item xs zeroMinWidth>
+                      <Grid container spacing={0} sx={{ pt: 1 }}>
+                        <Grid item xs={12}>
+                          <Typography align="left" variant="caption">
+                            Sat, 5 Mar
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography align="left" variant="body2">
+                            Design mobile Application
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </CardContent>
+          </PerfectScrollbar>
         </MainCard>
       </Grid>
 
-      {/* row 3 */}
-      <Grid item xs={12} md={7} lg={8}>
+      <Grid item xs={12} md={12} lg={12}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
-            <Typography variant="h5">Recent Orders</Typography>
+            <Typography variant="h5">Pending Tasks</Typography>
           </Grid>
           <Grid item />
         </Grid>
@@ -151,157 +270,15 @@ const DashboardDefault = () => {
           <OrdersTable />
         </MainCard>
       </Grid>
-      <Grid item xs={12} md={5} lg={4}>
-        <Grid container alignItems="center" justifyContent="space-between">
-          <Grid item>
-            <Typography variant="h5">Analytics Report</Typography>
-          </Grid>
-          <Grid item />
-        </Grid>
-        <MainCard sx={{ mt: 2 }} content={false}>
-          <List sx={{ p: 0, '& .MuiListItemButton-root': { py: 2 } }}>
-            <ListItemButton divider>
-              <ListItemText primary="Company Finance Growth" />
-              <Typography variant="h5">+45.14%</Typography>
-            </ListItemButton>
-            <ListItemButton divider>
-              <ListItemText primary="Company Expenses Ratio" />
-              <Typography variant="h5">0.58%</Typography>
-            </ListItemButton>
-            <ListItemButton>
-              <ListItemText primary="Business Risk Cases" />
-              <Typography variant="h5">Low</Typography>
-            </ListItemButton>
-          </List>
-          <ReportAreaChart />
-        </MainCard>
-      </Grid>
 
-      {/* row 4 */}
-      <Grid item xs={12} md={7} lg={8}>
+      <Grid item xs={12} md={4} lg={4}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
-            <Typography variant="h5">Sales Report</Typography>
-          </Grid>
-          <Grid item>
-            <TextField
-              id="standard-select-currency"
-              size="small"
-              select
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              sx={{ '& .MuiInputBase-input': { py: 0.5, fontSize: '0.875rem' } }}
-            >
-              {status.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </TextField>
-          </Grid>
-        </Grid>
-        <MainCard sx={{ mt: 1.75 }}>
-          <Stack spacing={1.5} sx={{ mb: -12 }}>
-            <Typography variant="h6" color="secondary">
-              Net Profit
-            </Typography>
-            <Typography variant="h4">$1560</Typography>
-          </Stack>
-          <SalesColumnChart />
-        </MainCard>
-      </Grid>
-      <Grid item xs={12} md={5} lg={4}>
-        <Grid container alignItems="center" justifyContent="space-between">
-          <Grid item>
-            <Typography variant="h5">Transaction History</Typography>
+            <Typography variant="h5"></Typography>
           </Grid>
           <Grid item />
         </Grid>
-        <MainCard sx={{ mt: 2 }} content={false}>
-          <List
-            component="nav"
-            sx={{
-              px: 0,
-              py: 0,
-              '& .MuiListItemButton-root': {
-                py: 1.5,
-                '& .MuiAvatar-root': avatarSX,
-                '& .MuiListItemSecondaryAction-root': { ...actionSX, position: 'relative' }
-              }
-            }}
-          >
-            <ListItemButton divider>
-              <ListItemAvatar>
-                <Avatar
-                  sx={{
-                    color: 'success.main',
-                    bgcolor: 'success.lighter'
-                  }}
-                >
-                  <GiftOutlined />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={<Typography variant="subtitle1">Order #002434</Typography>} secondary="Today, 2:00 AM" />
-              <ListItemSecondaryAction>
-                <Stack alignItems="flex-end">
-                  <Typography variant="subtitle1" noWrap>
-                    + $1,430
-                  </Typography>
-                  <Typography variant="h6" color="secondary" noWrap>
-                    78%
-                  </Typography>
-                </Stack>
-              </ListItemSecondaryAction>
-            </ListItemButton>
-            <ListItemButton divider>
-              <ListItemAvatar>
-                <Avatar
-                  sx={{
-                    color: 'primary.main',
-                    bgcolor: 'primary.lighter'
-                  }}
-                >
-                  <MessageOutlined />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={<Typography variant="subtitle1">Order #984947</Typography>} secondary="5 August, 1:45 PM" />
-              <ListItemSecondaryAction>
-                <Stack alignItems="flex-end">
-                  <Typography variant="subtitle1" noWrap>
-                    + $302
-                  </Typography>
-                  <Typography variant="h6" color="secondary" noWrap>
-                    8%
-                  </Typography>
-                </Stack>
-              </ListItemSecondaryAction>
-            </ListItemButton>
-            <ListItemButton>
-              <ListItemAvatar>
-                <Avatar
-                  sx={{
-                    color: 'error.main',
-                    bgcolor: 'error.lighter'
-                  }}
-                >
-                  <SettingOutlined />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={<Typography variant="subtitle1">Order #988784</Typography>} secondary="7 hours ago" />
-              <ListItemSecondaryAction>
-                <Stack alignItems="flex-end">
-                  <Typography variant="subtitle1" noWrap>
-                    + $682
-                  </Typography>
-                  <Typography variant="h6" color="secondary" noWrap>
-                    16%
-                  </Typography>
-                </Stack>
-              </ListItemSecondaryAction>
-            </ListItemButton>
-          </List>
-        </MainCard>
-        <MainCard sx={{ mt: 2 }}>
+        <MainCard>
           <Stack spacing={3}>
             <Grid container justifyContent="space-between" alignItems="center">
               <Grid item>
@@ -310,7 +287,7 @@ const DashboardDefault = () => {
                     Help & Support Chat
                   </Typography>
                   <Typography variant="caption" color="secondary" noWrap>
-                    Typical replay within 5 min
+                    Typical replay within 10 min
                   </Typography>
                 </Stack>
               </Grid>
