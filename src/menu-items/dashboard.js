@@ -10,6 +10,7 @@ import {
   EnvironmentOutlined,
   PaperClipOutlined,
   CalendarOutlined,
+  AccountBookOutlined,
   FileDoneOutlined
 } from '@ant-design/icons';
 
@@ -23,6 +24,7 @@ const icons = {
   EnvironmentOutlined,
   PaperClipOutlined,
   CalendarOutlined,
+  AccountBookOutlined,
   SettingOutlined
 };
 
@@ -64,6 +66,14 @@ const dashboard = {
       breadcrumbs: false
     },
     {
+      id: 'calender',
+      title: <FormattedMessage id="calender" />,
+      type: 'item',
+      url: 'calender',
+      icon: icons.CalendarOutlined,
+      breadcrumbs: false
+    },
+    {
       id: 'document',
       title: <FormattedMessage id="document" />,
       type: 'item',
@@ -87,12 +97,13 @@ const dashboard = {
       icon: icons.MessageOutlined,
       breadcrumbs: false
     },
+
     {
-      id: 'calender',
-      title: <FormattedMessage id="calender" />,
+      id: 'invoice',
+      title: <FormattedMessage id="invoice" />,
       type: 'item',
-      url: 'calender',
-      icon: icons.CalendarOutlined,
+      url: 'invoice',
+      icon: icons.AccountBookOutlined,
       breadcrumbs: false
     },
     {
