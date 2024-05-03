@@ -16,6 +16,13 @@ export const STATUS = {
   8: 'None'
 };
 
+export const TASK_STATUS = {
+  1: 'Open',
+  2: 'In Review',
+  3: 'Pending',
+  4: 'Closed'
+};
+
 export const COUNTRIES = [
   { code: 'AE', label: 'UAE', phone: '971' },
   { code: 'AL', label: 'Albania', phone: '355' },

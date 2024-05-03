@@ -18,31 +18,16 @@ import {
 } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 
-import { IconX, IconPlus, IconUpload } from '@tabler/icons-react';
+import { StyledContainer, StyledUploadDragIcon, StyledUploadDragSubTitle, StyledUploadDragTitle } from 'components/styled-css/DropZoneCSS';
+
+import { IconX, IconPlus } from '@tabler/icons-react';
 
 import { getFileType, uploadDocument } from 'utils/utilsFn';
 
 import { useSelector, useDispatch } from 'store/index';
 import { addNewDocumentService } from 'services/document';
 
-const StyledContainer = styled('div')({
-  alignItems: 'center',
-  background: '#fcfcfc',
-  border: '1px solid #e6ebf1',
-  borderRadius: '8px',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  textAlign: 'center',
-  height: '250px'
-});
-
 const StyledUploadIcon = styled(IconPlus)({
-  color: '#999999',
-  marginBottom: '12px'
-});
-
-const StyledUploadDragIcon = styled(IconUpload)({
   color: '#999999',
   marginBottom: '12px'
 });
@@ -59,22 +44,6 @@ const StyledButton = styled(Button)({
     width: '20px',
     height: '20px'
   }
-});
-
-const StyledUploadDragTitle = styled('div')({
-  color: '#333333',
-  fontSize: '1.23rem',
-  fontWeight: '500',
-  lineHeight: '1.2',
-  marginBottom: '8px'
-});
-
-const StyledUploadDragSubTitle = styled('div')({
-  color: '#999999',
-  fontSize: '1rem',
-  fontWeight: '400',
-  lineHeight: '1.2',
-  marginBottom: '8px'
 });
 
 const StyledRow = styled('div')({

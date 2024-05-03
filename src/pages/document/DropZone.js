@@ -1,6 +1,7 @@
 import { useDropzone } from 'react-dropzone';
-import { IconUpload } from '@tabler/icons-react';
 import { styled } from '@mui/material/styles';
+
+import { StyledUploadDragIcon, StyledUploadDragSubTitle, StyledUploadDragTitle } from 'components/styled-css/DropZoneCSS';
 
 import { getFileType, uploadDocument } from 'utils/utilsFn';
 
@@ -17,21 +18,6 @@ const StyledContainer = styled('div')({
   height: '100%',
   justifyContent: 'center',
   textAlign: 'center'
-});
-
-const StyledUploadDragTitle = styled('div')({
-  color: '#333333',
-  fontSize: '1.23rem',
-  fontWeight: '500',
-  lineHeight: '1.2',
-  marginBottom: '8px'
-});
-
-const StyledUploadDragSubTitle = styled('div')({ color: '#999999', fontSize: '1rem', fontWeight: '400', lineHeight: '1.2' });
-
-const StyledUploadIcon = styled(IconUpload)({
-  color: '#999999',
-  marginBottom: '12px'
 });
 
 export const DropZone = ({ setIsDraggingFile }) => {
@@ -74,7 +60,7 @@ export const DropZone = ({ setIsDraggingFile }) => {
       {isDragActive && (
         <>
           <input {...getInputProps()} />
-          <StyledUploadIcon />
+          <StyledUploadDragIcon />
           <StyledUploadDragTitle>Upload a file</StyledUploadDragTitle>
           <StyledUploadDragSubTitle>Drag and Drop Here</StyledUploadDragSubTitle>
         </>
