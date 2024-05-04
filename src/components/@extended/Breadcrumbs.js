@@ -23,7 +23,7 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
         if (collapse.type && collapse.type === 'collapse') {
           getCollapse(collapse);
         } else if (collapse.type && collapse.type === 'item') {
-          if (location.pathname === '/projects/' + projectId + '/' + collapse.url) {
+          if (location.pathname.includes('/projects/' + projectId + '/' + collapse.url)) {
             setMain(menu);
             setItem(collapse);
           }

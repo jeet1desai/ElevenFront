@@ -188,7 +188,6 @@ const Document = () => {
           ) : (
             <>
               {documentList.map((document) => {
-                console.log(document.is_published);
                 const Icon = IconMapping[document.type];
                 return (
                   <StyledRow key={document.id}>

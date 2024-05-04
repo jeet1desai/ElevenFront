@@ -32,8 +32,8 @@ const ProjectRoutes = {
       element: <Tasks />
     },
     {
-      path: 'projects/:id/tasks/view',
-      element: <Tasks />
+      path: 'projects/:id/tasks/view/:taskId',
+      element: <></>
     },
     {
       path: 'projects/:id/rfis',

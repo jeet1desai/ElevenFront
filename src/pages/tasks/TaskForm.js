@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
 import {
@@ -30,6 +30,7 @@ import dayjs from 'dayjs';
 import { useDropzone } from 'react-dropzone';
 
 import { StyledContainer, StyledUploadDragIcon, StyledUploadDragSubTitle, StyledUploadDragTitle } from 'components/styled-css/DropZoneCSS';
+import DeleteTask from './DeleteTask';
 
 import { IconX, IconPlus, IconTrash } from '@tabler/icons-react';
 
@@ -88,8 +89,10 @@ const StyledImage = styled(Paper)({
   borderRadius: 8
 });
 
-const TaskForm = ({ open, onClose, teamMember }) => {
+const TaskForm = ({ open, onClose, teamMember, task }) => {
   const dispatch = useDispatch();
+
+  const [isDeleteTaskOpen, setDeleteTask] = useState(false);
 
   const { projectId } = useSelector((state) => state.project);
 
@@ -313,9 +316,13 @@ const TaskForm = ({ open, onClose, teamMember }) => {
                   </Grid>
                 </DialogContent>
                 <DialogActions sx={{ padding: '15px 24px', justifyContent: 'space-between' }}>
-                  <IconButton color="error" onClick={() => onClose(false)}>
-                    <IconTrash />
-                  </IconButton>
+                  {task ? (
+                    <IconButton color="error" onClick={() => setDeleteTask(true)}>
+                      <IconTrash />
+                    </IconButton>
+                  ) : (
+                    <div></div>
+                  )}
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <Button onClick={() => onClose(false)} color="error">
                       Cancel
@@ -330,6 +337,8 @@ const TaskForm = ({ open, onClose, teamMember }) => {
           }}
         </Formik>
       </Dialog>
+
+      {isDeleteTaskOpen && <DeleteTask open={isDeleteTaskOpen} onClose={setDeleteTask} task={task} />}
     </>
   );
 };

@@ -5,9 +5,9 @@ import { Button, Box, Dialog, Typography, DialogContent, Avatar, Stack } from '@
 import { IconTrash } from '@tabler/icons-react';
 
 import { useDispatch } from 'store/index';
-import { removeTeamMemberService } from 'services/team';
+import { deleteTaskService } from 'services/task';
 
-const RemoveMember = ({ open, onClose, teamMember }) => {
+const DeleteTask = ({ open, onClose, task }) => {
   const dispatch = useDispatch();
 
   return (
@@ -21,17 +21,11 @@ const RemoveMember = ({ open, onClose, teamMember }) => {
                   <IconTrash />
                 </Avatar>
                 <Stack direction="column" alignItems="center" spacing={1.5}>
-                  <Typography variant="h4">Remove Member</Typography>
-                  <Typography variant="body">
-                    Are you sure you want to remove{' '}
-                    {teamMember.user.first_name && teamMember.user.last_name
-                      ? `'${teamMember.user.first_name} ${teamMember.user.last_name}'`
-                      : "'Na'"}{' '}
-                    from your team members?
-                  </Typography>
+                  <Typography variant="h4">Delete Task</Typography>
+                  <Typography variant="body">Are you sure, you want to delete {`"${task.title}"`} task that are assigned ?</Typography>
                 </Stack>
                 <Stack direction="row" spacing={1} sx={{ width: '100%' }}>
-                  <Button variant="outlined" fullWidth color="secondary" onClick={onClose}>
+                  <Button variant="outlined" fullWidth color="secondary" onClick={() => onClose(false)}>
                     Cancel
                   </Button>
                   <Button
@@ -39,11 +33,11 @@ const RemoveMember = ({ open, onClose, teamMember }) => {
                     color="error"
                     fullWidth
                     onClick={() => {
-                      dispatch(removeTeamMemberService(teamMember.id, teamMember.project.id, teamMember.user.id));
-                      onClose();
+                      dispatch(deleteTaskService(task.id));
+                      onClose(false);
                     }}
                   >
-                    Remove
+                    Delete
                   </Button>
                 </Stack>
               </Stack>
@@ -55,4 +49,4 @@ const RemoveMember = ({ open, onClose, teamMember }) => {
   );
 };
 
-export default RemoveMember;
+export default DeleteTask;
