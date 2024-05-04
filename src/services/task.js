@@ -1,5 +1,5 @@
 import { dispatch } from 'store/index';
-import { hasError } from 'store/slices/task';
+import { addTaskSuccess, hasError } from 'store/slices/task';
 
 import axios from 'utils/axios';
 import { openErrorSnackbar } from 'utils/utilsFn';

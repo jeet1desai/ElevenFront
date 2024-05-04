@@ -23,8 +23,10 @@ import {
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
+import dayjs from 'dayjs';
 import { useDropzone } from 'react-dropzone';
 
 import { StyledContainer, StyledUploadDragIcon, StyledUploadDragSubTitle, StyledUploadDragTitle } from 'components/styled-css/DropZoneCSS';
@@ -33,6 +35,9 @@ import { IconX, IconPlus, IconTrash } from '@tabler/icons-react';
 
 import { MenuProps } from 'utils/utilsFn';
 import { TASK_STATUS } from 'utils/enum';
+
+import { useSelector, useDispatch } from 'store/index';
+import { addTaskService } from 'services/task';
 
 const StyledUploadIcon = styled(IconPlus)({
   color: '#999999',
@@ -83,21 +88,11 @@ const StyledImage = styled(Paper)({
   borderRadius: 8
 });
 
-const top100Films = [
-  { title: 'The Shawshank Redemption', year: 1994 },
-  { title: 'The Godfather', year: 1972 },
-  { title: 'The Godfather: Part II', year: 1974 },
-  { title: 'The Dark Knight', year: 2008 },
-  { title: '12 Angry Men', year: 1957 },
-  { title: "Schindler's List", year: 1993 },
-  { title: 'Pulp Fiction', year: 1994 },
-  {
-    title: 'The Lord of the Rings: The Return of the King',
-    year: 2003
-  }
-];
+const TaskForm = ({ open, onClose, teamMember }) => {
+  const dispatch = useDispatch();
 
-const TaskForm = ({ open, onClose }) => {
+  const { projectId } = useSelector((state) => state.project);
+
   return (
     <>
       <Dialog open={open} scroll="paper" fullWidth>
@@ -114,19 +109,26 @@ const TaskForm = ({ open, onClose }) => {
         <Formik
           initialValues={{
             title: '',
+            status: 1,
             address: '',
-            startDate: '',
-            endDate: '',
+            start_date: '',
+            end_date: '',
             description: '',
             assign: [],
-            assets: [],
-            status: '1'
+            url: []
           }}
-          validationSchema={Yup.object().shape({})}
+          validationSchema={Yup.object().shape({
+            title: Yup.string().max(255).required('Task name is required')
+          })}
           onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
             try {
+              const body = { ...values, project: projectId };
+
+              await dispatch(addTaskService(body));
+
               setStatus({ success: true });
               setSubmitting(false);
+              onClose(false);
             } catch (err) {
               setStatus({ success: false });
               setErrors({ submit: err.message });
@@ -135,7 +137,6 @@ const TaskForm = ({ open, onClose }) => {
           }}
         >
           {({ errors, handleBlur, handleChange, handleSubmit, touched, values, isSubmitting }) => {
-            console.log(values);
             return (
               <Form noValidate onSubmit={handleSubmit}>
                 <DialogContent dividers>
@@ -151,8 +152,9 @@ const TaskForm = ({ open, onClose }) => {
                           id="title"
                           placeholder="Enter title"
                           fullWidth
+                          error={Boolean(touched.title && errors.title)}
                         />
-                        {touched.company && errors.company && <FormHelperText error>{errors.title}</FormHelperText>}
+                        {touched.title && errors.title && <FormHelperText error>{errors.title}</FormHelperText>}
                       </Stack>
                     </Grid>
                     <Grid item xs={12} sm={6}>
@@ -195,12 +197,15 @@ const TaskForm = ({ open, onClose }) => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <Stack spacing={1}>
-                        <InputLabel htmlFor="startDate">Start Date</InputLabel>
+                        <InputLabel htmlFor="start_date">Start Date</InputLabel>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
-                            name="startDate"
+                            defaultValue={dayjs(values.start_date)}
+                            name="start_date"
+                            id="start_date"
+                            onBlur={handleBlur}
                             onChange={(newValue) => {
-                              handleChange({ target: { name: 'startDate', value: newValue } });
+                              handleChange({ target: { name: 'start_date', value: dayjs(newValue).format('YYYY-MM-DD') } });
                             }}
                             renderInput={(params) => <TextField {...params} />}
                           />
@@ -209,12 +214,15 @@ const TaskForm = ({ open, onClose }) => {
                     </Grid>
                     <Grid item xs={12} sm={6}>
                       <Stack spacing={1}>
-                        <InputLabel htmlFor="endDate">Due Date</InputLabel>
+                        <InputLabel htmlFor="end_date">Due Date</InputLabel>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
-                            name="endDate"
+                            defaultValue={dayjs(values.end_date)}
+                            name="end_date"
+                            id="end_date"
+                            onBlur={handleBlur}
                             onChange={(newValue) => {
-                              handleChange({ target: { name: 'endDate', value: newValue } });
+                              handleChange({ target: { name: 'end_date', value: dayjs(newValue).format('YYYY-MM-DD') } });
                             }}
                             renderInput={(params) => <TextField {...params} />}
                           />
@@ -227,15 +235,29 @@ const TaskForm = ({ open, onClose }) => {
                         <Autocomplete
                           multiple
                           id="assign"
+                          name="assign"
                           limitTags={2}
-                          options={top100Films}
-                          getOptionLabel={(option) => option.title}
-                          defaultValue={[top100Films[1]]}
+                          options={teamMember}
+                          getOptionLabel={(option) => {
+                            if (option.user.first_name && option.user.last_name) {
+                              return `${option.user.first_name} ${option.user.last_name}`;
+                            } else {
+                              return option.user.email;
+                            }
+                          }}
+                          onBlur={handleBlur}
+                          defaultValue={values.assign}
                           filterSelectedOptions
+                          onChange={(event, values) => {
+                            handleChange({ target: { name: 'assign', value: values.map((member) => member.user.id) } });
+                          }}
                           renderInput={(params) => (
                             <TextField
                               {...params}
-                              sx={{ p: 0, '& .MuiInputBase-root': { p: '10px 12px !important' } }}
+                              sx={{
+                                p: 0,
+                                '& .MuiInputBase-root': { p: values.assign.length === 0 ? '10px 12px !important' : '2px 12px !important' }
+                              }}
                               placeholder="Who needs to do this?"
                             />
                           )}
@@ -261,27 +283,37 @@ const TaskForm = ({ open, onClose }) => {
                     </Grid>
                     <Grid item xs={12} sm={12}>
                       <Stack spacing={1}>
-                        <InputLabel htmlFor="assets">Photos</InputLabel>
-                        <TaskDropZone />
-                        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                          <StyledImageContainer>
-                            <StyledImage
-                              component="img"
-                              // src={isString(file) ? file : preview}
-                            />
-                            <Box sx={{ top: 6, right: 6, position: 'absolute' }}>
-                              <StyledRemoveButton size="small">
-                                <IconX />
-                              </StyledRemoveButton>
-                            </Box>
-                          </StyledImageContainer>
-                        </Stack>
+                        <InputLabel htmlFor="url">Photos</InputLabel>
+                        <TaskDropZone handleChange={handleChange} />
+                        <Grid container spacing={1}>
+                          {values.url.map((link, index) => {
+                            return (
+                              <Grid item xs={4} sm={3} md={2} lg={2} key={index}>
+                                <StyledImageContainer>
+                                  <StyledImage component="img" src={link} />
+                                  <Box sx={{ top: 6, right: 6, position: 'absolute' }}>
+                                    <StyledRemoveButton
+                                      size="small"
+                                      onClick={() =>
+                                        handleChange({
+                                          target: { name: 'url', value: values.url.filter((file, i) => i !== index) }
+                                        })
+                                      }
+                                    >
+                                      <IconX />
+                                    </StyledRemoveButton>
+                                  </Box>
+                                </StyledImageContainer>
+                              </Grid>
+                            );
+                          })}
+                        </Grid>
                       </Stack>
                     </Grid>
                   </Grid>
                 </DialogContent>
                 <DialogActions sx={{ padding: '15px 24px', justifyContent: 'space-between' }}>
-                  <IconButton color="error">
+                  <IconButton color="error" onClick={() => onClose(false)}>
                     <IconTrash />
                   </IconButton>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -302,8 +334,26 @@ const TaskForm = ({ open, onClose }) => {
   );
 };
 
-const TaskDropZone = () => {
+const TaskDropZone = ({ handleChange }) => {
   const fileInputRef = useRef(null);
+
+  const handleChangeFiles = (files) => {
+    handleChange({
+      target: {
+        name: 'url',
+        value: [...files].map((file) => {
+          const reader = new FileReader();
+
+          reader.onabort = () => console.log('file reading was aborted');
+          reader.onerror = () => console.log('file reading has failed');
+          reader.onload = () => console.log('file reading result');
+          reader.readAsArrayBuffer(file);
+
+          return URL.createObjectURL(file);
+        })
+      }
+    });
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     noClick: true,
@@ -312,7 +362,7 @@ const TaskDropZone = () => {
     onDragLeave: () => {},
     onDrop: () => {},
     onDropAccepted: async (files) => {
-      console.log(files);
+      handleChangeFiles(files);
     }
   });
 
@@ -322,15 +372,22 @@ const TaskDropZone = () => {
         <>
           <input accept="image/*" {...getInputProps()} />
           <StyledUploadDragIcon />
-          <StyledUploadDragTitle>Upload a file</StyledUploadDragTitle>
+          <StyledUploadDragTitle>Upload a photos</StyledUploadDragTitle>
           <StyledUploadDragSubTitle>Drag and Drop Here</StyledUploadDragSubTitle>
         </>
       ) : (
         <>
-          <input ref={fileInputRef} type="file" multiple accept="image/*" style={{ display: 'none' }} />
+          <input
+            onChange={(e) => handleChangeFiles(e.target.files)}
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept="image/*"
+            style={{ display: 'none' }}
+          />
           <StyledButton onClick={() => fileInputRef.current.click()}>
             <StyledUploadIcon />
-            Upload a file
+            Upload a photos
           </StyledButton>
           <StyledUploadDragSubTitle>OR</StyledUploadDragSubTitle>
           <StyledUploadDragTitle>Drag and Drop Here</StyledUploadDragTitle>

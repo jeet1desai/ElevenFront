@@ -103,9 +103,6 @@ const Document = () => {
   const { project, projectId } = useSelector((state) => state.project);
   const { myDocument, teamDocument } = useSelector((state) => state.document);
 
-  console.log(myDocument);
-  console.log(teamDocument);
-
   const handleDownload = (document) => {
     downloadFile(document.url, document.name);
   };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
 import {
@@ -27,6 +27,9 @@ import {
 import MainCard from 'components/MainCard';
 import TaskForm from './TaskForm';
 
+import { useSelector, useDispatch } from 'store/index';
+import { getTeamMemberService } from 'services/utils';
+
 const TableHeaderBox = styled('div')({
   display: 'flex',
   alignItems: 'center',
@@ -37,12 +40,26 @@ const TableHeaderBox = styled('div')({
 });
 
 const Tasks = () => {
-  const [value, setValue] = useState('1');
+  const dispatch = useDispatch();
+
+  const [value, setValue] = useState(0);
   const [isTaskFormOpen, setTaskForm] = useState(false);
+
+  const { projectId } = useSelector((state) => state.project);
+  const { teamMember } = useSelector((state) => state.utils);
+  const { tasks } = useSelector((state) => state.task);
 
   const handleChange = (_, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    if (projectId) {
+      dispatch(getTeamMemberService(projectId));
+    }
+  }, [dispatch, projectId]);
+
+  console.log(tasks);
 
   return (
     <>
@@ -128,7 +145,7 @@ const Tasks = () => {
         )}
       </MainCard>
 
-      {isTaskFormOpen && <TaskForm open={isTaskFormOpen} onClose={setTaskForm} />}
+      {isTaskFormOpen && <TaskForm open={isTaskFormOpen} onClose={setTaskForm} teamMember={teamMember} />}
     </>
   );
 };
