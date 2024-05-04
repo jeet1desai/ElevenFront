@@ -7,6 +7,8 @@ import projectReducer from './slices/project';
 import teamReducer from './slices/team';
 import documentReduce from './slices/document';
 import todoReduce from './slices/todo';
+import taskReduce from './slices/task';
+
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
@@ -22,6 +24,7 @@ const reducers = combineReducers({
   project: projectReducer,
   document: documentReduce,
   team: teamReducer,
+  task: taskReduce,
   todo: persistReducer(persistConfig, todoReduce)
 });
 

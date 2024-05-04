@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useTheme, styled } from '@mui/material/styles';
 import {
@@ -20,7 +20,7 @@ import {
 import MainCard from 'components/MainCard';
 
 import { MenuUnfoldOutlined } from '@ant-design/icons';
-import { IconPhone, IconVideo, IconExclamationCircle, IconMoodHappyFilled, IconPaperclip, IconSend } from '@tabler/icons-react';
+import { IconPhone, IconExclamationCircle, IconMoodHappyFilled, IconPaperclip, IconSend } from '@tabler/icons-react';
 
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import UserList from './UserList';
@@ -48,8 +48,18 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
 
 const Chat = () => {
   const theme = useTheme();
-
   const matchDownLG = useMediaQuery(theme.breakpoints.down('lg'));
+
+  const [openChatDrawer, setOpenChatDrawer] = useState(true);
+
+  const handleDrawerOpen = () => {
+    setOpenChatDrawer((prevState) => !prevState);
+  };
+
+  useEffect(() => {
+    setOpenChatDrawer(!matchDownLG);
+  }, [matchDownLG]);
+
   const drawerBG = theme.palette.mode === 'dark' ? 'dark.main' : '#fff';
 
   return (
@@ -65,12 +75,13 @@ const Chat = () => {
             boxSizing: 'border-box',
             position: 'relative',
             border: 'none',
-            borderRadius: matchDownLG ? 'none' : `8px`
+            borderRadius: matchDownLG ? 'none' : `8px 0 0 8px`
           }
         }}
         variant={matchDownLG ? 'temporary' : 'persistent'}
         anchor="left"
-        open={false}
+        open={openChatDrawer}
+        onClose={handleDrawerOpen}
         ModalProps={{ keepMounted: true }}
       >
         <MainCard
@@ -82,7 +93,7 @@ const Chat = () => {
           border={!matchDownLG}
           content={false}
         >
-          <Box sx={{ p: 2.5, pb: 2 }}>
+          <Box sx={{ p: 2.5, pb: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Grid container spacing={2} alignItems="center" sx={{ flexWrap: 'nowrap' }}>
@@ -91,9 +102,9 @@ const Chat = () => {
                       Messages
                     </Typography>
                   </Grid>
-                  <Grid item>
-                    <IconButton>{/* <ExpandMoreIcon /> */}</IconButton>
-                  </Grid>
+                  {/* <Grid item>
+                    <IconButton>ALl</IconButton>
+                  </Grid> */}
                 </Grid>
               </Grid>
             </Grid>
@@ -101,7 +112,7 @@ const Chat = () => {
           <PerfectScrollbar
             style={{
               overflowX: 'hidden',
-              height: matchDownLG ? 'calc(100vh - 190px)' : 'calc(100vh - 445px)',
+              height: matchDownLG ? '100%' : 'calc(100vh - 445px)',
               minHeight: matchDownLG ? 0 : 553
             }}
           >
@@ -115,11 +126,11 @@ const Chat = () => {
           </PerfectScrollbar>
         </MainCard>
       </Drawer>
-      <Main theme={theme} open={true}>
+      <Main theme={theme} open={openChatDrawer}>
         <MainCard
           sx={{
             bgcolor: theme.palette.mode === 'dark' ? 'dark.main' : '#fff',
-            borderRadius: '0 8px 8px 0',
+            borderRadius: openChatDrawer ? '0px 8px 8px 0px' : '8px',
             '& .MuiCardContent-root': {
               padding: '0 !important'
             }
@@ -128,9 +139,9 @@ const Chat = () => {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Box sx={{ padding: '14px 14px 0 14px' }}>
-                <Grid container alignItems="center" spacing={0.5}>
+                <Grid container alignItems="center" justifyContent="space-between" spacing={0.5}>
                   <Grid item>
-                    <IconButton>
+                    <IconButton onClick={handleDrawerOpen}>
                       <MenuUnfoldOutlined />
                     </IconButton>
                   </Grid>
@@ -157,11 +168,6 @@ const Chat = () => {
                   <Grid item>
                     <IconButton>
                       <IconPhone />
-                    </IconButton>
-                  </Grid>
-                  <Grid item>
-                    <IconButton>
-                      <IconVideo />
                     </IconButton>
                   </Grid>
                   <Grid item>

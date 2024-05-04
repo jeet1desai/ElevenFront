@@ -19,7 +19,7 @@ import {
   Select,
   Stack,
   TextField
-} from '../../../node_modules/@mui/material/index';
+} from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -29,7 +29,7 @@ import { useDropzone } from 'react-dropzone';
 
 import { StyledContainer, StyledUploadDragIcon, StyledUploadDragSubTitle, StyledUploadDragTitle } from 'components/styled-css/DropZoneCSS';
 
-import { IconX, IconPlus } from '@tabler/icons-react';
+import { IconX, IconPlus, IconTrash } from '@tabler/icons-react';
 
 import { MenuProps } from 'utils/utilsFn';
 import { TASK_STATUS } from 'utils/enum';
@@ -263,7 +263,6 @@ const TaskForm = ({ open, onClose }) => {
                       <Stack spacing={1}>
                         <InputLabel htmlFor="assets">Photos</InputLabel>
                         <TaskDropZone />
-
                         <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                           <StyledImageContainer>
                             <StyledImage
@@ -281,13 +280,18 @@ const TaskForm = ({ open, onClose }) => {
                     </Grid>
                   </Grid>
                 </DialogContent>
-                <DialogActions sx={{ padding: '15px 24px' }}>
-                  <Button onClick={() => onClose(false)} color="error">
-                    Cancel
-                  </Button>
-                  <Button disabled={isSubmitting} disableElevation variant="contained" type="submit">
-                    Add Task
-                  </Button>
+                <DialogActions sx={{ padding: '15px 24px', justifyContent: 'space-between' }}>
+                  <IconButton color="error">
+                    <IconTrash />
+                  </IconButton>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Button onClick={() => onClose(false)} color="error">
+                      Cancel
+                    </Button>
+                    <Button disabled={isSubmitting} disableElevation variant="contained" type="submit">
+                      Add Task
+                    </Button>
+                  </Box>
                 </DialogActions>
               </Form>
             );

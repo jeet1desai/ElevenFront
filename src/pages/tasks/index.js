@@ -33,7 +33,7 @@ const TableHeaderBox = styled('div')({
   flexWrap: 'wrap',
   gap: '10px',
   justifyContent: 'space-between',
-  padding: '2px 12px'
+  padding: '2px 0'
 });
 
 const Tasks = () => {
@@ -52,7 +52,7 @@ const Tasks = () => {
           <Tab sx={{ textTransform: 'none' }} label="Team's All Tasks" />
           <Tab sx={{ textTransform: 'none' }} label="My Tasks" />
         </Tabs>
-        {value === 1 && (
+        {(value === 1 || value === 2) && (
           <>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2, mx: 1 }}>
               <Typography variant="h4">
@@ -86,9 +86,11 @@ const Tasks = () => {
                   <MenuItem>Pending</MenuItem>
                   <MenuItem>Closed</MenuItem>
                 </Select>
-                <Button onClick={() => setTaskForm(true)} variant="contained" color="success">
-                  Add Task
-                </Button>
+                {value === 1 && (
+                  <Button onClick={() => setTaskForm(true)} variant="contained" color="success">
+                    Add Task
+                  </Button>
+                )}
               </TableHeaderBox>
             </Box>
             <MainCard content={false}>
@@ -126,7 +128,7 @@ const Tasks = () => {
         )}
       </MainCard>
 
-      <TaskForm open={isTaskFormOpen} onClose={setTaskForm} />
+      {isTaskFormOpen && <TaskForm open={isTaskFormOpen} onClose={setTaskForm} />}
     </>
   );
 };

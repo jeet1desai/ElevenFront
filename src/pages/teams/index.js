@@ -44,6 +44,7 @@ const Teams = () => {
 
   const dispatch = useDispatch();
   const { teams } = useSelector((state) => state.team);
+  const { user } = useSelector((state) => state.account);
 
   const [isAddMemberOpen, setAddMember] = useState(false);
   const [deleteTeamDialogOpen, setDeleteTeamDialog] = useState(false);
@@ -152,9 +153,11 @@ const Teams = () => {
                       {team.user.country_code && team.user.phone_number ? team.user.country_code + ' ' + team.user.phone_number : 'Na'}
                     </TableCell>
                     <TableCell align="center">
-                      <IconButton>
-                        <MessageOutlined />
-                      </IconButton>
+                      {user.id !== team.user.id && (
+                        <IconButton>
+                          <MessageOutlined />
+                        </IconButton>
+                      )}
                       <IconButton
                         color="primary"
                         onClick={() => {
@@ -164,7 +167,7 @@ const Teams = () => {
                       >
                         <IconEye />
                       </IconButton>
-                      {ROLES[team.role] !== ROLES[4] && (
+                      {user.id !== team.user.id && ROLES[team.role] !== ROLES[4] && (
                         <IconButton
                           color="error"
                           onClick={() => {

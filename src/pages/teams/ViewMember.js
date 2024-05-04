@@ -28,6 +28,7 @@ const ViewMember = ({ open, onClose, teamMember }) => {
   const dispatch = useDispatch();
 
   const { project } = useSelector((state) => state.project);
+  const { user } = useSelector((state) => state.account);
 
   const [permission, setPermission] = useState(0);
 
@@ -84,7 +85,7 @@ const ViewMember = ({ open, onClose, teamMember }) => {
                       : 'Na'}
                   </Typography>
                 </Grid>
-                {project.user_role === 4 ? (
+                {project.user_role === 4 && teamMember.user.id !== user.id ? (
                   <Grid item xs={12}>
                     <Stack spacing={1}>
                       <InputLabel htmlFor="email">Permissions</InputLabel>
