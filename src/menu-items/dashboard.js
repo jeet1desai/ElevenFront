@@ -71,7 +71,7 @@ const dashboard = {
       type: 'item',
       url: 'calender',
       icon: icons.CalendarOutlined,
-      breadcrumbs: false
+      breadcrumbs: true
     },
     {
       id: 'document',

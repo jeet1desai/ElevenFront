@@ -10,8 +10,6 @@ import navigation from 'menu-items';
 import Breadcrumbs from 'components/@extended/Breadcrumbs';
 
 import { openDrawer } from 'store/slices/menu';
-import DrawerHeader from './Drawer/DrawerHeader';
-import MiniDrawerStyled from './Drawer/MiniDrawerStyled';
 
 const SimpleLayout = () => {
   const theme = useTheme();
@@ -41,22 +39,7 @@ const SimpleLayout = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ display: 'flex', width: '100%' }}>
-        <Header open={open} handleDrawerToggle={handleDrawerToggle} />
-        <Box component="nav" sx={{ flexShrink: { md: 0 }, zIndex: 1300 }}>
-          <MiniDrawerStyled
-            sx={{
-              '& .MuiPaper-root': {
-                height: 'unset',
-                boxShadow: 'none',
-                borderBottom: '1px solid #f0f0f0'
-              }
-            }}
-            variant="permanent"
-            open={open}
-          >
-            <DrawerHeader open={open} />
-          </MiniDrawerStyled>
-        </Box>
+        <Header open={false} handleDrawerToggle={handleDrawerToggle} />
       </Box>
       <Box component="main" sx={{ width: '100%' }}>
         <Toolbar />
