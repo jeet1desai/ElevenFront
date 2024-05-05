@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
 import {
@@ -34,11 +34,11 @@ import DeleteTask from './DeleteTask';
 
 import { IconX, IconPlus, IconTrash } from '@tabler/icons-react';
 
-import { MenuProps } from 'utils/utilsFn';
+import { MenuProps, uploadDocument } from 'utils/utilsFn';
 import { TASK_STATUS } from 'utils/enum';
 
 import { useSelector, useDispatch } from 'store/index';
-import { addTaskService } from 'services/task';
+import { addTaskService, editTaskService } from 'services/task';
 
 const StyledUploadIcon = styled(IconPlus)({
   color: '#999999',
@@ -89,10 +89,46 @@ const StyledImage = styled(Paper)({
   borderRadius: 8
 });
 
-const TaskForm = ({ open, onClose, teamMember, task }) => {
+const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
   const dispatch = useDispatch();
 
+  const { teamMember } = useSelector((state) => state.utils);
+
+  const [loading, setLoading] = useState(false);
   const [isDeleteTaskOpen, setDeleteTask] = useState(false);
+  const [formValue, setFormValue] = useState({
+    title: '',
+    status: 1,
+    address: '',
+    start_date: '',
+    end_date: '',
+    description: '',
+    assign: [],
+    firebaseUrl: [],
+    files: [],
+    url: []
+  });
+
+  useEffect(() => {
+    if (isEditTaskOpen) {
+      setFormValue({
+        title: task.title,
+        status: task.status,
+        address: task.address,
+        start_date: task.start_date,
+        end_date: task.end_date,
+        description: task.description,
+        assign: task.assign.map((user) => {
+          const { first_name, last_name, email } = user;
+          const label = first_name && last_name ? `${first_name} ${last_name}` : email;
+          return { label, id: user.id };
+        }),
+        firebaseUrl: task.urls,
+        files: [],
+        url: []
+      });
+    }
+  }, [isEditTaskOpen]);
 
   const { projectId } = useSelector((state) => state.project);
 
@@ -101,7 +137,9 @@ const TaskForm = ({ open, onClose, teamMember, task }) => {
       <Dialog open={open} scroll="paper" fullWidth>
         <Grid container spacing={2} justifyContent="space-between" alignItems="center" sx={{ flexWrap: 'nowrap' }}>
           <Grid item>
-            <DialogTitle sx={{ fontSize: '1.3rem', fontWeight: '500' }}>Add New Task</DialogTitle>
+            <DialogTitle sx={{ fontSize: '1.3rem', fontWeight: '500' }}>
+              {isEditTaskOpen ? `Edit Task: ${task.title}` : 'Add New Task'}
+            </DialogTitle>
           </Grid>
           <Grid item sx={{ mr: 1.5 }}>
             <IconButton color="secondary" onClick={() => onClose(false)}>
@@ -110,36 +148,53 @@ const TaskForm = ({ open, onClose, teamMember, task }) => {
           </Grid>
         </Grid>
         <Formik
-          initialValues={{
-            title: '',
-            status: 1,
-            address: '',
-            start_date: '',
-            end_date: '',
-            description: '',
-            assign: [],
-            url: []
-          }}
+          enableReinitialize
+          initialValues={formValue}
           validationSchema={Yup.object().shape({
             title: Yup.string().max(255).required('Task name is required')
           })}
-          onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
+          onSubmit={async (values) => {
+            setLoading(true);
             try {
-              const body = { ...values, project: projectId };
+              let fileUrls = [];
+              const uploadPromises = [];
 
-              await dispatch(addTaskService(body));
+              values.files.forEach((file) => {
+                const uploadPromise = uploadDocument('eleven/tasks', file).then((url) => {
+                  fileUrls.push(url);
+                });
+                uploadPromises.push(uploadPromise);
+              });
 
-              setStatus({ success: true });
-              setSubmitting(false);
-              onClose(false);
+              Promise.all(uploadPromises).then(async () => {
+                const body = {
+                  title: values.title,
+                  status: values.status,
+                  address: values.address,
+                  start_date: values.start_date,
+                  end_date: values.end_date,
+                  description: values.description,
+                  assign: values.assign.map((user) => user.id),
+                  url: [...fileUrls, ...values.firebaseUrl],
+                  project: Number(projectId)
+                };
+
+                onClose(false);
+
+                if (isEditTaskOpen) {
+                  await dispatch(editTaskService(task.id, body));
+                } else {
+                  await dispatch(addTaskService(body));
+                }
+
+                setLoading(false);
+              });
             } catch (err) {
-              setStatus({ success: false });
-              setErrors({ submit: err.message });
-              setSubmitting(false);
+              setLoading(false);
             }
           }}
         >
-          {({ errors, handleBlur, handleChange, handleSubmit, touched, values, isSubmitting }) => {
+          {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => {
             return (
               <Form noValidate onSubmit={handleSubmit}>
                 <DialogContent dividers>
@@ -240,19 +295,21 @@ const TaskForm = ({ open, onClose, teamMember, task }) => {
                           id="assign"
                           name="assign"
                           limitTags={2}
-                          options={teamMember}
-                          getOptionLabel={(option) => {
-                            if (option.user.first_name && option.user.last_name) {
-                              return `${option.user.first_name} ${option.user.last_name}`;
-                            } else {
-                              return option.user.email;
+                          options={teamMember.map((option) => {
+                            const { user } = option;
+                            if (user) {
+                              const { first_name, last_name, email } = user;
+                              const label = first_name && last_name ? `${first_name} ${last_name}` : email;
+                              return { label, id: user.id };
                             }
-                          }}
+                          })}
                           onBlur={handleBlur}
-                          defaultValue={values.assign}
+                          value={values.assign}
                           filterSelectedOptions
-                          onChange={(event, values) => {
-                            handleChange({ target: { name: 'assign', value: values.map((member) => member.user.id) } });
+                          onChange={(event, newValue) => {
+                            const newValues = newValue.map((member) => ({ label: member.label, id: member.id }));
+                            handleChange({ target: { name: 'assign', value: newValues } });
+                            // handleChange({ target: { name: 'assign', value: newValue.map((member) => member.user.id) } });
                           }}
                           renderInput={(params) => (
                             <TextField
@@ -289,6 +346,27 @@ const TaskForm = ({ open, onClose, teamMember, task }) => {
                         <InputLabel htmlFor="url">Photos</InputLabel>
                         <TaskDropZone handleChange={handleChange} />
                         <Grid container spacing={1}>
+                          {values.firebaseUrl.map((link, index) => {
+                            return (
+                              <Grid item xs={4} sm={3} md={2} lg={2} key={index}>
+                                <StyledImageContainer>
+                                  <StyledImage component="img" src={link} />
+                                  <Box sx={{ top: 6, right: 6, position: 'absolute' }}>
+                                    <StyledRemoveButton
+                                      size="small"
+                                      onClick={() => {
+                                        handleChange({
+                                          target: { name: 'firebaseUrl', value: values.firebaseUrl.filter((file, i) => i !== index) }
+                                        });
+                                      }}
+                                    >
+                                      <IconX />
+                                    </StyledRemoveButton>
+                                  </Box>
+                                </StyledImageContainer>
+                              </Grid>
+                            );
+                          })}
                           {values.url.map((link, index) => {
                             return (
                               <Grid item xs={4} sm={3} md={2} lg={2} key={index}>
@@ -297,11 +375,14 @@ const TaskForm = ({ open, onClose, teamMember, task }) => {
                                   <Box sx={{ top: 6, right: 6, position: 'absolute' }}>
                                     <StyledRemoveButton
                                       size="small"
-                                      onClick={() =>
+                                      onClick={() => {
+                                        handleChange({
+                                          target: { name: 'files', value: values.files.filter((file, i) => i !== index) }
+                                        });
                                         handleChange({
                                           target: { name: 'url', value: values.url.filter((file, i) => i !== index) }
-                                        })
-                                      }
+                                        });
+                                      }}
                                     >
                                       <IconX />
                                     </StyledRemoveButton>
@@ -316,7 +397,7 @@ const TaskForm = ({ open, onClose, teamMember, task }) => {
                   </Grid>
                 </DialogContent>
                 <DialogActions sx={{ padding: '15px 24px', justifyContent: 'space-between' }}>
-                  {task ? (
+                  {isEditTaskOpen ? (
                     <IconButton color="error" onClick={() => setDeleteTask(true)}>
                       <IconTrash />
                     </IconButton>
@@ -327,8 +408,8 @@ const TaskForm = ({ open, onClose, teamMember, task }) => {
                     <Button onClick={() => onClose(false)} color="error">
                       Cancel
                     </Button>
-                    <Button disabled={isSubmitting} disableElevation variant="contained" type="submit">
-                      Add Task
+                    <Button disableElevation disabled={loading} variant="contained" type="submit">
+                      {loading ? 'Saving' : isEditTaskOpen ? 'Save Task' : 'Add Task'}
                     </Button>
                   </Box>
                 </DialogActions>
@@ -338,7 +419,7 @@ const TaskForm = ({ open, onClose, teamMember, task }) => {
         </Formik>
       </Dialog>
 
-      {isDeleteTaskOpen && <DeleteTask open={isDeleteTaskOpen} onClose={setDeleteTask} task={task} />}
+      {isDeleteTaskOpen && <DeleteTask open={isDeleteTaskOpen} onClose={setDeleteTask} formClose={onClose} task={task} />}
     </>
   );
 };
@@ -347,17 +428,14 @@ const TaskDropZone = ({ handleChange }) => {
   const fileInputRef = useRef(null);
 
   const handleChangeFiles = (files) => {
+    const fileList = [...files];
+    handleChange({ target: { name: 'files', value: fileList } });
     handleChange({
       target: {
         name: 'url',
-        value: [...files].map((file) => {
+        value: fileList.map((file) => {
           const reader = new FileReader();
-
-          reader.onabort = () => console.log('file reading was aborted');
-          reader.onerror = () => console.log('file reading has failed');
-          reader.onload = () => console.log('file reading result');
           reader.readAsArrayBuffer(file);
-
           return URL.createObjectURL(file);
         })
       }

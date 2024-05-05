@@ -7,7 +7,7 @@ import { IconTrash } from '@tabler/icons-react';
 import { useDispatch } from 'store/index';
 import { deleteTaskService } from 'services/task';
 
-const DeleteTask = ({ open, onClose, task }) => {
+const DeleteTask = ({ open, onClose, task, formClose }) => {
   const dispatch = useDispatch();
 
   return (
@@ -34,6 +34,7 @@ const DeleteTask = ({ open, onClose, task }) => {
                     fullWidth
                     onClick={() => {
                       dispatch(deleteTaskService(task.id));
+                      formClose(false);
                       onClose(false);
                     }}
                   >

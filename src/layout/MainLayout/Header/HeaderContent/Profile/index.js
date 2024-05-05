@@ -24,7 +24,8 @@ import ProfileTab from './ProfileTab';
 import SettingTab from './SettingTab';
 
 import avatar from 'assets/images/users/avatar.png';
-import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { IconLogout } from '@tabler/icons-react';
 
 import { useDispatch, useSelector } from 'store/index';
 import { logoutSuccess } from 'store/slices/account';
@@ -165,8 +166,8 @@ const Profile = () => {
                           </Stack>
                         </Grid>
                         <Grid item>
-                          <IconButton size="large" color="secondary" onClick={handleLogout}>
-                            <LogoutOutlined />
+                          <IconButton color="secondary" onClick={handleLogout}>
+                            <IconLogout />
                           </IconButton>
                         </Grid>
                       </Grid>

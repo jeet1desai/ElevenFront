@@ -18,13 +18,14 @@ import {
   Stack,
   TextField,
   Typography,
+  CircularProgress,
   Chip,
   IconButton
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 
-import { IconSearch, IconEye, IconTrash, IconEdit, IconMessage, IconSunglasses } from '@tabler/icons-react';
+import { IconSearch, IconEye, IconTrash, IconEdit, IconMessage, IconSunglasses, IconRefresh } from '@tabler/icons-react';
 
 import MainCard from 'components/MainCard';
 import Dot from 'components/@extended/Dot';
@@ -77,13 +78,13 @@ const Tasks = () => {
 
   const [value, setValue] = useState(0);
   const [isTaskFormOpen, setTaskForm] = useState(false);
+  const [isEditTaskOpen, setEditTask] = useState(false);
   const [isDeleteTaskOpen, setDeleteTask] = useState(false);
 
   const [taskDetail, setTaskDetail] = useState(null);
 
   const { projectId } = useSelector((state) => state.project);
-  const { teamMember } = useSelector((state) => state.utils);
-  const { tasks } = useSelector((state) => state.task);
+  const { loading, tasks } = useSelector((state) => state.task);
 
   const handleChange = (_, newValue) => {
     setValue(newValue);
@@ -95,16 +96,11 @@ const Tasks = () => {
     }
   }, [dispatch, projectId]);
 
-  console.log(tasks);
-
   useEffect(() => {
     if (projectId) {
-      if (value === 1) {
-        dispatch(getProjectTaskService(projectId));
-      } else if (value === 2) {
-        dispatch(assignedTaskService(projectId));
-      }
+      handleFetchData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, projectId, value]);
 
   const isDatePastDueDate = (end_date) => {
@@ -114,6 +110,14 @@ const Tasks = () => {
     };
     const endDateIsPast = isDateInPast(endDate);
     return endDateIsPast ? 'red' : 'inherit';
+  };
+
+  const handleFetchData = () => {
+    if (value === 1) {
+      dispatch(getProjectTaskService(projectId));
+    } else if (value === 2) {
+      dispatch(assignedTaskService(projectId));
+    }
   };
 
   return (
@@ -131,6 +135,13 @@ const Tasks = () => {
                 All <span style={{ color: '#d9d9d9' }}>({tasks.length})</span>
               </Typography>
               <TableHeaderBox>
+                <IconButton>
+                  {loading ? (
+                    <CircularProgress color="secondary" sx={{ height: 'unset !important' }} />
+                  ) : (
+                    <IconRefresh onClick={() => handleFetchData()} />
+                  )}
+                </IconButton>
                 <TextField
                   InputProps={{
                     startAdornment: (
@@ -141,14 +152,14 @@ const Tasks = () => {
                   }}
                   placeholder="Search by title"
                   size="small"
-                  sx={{ '& input': { paddingLeft: '2px' } }}
+                  sx={{ '& input': { padding: '8px 8px 8px 2px' } }}
                   onChange={() => {}}
                 />
                 <Select
                   value=""
                   displayEmpty
                   onChange={() => {}}
-                  sx={{ width: '150px', '& .MuiInputBase-input': { py: 1, fontSize: '0.875rem' } }}
+                  sx={{ width: '150px', '& .MuiInputBase-input': { py: 1.1, fontSize: '0.875rem' } }}
                 >
                   <MenuItem disabled value="">
                     Select Status
@@ -159,7 +170,14 @@ const Tasks = () => {
                   <MenuItem>Closed</MenuItem>
                 </Select>
                 {value === 1 && (
-                  <Button onClick={() => setTaskForm(true)} variant="contained" color="success">
+                  <Button
+                    onClick={() => {
+                      setEditTask(false);
+                      setTaskForm(true);
+                    }}
+                    variant="contained"
+                    color="success"
+                  >
                     Add Task
                   </Button>
                 )}
@@ -222,7 +240,7 @@ const Tasks = () => {
                             <TaskStatus status={task.status} />
                           </TableCell>
                           <TableCell align="left" style={{ color: isDatePastDueDate(task.end_date) }}>
-                            {dayjs(task.end_date).format('MMM DD, YYYY')}
+                            {task.end_date ? dayjs(task.end_date).format('MMM DD, YYYY') : ''}
                           </TableCell>
                           <TableCell align="left">{task.assign.map((user) => user.first_name + ' ' + user.last_name).toString()}</TableCell>
                           <TableCell align="center">
@@ -231,7 +249,14 @@ const Tasks = () => {
                                 <IconEye />
                               </IconButton>
                             </Link>
-                            <IconButton color="primary">
+                            <IconButton
+                              color="primary"
+                              onClick={() => {
+                                setTaskDetail(task);
+                                setEditTask(true);
+                                setTaskForm(true);
+                              }}
+                            >
                               <IconEdit />
                             </IconButton>
                             <IconButton
@@ -255,9 +280,9 @@ const Tasks = () => {
         )}
       </MainCard>
 
-      {isTaskFormOpen && <TaskForm open={isTaskFormOpen} onClose={setTaskForm} teamMember={teamMember} task={taskDetail} />}
+      {isTaskFormOpen && <TaskForm open={isTaskFormOpen} onClose={setTaskForm} isEditTaskOpen={isEditTaskOpen} task={taskDetail} />}
 
-      {isDeleteTaskOpen && <DeleteTask open={isDeleteTaskOpen} onClose={setDeleteTask} task={taskDetail} />}
+      {isDeleteTaskOpen && <DeleteTask open={isDeleteTaskOpen} onClose={setDeleteTask} task={taskDetail} formClose={setTaskForm} />}
     </>
   );
 };

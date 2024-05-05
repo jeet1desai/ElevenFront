@@ -7,6 +7,7 @@ import AuthGuard from 'layout/RouteGuard/AuthGuard';
 const Dashboard = Loadable(lazy(() => import('pages/dashboard')));
 const Teams = Loadable(lazy(() => import('pages/teams')));
 const Tasks = Loadable(lazy(() => import('pages/tasks')));
+const ViewTask = Loadable(lazy(() => import('pages/tasks/ViewTask')));
 const RequestInformation = Loadable(lazy(() => import('pages/request-information')));
 const FieldReports = Loadable(lazy(() => import('pages/field-reports')));
 const Map = Loadable(lazy(() => import('pages/map')));
@@ -33,7 +34,7 @@ const ProjectRoutes = {
     },
     {
       path: 'projects/:id/tasks/view/:taskId',
-      element: <></>
+      element: <ViewTask />
     },
     {
       path: 'projects/:id/rfis',

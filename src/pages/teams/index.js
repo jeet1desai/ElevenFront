@@ -11,7 +11,9 @@ import {
   TableBody,
   TableContainer,
   Table,
-  IconButton
+  IconButton,
+  Chip,
+  Stack
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import _ from 'lodash';
@@ -38,6 +40,47 @@ const TableHeaderBox = styled('div')({
   borderBottom: '1px solid #e6ebf1',
   padding: '16px 12px'
 });
+
+const TeamRole = ({ role }) => {
+  let color;
+  let bgColor;
+  let borderColor;
+  let title = ROLES[role];
+
+  switch (role) {
+    case 2:
+      color = '#ffb814';
+      bgColor = '#fff6d0';
+      borderColor = '#ffcf4e';
+      break;
+    case 3:
+      color = '#58d62a';
+      bgColor = '#eafcd4';
+      borderColor = '#8ae65b';
+      break;
+    case 4:
+      color = 'error';
+      break;
+    default:
+      color = '#549bff';
+      bgColor = '#dcf0ff';
+      borderColor = '#7eb9ff';
+  }
+
+  if (role === 4) {
+    return (
+      <Stack direction="row" spacing={1} alignItems="center">
+        <Chip label={title} size="small" color={color} />
+      </Stack>
+    );
+  }
+
+  return (
+    <Stack direction="row" spacing={1} alignItems="center">
+      <Chip label={title} size="small" sx={{ color: color, background: bgColor, borderColor: borderColor }} />
+    </Stack>
+  );
+};
 
 const Teams = () => {
   const { id } = useParams();
@@ -147,7 +190,10 @@ const Teams = () => {
                   <TableRow key={team.id}>
                     <TableCell align="left">{team.user.first_name + ' ' + team.user.last_name}</TableCell>
                     <TableCell align="left">{team.user.email}</TableCell>
-                    <TableCell align="left">{ROLES[team.role]}</TableCell>
+                    {/* <TableCell align="left">{ROLES[team.role]}</TableCell> */}
+                    <TableCell align="left">
+                      <TeamRole role={team.role} />
+                    </TableCell>
                     <TableCell align="left">{team.company.company}</TableCell>
                     <TableCell align="left">
                       {team.user.country_code && team.user.phone_number ? team.user.country_code + ' ' + team.user.phone_number : 'Na'}
