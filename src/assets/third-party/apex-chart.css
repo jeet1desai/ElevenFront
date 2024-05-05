@@ -44,3 +44,17 @@ button {
   width: 20px;
   height: 20px;
 }
+
+.MuiTab-root {
+  border-radius: 8px 8px 0 0 !important;
+}
+
+.MuiTab-root:hover {
+  background-color: rgba(214, 228, 255, 0.6);
+  color: rgb(51, 102, 255);
+}
+
+.MuiOutlinedInput-root {
+  outline: none !important;
+  box-shadow: none !important;
+}

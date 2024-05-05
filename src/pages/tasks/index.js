@@ -30,13 +30,14 @@ import { IconSearch, IconEye, IconTrash, IconEdit, IconMessage, IconSunglasses, 
 import MainCard from 'components/MainCard';
 import Dot from 'components/@extended/Dot';
 import TaskForm from './TaskForm';
+import DeleteTask from './DeleteTask';
 
 import { useSelector, useDispatch } from 'store/index';
 import { getTeamMemberService } from 'services/utils';
 import { assignedTaskService, getProjectTaskService } from 'services/task';
 
 import { TASK_STATUS } from 'utils/enum';
-import DeleteTask from './DeleteTask';
+import { isDatePastDueDateColor } from 'utils/utilsFn';
 
 const TableHeaderBox = styled('div')({
   display: 'flex',
@@ -102,15 +103,6 @@ const Tasks = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, projectId, value]);
-
-  const isDatePastDueDate = (end_date) => {
-    const endDate = new Date(end_date);
-    const isDateInPast = (date) => {
-      return dayjs(date).isBefore(dayjs(), 'day');
-    };
-    const endDateIsPast = isDateInPast(endDate);
-    return endDateIsPast ? 'red' : 'inherit';
-  };
 
   const handleFetchData = () => {
     if (value === 1) {
@@ -239,12 +231,12 @@ const Tasks = () => {
                           <TableCell align="left">
                             <TaskStatus status={task.status} />
                           </TableCell>
-                          <TableCell align="left" style={{ color: isDatePastDueDate(task.end_date) }}>
+                          <TableCell align="left" style={{ color: isDatePastDueDateColor(task.end_date) }}>
                             {task.end_date ? dayjs(task.end_date).format('MMM DD, YYYY') : ''}
                           </TableCell>
                           <TableCell align="left">{task.assign.map((user) => user.first_name + ' ' + user.last_name).toString()}</TableCell>
                           <TableCell align="center">
-                            <Link to={`/projects/${projectId}/tasks/view/1`}>
+                            <Link to={`/projects/${projectId}/tasks/view/${task.id}`}>
                               <IconButton>
                                 <IconEye />
                               </IconButton>

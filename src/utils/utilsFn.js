@@ -3,6 +3,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { openSnackbar } from 'store/slices/snackbar';
 import { dispatch } from 'store/index';
 import { FileExtensionMapping } from './enum';
+import dayjs from 'dayjs';
 
 export const openErrorSnackbar = (message, type) => {
   dispatch(
@@ -72,4 +73,13 @@ export const downloadFile = (fullPath, fileName) => {
   } catch (error) {
     console.error('Error downloading file:', error);
   }
+};
+
+export const isDatePastDueDateColor = (end_date) => {
+  const endDate = new Date(end_date);
+  const isDateInPast = (date) => {
+    return dayjs(date).isBefore(dayjs(), 'day');
+  };
+  const endDateIsPast = isDateInPast(endDate);
+  return endDateIsPast ? 'red' : 'inherit';
 };

@@ -190,7 +190,6 @@ const Teams = () => {
                   <TableRow key={team.id}>
                     <TableCell align="left">{team.user.first_name + ' ' + team.user.last_name}</TableCell>
                     <TableCell align="left">{team.user.email}</TableCell>
-                    {/* <TableCell align="left">{ROLES[team.role]}</TableCell> */}
                     <TableCell align="left">
                       <TeamRole role={team.role} />
                     </TableCell>

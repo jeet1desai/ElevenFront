@@ -1,14 +1,18 @@
 import React from 'react';
 
 import { Button, Box, Dialog, Typography, DialogContent, Avatar, Stack } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 import { IconTrash } from '@tabler/icons-react';
 
-import { useDispatch } from 'store/index';
+import { useDispatch, useSelector } from 'store/index';
 import { deleteTaskService } from 'services/task';
 
 const DeleteTask = ({ open, onClose, task, formClose }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { projectId } = useSelector((state) => state.project);
 
   return (
     <>
@@ -36,6 +40,7 @@ const DeleteTask = ({ open, onClose, task, formClose }) => {
                       dispatch(deleteTaskService(task.id));
                       formClose(false);
                       onClose(false);
+                      navigate(`/projects/${projectId}/tasks`);
                     }}
                   >
                     Delete

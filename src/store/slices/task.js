@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   loading: true,
+  task: null,
   tasks: []
 };
 
@@ -12,25 +13,30 @@ const taskSlice = createSlice({
     fetchRequest(state) {
       state.loading = true;
     },
-    getTaskSuccess(state, action) {
+    getTasksSuccess(state, action) {
       const { tasks } = action.payload;
-      state.loading = false;
       state.tasks = tasks;
+      state.loading = false;
+    },
+    getTaskSuccess(state, action) {
+      const { task } = action.payload;
+      state.task = task;
+      state.loading = false;
     },
     addTaskSuccess(state, action) {
       const { task } = action.payload;
-      state.loading = false;
       state.tasks = [task, ...state.tasks];
+      state.loading = false;
     },
     editTaskSuccess(state, action) {
       const { task } = action.payload;
-      state.loading = false;
       state.tasks = state.tasks.map((taskItem) => (taskItem.id === task.id ? task : taskItem));
+      state.loading = false;
     },
     deleteTaskSuccess(state, action) {
       const { task } = action.payload;
-      state.loading = false;
       state.tasks = state.tasks.filter((taskItem) => taskItem.id !== task.id);
+      state.loading = false;
     },
     hasError(state) {
       state.loading = false;
@@ -38,6 +44,7 @@ const taskSlice = createSlice({
   }
 });
 
-export const { fetchRequest, hasError, addTaskSuccess, editTaskSuccess, getTaskSuccess, deleteTaskSuccess } = taskSlice.actions;
+export const { fetchRequest, hasError, addTaskSuccess, editTaskSuccess, getTasksSuccess, getTaskSuccess, deleteTaskSuccess } =
+  taskSlice.actions;
 
 export default taskSlice.reducer;
