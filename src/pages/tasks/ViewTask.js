@@ -1,36 +1,25 @@
 import React, { useEffect, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
-import {
-  Avatar,
-  Box,
-  Chip,
-  Divider,
-  Grid,
-  IconButton,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemText,
-  OutlinedInput,
-  Stack,
-  Typography
-} from '../../../node_modules/@mui/material/index';
+import { Box, Chip, Divider, Grid, IconButton, OutlinedInput, Stack, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
-import { IconTrash, IconEdit, IconSend, IconMoodSmile } from '@tabler/icons-react';
+import { IconTrash, IconEdit, IconSend } from '@tabler/icons-react';
 
 import MainCard from 'components/MainCard';
 import Loader from 'components/Loader';
 import TaskForm from './TaskForm';
 import DeleteTask from './DeleteTask';
+import CommentItem from './CommentItem';
+import EmojiPicker from 'components/third-party/EmojiPicker';
 
 import { useDispatch, useSelector } from 'store/index';
-import { getTaskService } from 'services/task';
+import { addTaskCommentService, getTaskService } from 'services/task';
 
 import { TASK_STATUS } from 'utils/enum';
-import { isDatePastDueDateColor } from 'utils/utilsFn';
+import { handleUserName, isDatePastDueDateColor } from 'utils/utilsFn';
 
 const HeaderIconBox = styled('div')({
   display: 'flex',
@@ -92,13 +81,22 @@ const ViewTask = () => {
   const [isEditTaskOpen, setEditTask] = useState(false);
   const [isDeleteTaskOpen, setDeleteTask] = useState(false);
 
+  const [commentTitle, setCommentTitle] = useState('');
+
+  const handleAddComment = () => {
+    if (commentTitle !== '') {
+      dispatch(addTaskCommentService(task.id, { comment: commentTitle }));
+      setCommentTitle('');
+    }
+  };
+
   useEffect(() => {
     if (taskId) {
       dispatch(getTaskService(taskId));
     }
   }, [dispatch, taskId]);
 
-  if (loading) {
+  if (loading && !task) {
     return <Loader />;
   }
 
@@ -145,6 +143,20 @@ const ViewTask = () => {
                 </Grid>
                 <Grid item xs={12} sm={12} lg={12}>
                   <Typography variant="body1" sx={{ color: '#8c8c8c' }}>
+                    Assign To
+                  </Typography>
+                  {task.assign.length > 0 ? (
+                    <Box sx={{ display: 'flex', gap: '10px', mt: 0.5 }}>
+                      {task.assign.map((user) => (
+                        <Chip key={user.id} label={handleUserName(user)} />
+                      ))}
+                    </Box>
+                  ) : (
+                    <Typography variant="body1">N/a</Typography>
+                  )}
+                </Grid>
+                <Grid item xs={12} sm={12} lg={12}>
+                  <Typography variant="body1" sx={{ color: '#8c8c8c' }}>
                     Description
                   </Typography>
                   <Typography variant="body1">{task.description || 'N/a'}</Typography>
@@ -179,73 +191,32 @@ const ViewTask = () => {
               </Grid>
             </Grid>
             <Grid item xs={12} sm={6} lg={5}>
-              <MainCard content={false}>
+              <Typography variant="h5">Comments</Typography>
+              <MainCard content={false} sx={{ mt: 1 }}>
                 <PerfectScrollbar
                   style={{
                     overflowX: 'hidden',
-                    height: '475px',
+                    height: '450px',
                     minHeight: 200
                   }}
                 >
-                  <ListItemButton>
-                    <ListItemAvatar>
-                      <Avatar url="" />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary={
-                        <Grid container alignItems="center" spacing={1} component="span">
-                          <Grid item xs zeroMinWidth component="span">
-                            <Typography
-                              variant="h5"
-                              color="inherit"
-                              component="span"
-                              sx={{
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                                display: 'block'
-                              }}
-                            >
-                              Name
-                            </Typography>
-                          </Grid>
-                          <Grid item component="span">
-                            <Typography component="span" variant="subtitle2">
-                              2h ago
-                            </Typography>
-                          </Grid>
-                        </Grid>
-                      }
-                      secondary={
-                        <Typography
-                          variant="caption"
-                          component="span"
-                          sx={{
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            display: 'block'
-                          }}
-                        >
-                          Last message
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
+                  {task.comments.map((comment) => {
+                    return <CommentItem key={comment.id} comment={comment} />;
+                  })}
                 </PerfectScrollbar>
                 <OutlinedInput
-                  value={''}
+                  value={commentTitle}
                   fullWidth
                   placeholder="Add a comment"
-                  onChange={() => {}}
-                  onKeyDown={(e) => e.key === 'Enter' && {}}
+                  onChange={(e) => setCommentTitle(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
                   startAdornment={
                     <IconButton>
-                      <IconMoodSmile />
+                      <EmojiPicker value={commentTitle} setValue={setCommentTitle} />
                     </IconButton>
                   }
                   endAdornment={
-                    <IconButton color="success" onClick={() => {}}>
+                    <IconButton color="success" onClick={() => handleAddComment()}>
                       <IconSend />
                     </IconButton>
                   }

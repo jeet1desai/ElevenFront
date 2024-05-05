@@ -31,6 +31,12 @@ const taskSlice = createSlice({
     editTaskSuccess(state, action) {
       const { task } = action.payload;
       state.tasks = state.tasks.map((taskItem) => (taskItem.id === task.id ? task : taskItem));
+      state.task = task;
+      state.loading = false;
+    },
+    addTaskCommentSuccess(state, action) {
+      const { comment } = action.payload;
+      state.task = { ...state.task, comments: [comment, ...state.task.comments] };
       state.loading = false;
     },
     deleteTaskSuccess(state, action) {
@@ -44,7 +50,15 @@ const taskSlice = createSlice({
   }
 });
 
-export const { fetchRequest, hasError, addTaskSuccess, editTaskSuccess, getTasksSuccess, getTaskSuccess, deleteTaskSuccess } =
-  taskSlice.actions;
+export const {
+  fetchRequest,
+  hasError,
+  addTaskSuccess,
+  editTaskSuccess,
+  getTasksSuccess,
+  getTaskSuccess,
+  deleteTaskSuccess,
+  addTaskCommentSuccess
+} = taskSlice.actions;
 
 export default taskSlice.reducer;

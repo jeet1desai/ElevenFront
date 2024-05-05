@@ -33,11 +33,10 @@ import TaskForm from './TaskForm';
 import DeleteTask from './DeleteTask';
 
 import { useSelector, useDispatch } from 'store/index';
-import { getTeamMemberService } from 'services/utils';
 import { assignedTaskService, getProjectTaskService } from 'services/task';
 
 import { TASK_STATUS } from 'utils/enum';
-import { isDatePastDueDateColor } from 'utils/utilsFn';
+import { handleUserName, isDatePastDueDateColor } from 'utils/utilsFn';
 
 const TableHeaderBox = styled('div')({
   display: 'flex',
@@ -90,12 +89,6 @@ const Tasks = () => {
   const handleChange = (_, newValue) => {
     setValue(newValue);
   };
-
-  useEffect(() => {
-    if (projectId) {
-      dispatch(getTeamMemberService(projectId));
-    }
-  }, [dispatch, projectId]);
 
   useEffect(() => {
     if (projectId) {
@@ -234,7 +227,7 @@ const Tasks = () => {
                           <TableCell align="left" style={{ color: isDatePastDueDateColor(task.end_date) }}>
                             {task.end_date ? dayjs(task.end_date).format('MMM DD, YYYY') : ''}
                           </TableCell>
-                          <TableCell align="left">{task.assign.map((user) => user.first_name + ' ' + user.last_name).toString()}</TableCell>
+                          <TableCell align="left">{task.assign.map((user) => handleUserName(user)).toString()}</TableCell>
                           <TableCell align="center">
                             <Link to={`/projects/${projectId}/tasks/view/${task.id}`}>
                               <IconButton>

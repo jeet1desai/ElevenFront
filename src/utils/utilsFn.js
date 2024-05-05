@@ -83,3 +83,22 @@ export const isDatePastDueDateColor = (end_date) => {
   const endDateIsPast = isDateInPast(endDate);
   return endDateIsPast ? 'red' : 'inherit';
 };
+
+export const formatDate = (dateString) => {
+  const date = dayjs(dateString);
+  if (date.isSame(dayjs(), 'day')) {
+    return date.fromNow();
+  } else {
+    return date.format('MMM DD, YYYY');
+  }
+};
+
+export const handleUserName = (user) => {
+  let name = '';
+  if (user.first_name && user.last_name) {
+    name = `${user.first_name} ${user.last_name}`;
+  } else {
+    name = user.email;
+  }
+  return name;
+};

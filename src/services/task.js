@@ -1,5 +1,6 @@
 import { dispatch } from 'store/index';
 import {
+  addTaskCommentSuccess,
   addTaskSuccess,
   deleteTaskSuccess,
   editTaskSuccess,
@@ -83,6 +84,18 @@ export const getTaskService = (taskId) => {
       dispatch(fetchRequest());
       const response = await axios.get(`tasks/task/${taskId}`);
       dispatch(getTaskSuccess({ task: response.data.data }));
+    } catch (error) {
+      openErrorSnackbar(error.msg, 'error');
+      dispatch(hasError());
+    }
+  };
+};
+
+export const addTaskCommentService = (taskId, data) => {
+  return async () => {
+    try {
+      const response = await axios.post(`tasks/task/comment/${taskId}`, data);
+      dispatch(addTaskCommentSuccess({ comment: response.data.data }));
     } catch (error) {
       openErrorSnackbar(error.msg, 'error');
       dispatch(hasError());

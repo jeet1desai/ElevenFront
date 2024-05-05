@@ -34,11 +34,12 @@ import DeleteTask from './DeleteTask';
 
 import { IconX, IconPlus, IconTrash } from '@tabler/icons-react';
 
-import { MenuProps, uploadDocument } from 'utils/utilsFn';
+import { MenuProps, handleUserName, uploadDocument } from 'utils/utilsFn';
 import { TASK_STATUS } from 'utils/enum';
 
 import { useSelector, useDispatch } from 'store/index';
 import { addTaskService, editTaskService } from 'services/task';
+import { getTeamMemberService } from 'services/utils';
 
 const StyledUploadIcon = styled(IconPlus)({
   color: '#999999',
@@ -92,6 +93,7 @@ const StyledImage = styled(Paper)({
 const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
   const dispatch = useDispatch();
 
+  const { projectId } = useSelector((state) => state.project);
   const { teamMember } = useSelector((state) => state.utils);
 
   const [loading, setLoading] = useState(false);
@@ -110,18 +112,22 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
   });
 
   useEffect(() => {
+    if (projectId) {
+      dispatch(getTeamMemberService(projectId));
+    }
+  }, [dispatch, projectId]);
+
+  useEffect(() => {
     if (isEditTaskOpen) {
       setFormValue({
         title: task.title,
         status: task.status,
         address: task.address,
-        start_date: task.start_date,
-        end_date: task.end_date,
+        start_date: task.start_date ? dayjs(task.start_date).format('YYYY-MM-DD') : '',
+        end_date: task.end_date ? dayjs(task.end_date).format('YYYY-MM-DD') : '',
         description: task.description,
         assign: task.assign.map((user) => {
-          const { first_name, last_name, email } = user;
-          const label = first_name && last_name ? `${first_name} ${last_name}` : email;
-          return { label, id: user.id };
+          return { label: handleUserName(user), id: user.id };
         }),
         firebaseUrl: task.urls,
         files: [],
@@ -129,8 +135,6 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
       });
     }
   }, [isEditTaskOpen]);
-
-  const { projectId } = useSelector((state) => state.project);
 
   return (
     <>
@@ -258,7 +262,7 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
                         <InputLabel htmlFor="start_date">Start Date</InputLabel>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
-                            defaultValue={dayjs(values.start_date)}
+                            value={dayjs(values.start_date)}
                             name="start_date"
                             id="start_date"
                             onBlur={handleBlur}
@@ -275,7 +279,7 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
                         <InputLabel htmlFor="end_date">Due Date</InputLabel>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
-                            defaultValue={dayjs(values.end_date)}
+                            value={dayjs(values.end_date)}
                             name="end_date"
                             id="end_date"
                             onBlur={handleBlur}
@@ -298,9 +302,7 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
                           options={teamMember.map((option) => {
                             const { user } = option;
                             if (user) {
-                              const { first_name, last_name, email } = user;
-                              const label = first_name && last_name ? `${first_name} ${last_name}` : email;
-                              return { label, id: user.id };
+                              return { label: handleUserName(user), id: user.id };
                             }
                           })}
                           onBlur={handleBlur}
@@ -309,7 +311,6 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
                           onChange={(event, newValue) => {
                             const newValues = newValue.map((member) => ({ label: member.label, id: member.id }));
                             handleChange({ target: { name: 'assign', value: newValues } });
-                            // handleChange({ target: { name: 'assign', value: newValue.map((member) => member.user.id) } });
                           }}
                           renderInput={(params) => (
                             <TextField
