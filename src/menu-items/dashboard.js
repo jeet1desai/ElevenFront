@@ -97,15 +97,14 @@ const dashboard = {
       icon: icons.MessageOutlined,
       breadcrumbs: false
     },
-
-    {
-      id: 'invoice',
-      title: <FormattedMessage id="invoice" />,
-      type: 'item',
-      url: 'invoice',
-      icon: icons.AccountBookOutlined,
-      breadcrumbs: true
-    },
+    // {
+    //   id: 'invoice',
+    //   title: <FormattedMessage id="invoice" />,
+    //   type: 'item',
+    //   url: 'invoice',
+    //   icon: icons.AccountBookOutlined,
+    //   breadcrumbs: true
+    // },
     {
       id: 'setting',
       title: <FormattedMessage id="setting" />,

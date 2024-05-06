@@ -19,7 +19,6 @@ const Calender = () => {
   const matchSm = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
   const [date, setDate] = useState(new Date());
-  const [view, setView] = useState(matchSm ? 'listWeek' : 'dayGridMonth');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -31,17 +30,6 @@ const Calender = () => {
 
       calendarApi.today();
       setDate(calendarApi.getDate());
-    }
-  };
-
-  const handleViewChange = (newView) => {
-    const calendarEl = calendarRef.current;
-
-    if (calendarEl) {
-      const calendarApi = calendarEl.getApi();
-
-      calendarApi.changeView(newView);
-      setView(newView);
     }
   };
 
@@ -97,14 +85,7 @@ const Calender = () => {
     <>
       <MainCard>
         <CalendarStyled>
-          <Toolbar
-            date={date}
-            view={view}
-            onClickNext={handleDateNext}
-            onClickPrev={handleDatePrev}
-            onClickToday={handleDateToday}
-            onChangeView={handleViewChange}
-          />
+          <Toolbar date={date} onClickNext={handleDateNext} onClickPrev={handleDatePrev} onClickToday={handleDateToday} />
           <FullCalendar
             weekends
             editable
@@ -114,7 +95,7 @@ const Calender = () => {
             ref={calendarRef}
             rerenderDelay={10}
             initialDate={date}
-            initialView={view}
+            initialView={'dayGridMonth'}
             dayMaxEventRows={3}
             eventDisplay="block"
             headerToolbar={false}

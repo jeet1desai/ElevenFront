@@ -1,45 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-import { Button, ButtonGroup, Grid, IconButton, Stack, Typography, useMediaQuery } from '@mui/material';
+import { Button, Grid, IconButton, Stack, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 
-import { IconChevronLeft, IconChevronRight, IconLayoutGrid, IconTemplate, IconLayoutList, IconListNumbers } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
-const viewOptions = [
-  {
-    label: 'Month',
-    value: 'dayGridMonth',
-    icon: IconLayoutGrid
-  },
-  {
-    label: 'Week',
-    value: 'timeGridWeek',
-    icon: IconTemplate
-  },
-  {
-    label: 'Day',
-    value: 'timeGridDay',
-    icon: IconLayoutList
-  },
-  {
-    label: 'Agenda',
-    value: 'listWeek',
-    icon: IconListNumbers
-  }
-];
-
-const Toolbar = ({ date, view, onClickNext, onClickPrev, onClickToday, onChangeView, ...others }) => {
-  const matchSm = useMediaQuery((theme) => theme.breakpoints.down('md'));
-  const [newViewOption, setNewViewOption] = useState(viewOptions);
-
-  useEffect(() => {
-    let newOption = viewOptions;
-    if (matchSm) {
-      newOption = viewOptions.filter((options) => options.value !== 'dayGridMonth' && options.value !== 'timeGridWeek');
-    }
-    setNewViewOption(newOption);
-  }, [matchSm]);
-
+const Toolbar = ({ date, onClickNext, onClickPrev, onClickToday, ...others }) => {
   return (
     <Grid alignItems="center" container justifyContent="space-between" spacing={3} {...others} sx={{ pb: 3 }}>
       <Grid item>
@@ -60,24 +26,7 @@ const Toolbar = ({ date, view, onClickNext, onClickPrev, onClickToday, onChangeV
           </IconButton>
         </Stack>
       </Grid>
-      <Grid item>
-        <ButtonGroup variant="outlined">
-          {newViewOption.map((viewOption) => {
-            const Icon = viewOption.icon;
-            return (
-              <Button
-                key={viewOption.value}
-                disableElevation
-                variant={viewOption.value === view ? 'contained' : 'outlined'}
-                onClick={() => onChangeView(viewOption.value)}
-                sx={{ borderWidth: '0px !important' }}
-              >
-                <Icon stroke="2" size="20px" />
-              </Button>
-            );
-          })}
-        </ButtonGroup>
-      </Grid>
+      <Grid item></Grid>
     </Grid>
   );
 };

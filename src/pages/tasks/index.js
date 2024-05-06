@@ -20,10 +20,13 @@ import {
   Typography,
   CircularProgress,
   Chip,
+  LinearProgress,
+  Grid,
   IconButton
 } from '@mui/material';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
+import ReactApexChart from 'react-apexcharts';
 
 import { IconSearch, IconEye, IconTrash, IconEdit, IconMessage, IconSunglasses, IconRefresh } from '@tabler/icons-react';
 
@@ -76,7 +79,7 @@ const TaskStatus = ({ status }) => {
 const Tasks = () => {
   const dispatch = useDispatch();
 
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(1);
   const [isTaskFormOpen, setTaskForm] = useState(false);
   const [isEditTaskOpen, setEditTask] = useState(false);
   const [isDeleteTaskOpen, setDeleteTask] = useState(false);
@@ -105,6 +108,33 @@ const Tasks = () => {
     }
   };
 
+  const SatisfactionChartCardOptions = {
+    chart: {
+      id: 'satisfaction-chart',
+      height: 300,
+      type: 'pie'
+    },
+    labels: ['Open', 'In Review', 'Pending', 'Closed'],
+    legend: {
+      show: true,
+      position: 'bottom',
+      fontFamily: 'inherit',
+      labels: {
+        colors: 'inherit'
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      dropShadow: {
+        enabled: false
+      }
+    }
+  };
+
+  const [satisfactionChartCardSeries] = useState([66, 50, 40, 30]);
+
+  const chartData = { series: satisfactionChartCardSeries, options: SatisfactionChartCardOptions };
+
   return (
     <>
       <MainCard>
@@ -113,6 +143,108 @@ const Tasks = () => {
           <Tab sx={{ textTransform: 'none' }} label="Tasks" />
           <Tab sx={{ textTransform: 'none' }} label="Assigned to Me" />
         </Tabs>
+        {value === 0 && (
+          <Box sx={{ py: 2 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sx={12}>
+                <MainCard>
+                  <Grid container alignItems="center" spacing={2}>
+                    <Grid item xs={12} lg={3} sm={6}>
+                      <Grid container spacing={1}>
+                        <Grid item xs={12}>
+                          <Typography variant="subtitle2" align="left">
+                            Open
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography variant="h3" align="left">
+                            532
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <LinearProgress variant="determinate" value={40} color="primary" />
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} lg={3} sm={6}>
+                      <Grid container spacing={1}>
+                        <Grid item xs={12}>
+                          <Typography variant="subtitle2" align="left">
+                            In Review
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography variant="h3" align="left">
+                            4,569
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <LinearProgress variant="determinate" value={70} color="success" />
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} lg={3} sm={6}>
+                      <Grid container spacing={1}>
+                        <Grid item xs={12}>
+                          <Typography variant="subtitle2" align="left">
+                            Pending
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography variant="h3" align="left">
+                            1,005
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <LinearProgress variant="determinate" value={30} color="secondary" />
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={12} lg={3} sm={6}>
+                      <Grid container spacing={1}>
+                        <Grid item xs={12}>
+                          <Typography variant="subtitle2" align="left">
+                            Closed
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography variant="h3" align="left">
+                            365
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <LinearProgress variant="determinate" value={10} color="error" />
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </MainCard>
+              </Grid>
+              <Grid item xs={12} sx={6} md={6}>
+                <MainCard>
+                  <Typography variant="subtitle1">Tasks</Typography>
+                  <ReactApexChart
+                    options={chartData.options}
+                    series={chartData.series}
+                    type={chartData.options?.chart?.type}
+                    height={chartData.options?.chart?.height}
+                  />
+                </MainCard>
+              </Grid>
+              <Grid item xs={12} sx={6} md={6}>
+                <MainCard>
+                  <Typography variant="subtitle1">Users</Typography>
+                  <ReactApexChart
+                    options={chartData.options}
+                    series={chartData.series}
+                    type={chartData.options?.chart?.type}
+                    height={chartData.options?.chart?.height}
+                  />
+                </MainCard>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
         {(value === 1 || value === 2) && (
           <>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2, mx: 1 }}>

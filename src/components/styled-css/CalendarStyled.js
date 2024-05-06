@@ -82,6 +82,10 @@ const ExperimentalStyled = styled('div')(({ theme }) => ({
   '& .fc-timegrid-event-harness-inset .fc-timegrid-event, .fc-timegrid-event.fc-event-mirror, .fc-timegrid-more-link': {
     padding: 8,
     margin: 2
+  },
+
+  '& .fc .fc-daygrid-day.fc-day-today': {
+    backgroundColor: '#e4f1ff'
   }
 }));
 
