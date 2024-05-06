@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
-import { Box, Chip, Divider, Grid, IconButton, OutlinedInput, Stack, Typography } from '@mui/material';
+import { Box, Chip, Divider, Grid, IconButton, OutlinedInput, Stack, Typography, Modal } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
-import { IconTrash, IconEdit, IconSend } from '@tabler/icons-react';
+import { IconTrash, IconEdit, IconSend, IconX } from '@tabler/icons-react';
 
 import MainCard from 'components/MainCard';
 import Loader from 'components/Loader';
@@ -28,6 +28,36 @@ const HeaderIconBox = styled('div')({
   gap: '6px',
   justifyContent: 'space-between',
   padding: '2px 0'
+});
+
+const ModalBox = styled('div')({
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  '& img': {
+    width: '100%',
+    minWidth: '300px',
+    height: '100%',
+    borderRadius: '8px',
+    objectFit: 'contain'
+  },
+  '&:focus': {
+    outline: 'none'
+  }
+});
+
+const ModalCloseButton = styled(IconButton)({
+  position: 'absolute',
+  borderRadius: '50% !important',
+  background: '#24292e',
+  color: 'white',
+  right: '10px',
+  top: '10px',
+  '&:hover': {
+    background: '#24292e',
+    color: 'white'
+  }
 });
 
 const TaskStatus = ({ status }) => {
@@ -80,6 +110,9 @@ const ViewTask = () => {
   const [isTaskFormOpen, setTaskForm] = useState(false);
   const [isEditTaskOpen, setEditTask] = useState(false);
   const [isDeleteTaskOpen, setDeleteTask] = useState(false);
+
+  const [isImageOpen, setImageTask] = useState(false);
+  const [image, setImage] = useState('');
 
   const [commentTitle, setCommentTitle] = useState('');
 
@@ -182,6 +215,26 @@ const ViewTask = () => {
                   <Typography variant="body1">{task.address || 'N/a'}</Typography>
                 </Grid>
                 <Grid item xs={12} sm={12} lg={12}>
+                  <Typography variant="body1" sx={{ color: '#8c8c8c' }}>
+                    Photos
+                  </Typography>
+                  <Box sx={{ display: 'flex', gap: '10px', mt: 0.5, overflowX: 'auto' }}>
+                    {task.urls.map((url, i) => {
+                      return (
+                        <Box
+                          onClick={() => {
+                            setImage(url);
+                            setImageTask(true);
+                          }}
+                          key={i}
+                        >
+                          <img style={{ width: '100px', height: '100px', borderRadius: '8px', cursor: 'pointer' }} src={url} alt="task" />
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </Grid>
+                <Grid item xs={12} sm={12} lg={12}>
                   <Typography variant="body1">
                     Created by &quot;{task.created_by.first_name} {task.created_by.last_name}&quot; on{' '}
                     {dayjs(task.created_date).format('MMM DD, YYYY')}
@@ -197,7 +250,8 @@ const ViewTask = () => {
                   style={{
                     overflowX: 'hidden',
                     height: '450px',
-                    minHeight: 200
+                    minHeight: 200,
+                    flexWrap: 'wrap'
                   }}
                 >
                   {task.comments.map((comment) => {
@@ -235,6 +289,17 @@ const ViewTask = () => {
       {isTaskFormOpen && <TaskForm open={isTaskFormOpen} onClose={setTaskForm} isEditTaskOpen={isEditTaskOpen} task={task} />}
 
       {isDeleteTaskOpen && <DeleteTask open={isDeleteTaskOpen} onClose={setDeleteTask} task={task} formClose={setTaskForm} />}
+
+      {isImageOpen && (
+        <Modal open={isImageOpen}>
+          <ModalBox>
+            <img src={image} alt="task" />
+            <ModalCloseButton onClick={() => setImageTask(false)}>
+              <IconX />
+            </ModalCloseButton>
+          </ModalBox>
+        </Modal>
+      )}
     </>
   );
 };

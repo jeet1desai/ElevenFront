@@ -27,9 +27,10 @@ import avatar from 'assets/images/users/avatar.png';
 import { SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { IconLogout } from '@tabler/icons-react';
 
-import { useDispatch, useSelector } from 'store/index';
-import { logoutSuccess } from 'store/slices/account';
+import { useSelector } from 'store/index';
 import { ROLES } from 'utils/enum';
+
+import useAuth from 'hooks/useAuth';
 
 function TabPanel({ children, value, index, ...other }) {
   return (
@@ -53,15 +54,11 @@ function a11yProps(index) {
 }
 
 const Profile = () => {
-  const dispatch = useDispatch();
+  const { logout } = useAuth();
   const theme = useTheme();
 
   const { user } = useSelector((state) => state.account);
   const { project } = useSelector((state) => state.project);
-
-  const handleLogout = async () => {
-    dispatch(logoutSuccess());
-  };
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -166,7 +163,7 @@ const Profile = () => {
                           </Stack>
                         </Grid>
                         <Grid item>
-                          <IconButton color="secondary" onClick={handleLogout}>
+                          <IconButton color="secondary" onClick={logout}>
                             <IconLogout />
                           </IconButton>
                         </Grid>
@@ -203,7 +200,7 @@ const Profile = () => {
                           </Tabs>
                         </Box>
                         <TabPanel value={value} index={0} dir={theme.direction}>
-                          <ProfileTab handleLogout={handleLogout} />
+                          <ProfileTab handleLogout={logout} />
                         </TabPanel>
                         <TabPanel value={value} index={1} dir={theme.direction}>
                           <SettingTab />

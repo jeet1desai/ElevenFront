@@ -1,30 +1,27 @@
-export const setCookie = (name, value, daysToExpire) => {
-  let cookie = name + '=' + encodeURIComponent(value);
+import Cookies from 'js-cookie';
 
-  if (daysToExpire) {
-    const expirationDate = new Date();
-    expirationDate.setDate(expirationDate.getDate() + daysToExpire);
-    cookie += '; expires=' + expirationDate.toUTCString();
+class CookieStorage {
+  constructor() {
+    this.keys = new Set();
   }
 
-  document.cookie = cookie;
-};
-
-export const getCookie = (name) => {
-  const cookies = document.cookie.split(';');
-
-  for (let cookie of cookies) {
-    const cookiePair = cookie.split('=');
-    const cookieName = cookiePair[0].trim();
-
-    if (cookieName === name) {
-      return decodeURIComponent(cookiePair[1]);
-    }
+  getItem(key) {
+    return Cookies.get(key);
   }
 
-  return null;
-};
+  setItem(key, value, attributes) {
+    this.keys.add(key);
+    Cookies.set(key, value, attributes);
+  }
 
-export const deleteCookie = (name) => {
-  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-};
+  removeItem(key) {
+    this.keys.delete(key);
+    Cookies.remove(key);
+  }
+
+  clear() {
+    this.keys.forEach((key) => this.removeItem(key));
+  }
+}
+
+export const cookieStorage = new CookieStorage();
