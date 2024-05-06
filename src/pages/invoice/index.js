@@ -1,7 +1,7 @@
 import React from 'react';
 import UnderConstruction from 'pages/maintenance/under-construction';
 
-const Map = () => {
+const Invoice = () => {
   return (
     <>
       <UnderConstruction />
@@ -9,4 +9,4 @@ const Map = () => {
   );
 };
 
-export default Map;
+export default Invoice;

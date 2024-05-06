@@ -10,7 +10,7 @@ const Tasks = Loadable(lazy(() => import('pages/tasks')));
 const ViewTask = Loadable(lazy(() => import('pages/tasks/ViewTask')));
 const RequestInformation = Loadable(lazy(() => import('pages/request-information')));
 const FieldReports = Loadable(lazy(() => import('pages/field-reports')));
-const Map = Loadable(lazy(() => import('pages/map')));
+const Invoice = Loadable(lazy(() => import('pages/invoice')));
 const Document = Loadable(lazy(() => import('pages/document')));
 const Chat = Loadable(lazy(() => import('pages/chat')));
 const Calender = Loadable(lazy(() => import('pages/calender')));
@@ -45,8 +45,8 @@ const ProjectRoutes = {
       element: <FieldReports />
     },
     {
-      path: 'projects/:id/map',
-      element: <Map />
+      path: 'projects/:id/invoice',
+      element: <Invoice />
     },
     {
       path: 'projects/:id/document',

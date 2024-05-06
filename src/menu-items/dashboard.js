@@ -104,7 +104,7 @@ const dashboard = {
       type: 'item',
       url: 'invoice',
       icon: icons.AccountBookOutlined,
-      breadcrumbs: false
+      breadcrumbs: true
     },
     {
       id: 'setting',
