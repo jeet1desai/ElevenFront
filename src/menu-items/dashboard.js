@@ -111,7 +111,7 @@ const dashboard = {
       type: 'item',
       url: 'setting',
       icon: icons.SettingOutlined,
-      breadcrumbs: false
+      breadcrumbs: true
     }
   ]
 };

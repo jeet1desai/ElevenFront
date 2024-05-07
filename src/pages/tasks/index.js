@@ -39,7 +39,7 @@ import { useSelector, useDispatch } from 'store/index';
 import { assignedTaskService, getProjectTaskService } from 'services/task';
 
 import { TASK_STATUS } from 'utils/enum';
-import { handleUserName, isDatePastDueDateColor } from 'utils/utilsFn';
+import { isDatePastDueDateColor } from 'utils/utilsFn';
 
 const TableHeaderBox = styled('div')({
   display: 'flex',
@@ -146,7 +146,7 @@ const Tasks = () => {
         {value === 0 && (
           <Box sx={{ py: 2 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sx={12}>
+              <Grid item xs={12} sm={12}>
                 <MainCard>
                   <Grid container alignItems="center" spacing={2}>
                     <Grid item xs={12} lg={3} sm={6}>
@@ -220,7 +220,7 @@ const Tasks = () => {
                   </Grid>
                 </MainCard>
               </Grid>
-              <Grid item xs={12} sx={6} md={6}>
+              <Grid item xs={12} sm={6} md={6}>
                 <MainCard>
                   <Typography variant="subtitle1">Tasks</Typography>
                   <ReactApexChart
@@ -231,7 +231,7 @@ const Tasks = () => {
                   />
                 </MainCard>
               </Grid>
-              <Grid item xs={12} sx={6} md={6}>
+              <Grid item xs={12} sm={6} md={6}>
                 <MainCard>
                   <Typography variant="subtitle1">Users</Typography>
                   <ReactApexChart
@@ -325,7 +325,6 @@ const Tasks = () => {
                       <TableCell align="right"></TableCell>
                       <TableCell align="left">Status</TableCell>
                       <TableCell align="left">Due Date</TableCell>
-                      <TableCell align="left">Assign to</TableCell>
                       <TableCell align="center">Action</TableCell>
                     </TableRow>
                   </TableHead>
@@ -359,7 +358,6 @@ const Tasks = () => {
                           <TableCell align="left" style={{ color: isDatePastDueDateColor(task.end_date) }}>
                             {task.end_date ? dayjs(task.end_date).format('MMM DD, YYYY') : ''}
                           </TableCell>
-                          <TableCell align="left">{task.assign.map((user) => handleUserName(user)).toString()}</TableCell>
                           <TableCell align="center">
                             <Link to={`/projects/${projectId}/tasks/view/${task.id}`}>
                               <IconButton>
