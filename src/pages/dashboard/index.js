@@ -14,7 +14,7 @@ import {
   IconButton,
   OutlinedInput
 } from '@mui/material';
-
+import { useNavigate } from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import OrdersTable from './OrdersTable';
@@ -65,6 +65,8 @@ const StyledColText = styled('p')({
 });
 
 const DashboardDefault = () => {
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
   const { project } = useSelector((state) => state.project);
   const { todo } = useSelector((state) => state.todo);
@@ -284,7 +286,7 @@ const DashboardDefault = () => {
               <Grid item>
                 <Stack>
                   <Typography variant="h5" noWrap>
-                    Help & Support Chat
+                    Help & Support
                   </Typography>
                   <Typography variant="caption" color="secondary" noWrap>
                     Typical replay within 10 min
@@ -300,7 +302,7 @@ const DashboardDefault = () => {
                 </AvatarGroup>
               </Grid>
             </Grid>
-            <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }}>
+            <Button size="small" variant="contained" sx={{ textTransform: 'capitalize' }} onClick={() => navigate('/help-support')}>
               Need Help?
             </Button>
           </Stack>

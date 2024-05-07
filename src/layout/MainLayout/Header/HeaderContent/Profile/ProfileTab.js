@@ -17,6 +17,8 @@ const ProfileTab = ({ handleLogout }) => {
 
     if (index === 0) {
       navigate('/account');
+    } else {
+      navigate('/billing');
     }
   };
 
@@ -26,9 +28,9 @@ const ProfileTab = ({ handleLogout }) => {
         <ListItemIcon>
           <UserOutlined />
         </ListItemIcon>
-        <ListItemText primary="Account Setting" />
+        <ListItemText primary="Account" />
       </ListItemButton>
-      <ListItemButton selected={selectedIndex === 4} onClick={(event) => handleListItemClick(event, 4)}>
+      <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
         <ListItemIcon>
           <WalletOutlined />
         </ListItemIcon>
