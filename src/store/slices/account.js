@@ -4,6 +4,7 @@ const initialState = {
   loading: true,
   isLoggedIn: false,
   user: null,
+  company: null,
   isCompany: true
 };
 
@@ -14,22 +15,32 @@ const accountSlice = createSlice({
     loginSuccess(state, action) {
       const { user, isCompany } = action.payload;
       state.isLoggedIn = true;
-      state.loading = false;
       state.user = user;
       state.isCompany = isCompany;
+      state.loading = false;
     },
     createCompanySuccess(state) {
-      state.loading = false;
       state.isCompany = true;
+      state.loading = false;
+    },
+    getCompanySuccess(state, action) {
+      const { company } = action.payload;
+      state.company = company;
+      state.loading = false;
+    },
+    editCompanySuccess(state, action) {
+      const { company } = action.payload;
+      state.company = company;
+      state.loading = false;
     },
     logoutSuccess(state) {
       state.isLoggedIn = false;
-      state.loading = false;
       state.user = null;
+      state.loading = false;
     }
   }
 });
 
-export const { loginSuccess, createCompanySuccess, logoutSuccess } = accountSlice.actions;
+export const { loginSuccess, createCompanySuccess, getCompanySuccess, editCompanySuccess, logoutSuccess } = accountSlice.actions;
 
 export default accountSlice.reducer;

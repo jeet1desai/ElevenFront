@@ -32,7 +32,7 @@ const MainRoutes = {
       element: <FeedbackPage />
     },
     {
-      path: 'privacy',
+      path: 'releases',
       element: <PrivacyPage />
     },
     {

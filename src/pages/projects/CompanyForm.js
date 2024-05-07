@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
@@ -26,25 +26,41 @@ import { IconX } from '@tabler/icons-react';
 import { COUNTRIES, INDUSTRY, TITLE, TYPE } from 'utils/enum';
 import { MenuProps } from 'utils/utilsFn';
 
-import { createCompanyService } from 'services/account';
+import { createCompanyService, editCompanyService } from 'services/account';
 import { useDispatch } from 'store/index';
 
-const CompanyForm = ({ open, setCompanyModal, isEdit }) => {
+const CompanyForm = ({ open, setCompanyModal, isEdit, company }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
+
+  const [formValue, setFormValue] = useState({
+    company: '',
+    countryCode: '',
+    phone: '',
+    title: '',
+    type: '',
+    industry: ''
+  });
+
+  useEffect(() => {
+    if (isEdit) {
+      setFormValue({
+        company: company.company,
+        countryCode: company.country_code,
+        phone: company.phone_number,
+        title: company.title,
+        type: company.type,
+        industry: company.industry
+      });
+    }
+  }, [isEdit]);
 
   return (
     <>
       <Dialog open={open} scroll="paper" fullWidth>
         <Formik
-          initialValues={{
-            company: '',
-            countryCode: '',
-            phone: '',
-            title: '',
-            type: '',
-            industry: ''
-          }}
+          enableReinitialize
+          initialValues={formValue}
           validationSchema={Yup.object().shape({
             company: Yup.string().max(255).required('Company name is required'),
             countryCode: Yup.string().max(255).required('Company code is required'),
@@ -52,17 +68,22 @@ const CompanyForm = ({ open, setCompanyModal, isEdit }) => {
           })}
           onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
             try {
-              await dispatch(
-                createCompanyService({
-                  company: values.company,
-                  country_code: values.countryCode,
-                  phone_number: values.phone,
-                  title: values.title,
-                  type: values.type,
-                  industry: values.industry
-                })
-              );
+              const body = {
+                company: values.company,
+                country_code: values.countryCode,
+                phone_number: values.phone,
+                title: values.title,
+                type: values.type,
+                industry: values.industry
+              };
 
+              if (isEdit) {
+                await dispatch(editCompanyService(company.id, body));
+              } else {
+                await dispatch(createCompanyService(body));
+              }
+
+              setCompanyModal(false);
               setStatus({ success: true });
               setSubmitting(false);
             } catch (err) {

@@ -19,7 +19,7 @@ const SettingTab = () => {
     } else if (index === 2) {
       navigate('/feedback');
     } else {
-      navigate('/privacy');
+      navigate('/releases');
     }
   };
 
@@ -35,7 +35,7 @@ const SettingTab = () => {
         <ListItemIcon>
           <LockOutlined />
         </ListItemIcon>
-        <ListItemText primary="Privacy Center" />
+        <ListItemText primary="Releases" />
       </ListItemButton>
       <ListItemButton selected={selectedIndex === 2} onClick={(event) => handleListItemClick(event, 2)}>
         <ListItemIcon>

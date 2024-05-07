@@ -13,17 +13,23 @@ const projectSlice = createSlice({
   reducers: {
     getProjectSuccess(state, action) {
       const { projects } = action.payload;
-      state.loading = false;
       state.projects = projects;
 
       if (state.projectId !== '') {
         state.project = projects.find((project) => project.id === Number(state.projectId));
       }
+      state.loading = false;
     },
     createProjectSuccess(state, action) {
       const { project } = action.payload;
-      state.loading = false;
       state.projects = [...state.projects, project];
+      state.loading = false;
+    },
+    editProjectSuccess(state, action) {
+      const { project } = action.payload;
+      state.project = project;
+      state.projects = state.projects.map((item) => (item.id === Number(project.id) ? project : item));
+      state.loading = false;
     },
     setProjectIdSuccess(state, action) {
       const { id } = action.payload;
@@ -37,6 +43,6 @@ const projectSlice = createSlice({
   }
 });
 
-export const { getProjectSuccess, createProjectSuccess, setProjectIdSuccess, hasError } = projectSlice.actions;
+export const { getProjectSuccess, createProjectSuccess, setProjectIdSuccess, editProjectSuccess, hasError } = projectSlice.actions;
 
 export default projectSlice.reducer;

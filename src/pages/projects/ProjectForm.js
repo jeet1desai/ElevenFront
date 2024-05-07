@@ -29,7 +29,7 @@ import { CloseOutlined } from '@ant-design/icons';
 
 import { STATUS } from 'utils/enum';
 
-import { createProjectListService } from 'services/project';
+import { createProjectListService, editProjectListService } from 'services/project';
 import { useDispatch } from 'store/index';
 
 const ITEM_HEIGHT = 48;
@@ -55,8 +55,6 @@ const ProjectForm = ({ isProjectModalOpen, setProjectModal, project, isEdit }) =
     startDate: '',
     endDate: ''
   });
-
-  console.log(project);
 
   useEffect(() => {
     if (isEdit) {
@@ -91,7 +89,11 @@ const ProjectForm = ({ isProjectModalOpen, setProjectModal, project, isEdit }) =
                 address: values.address
               };
 
-              await dispatch(createProjectListService(body));
+              if (isEdit) {
+                await dispatch(editProjectListService(project.id, body));
+              } else {
+                await dispatch(createProjectListService(body));
+              }
 
               setStatus({ success: true });
               setSubmitting(false);
