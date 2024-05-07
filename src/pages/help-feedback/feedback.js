@@ -3,7 +3,7 @@ import React from 'react';
 import { Box, IconButton, Typography, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
-import { IconHome } from '@tabler/icons-react';
+import { IconFolders } from '@tabler/icons-react';
 
 import MainCard from 'components/MainCard';
 
@@ -17,7 +17,7 @@ const Feedback = () => {
           <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
             <Typography variant="h2">Feedback</Typography>
             <IconButton sx={{ bgcolor: 'primary.lighter' }} onClick={() => navigate('/projects')}>
-              <IconHome />
+              <IconFolders />
             </IconButton>
           </Box>
           <Grid container spacing={2} sx={{ mt: 0 }}>

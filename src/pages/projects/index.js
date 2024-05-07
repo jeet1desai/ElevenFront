@@ -12,8 +12,8 @@ import { ROLES, STATUS } from 'utils/enum';
 
 import { setProjectIdSuccess } from 'store/slices/project';
 
-import NewProject from './NewProject';
-import CreateCompany from './CreateCompany';
+import ProjectForm from './ProjectForm';
+import CompanyForm from './CompanyForm';
 
 const headCells = [
   {
@@ -137,9 +137,9 @@ const Projects = () => {
         </MainCard>
       </Box>
 
-      <CreateCompany open={!isCompany} />
+      <CompanyForm open={!isCompany} setCompanyModal={() => {}} isEdit={false} />
 
-      <NewProject isProjectModalOpen={isProjectModalOpen} setProjectModal={setProjectModal} />
+      <ProjectForm isProjectModalOpen={isProjectModalOpen} setProjectModal={setProjectModal} project={null} isEdit={false} />
     </Box>
   );
 };

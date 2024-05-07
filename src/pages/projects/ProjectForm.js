@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import dayjs from 'dayjs';
 import * as Yup from 'yup';
@@ -44,21 +44,39 @@ const MenuProps = {
   }
 };
 
-const NewProject = ({ isProjectModalOpen, setProjectModal }) => {
+const ProjectForm = ({ isProjectModalOpen, setProjectModal, project, isEdit }) => {
   const dispatch = useDispatch();
+
+  const [formValue, setFormValue] = useState({
+    name: '',
+    code: '',
+    address: '',
+    status: 1,
+    startDate: '',
+    endDate: ''
+  });
+
+  console.log(project);
+
+  useEffect(() => {
+    if (isEdit) {
+      setFormValue({
+        name: project.name,
+        code: project.code,
+        address: project.address,
+        status: project.status,
+        startDate: project.start_date ? dayjs(project.start_date).format('YYYY-MM-DD') : '',
+        endDate: project.end_date ? dayjs(project.end_date).format('YYYY-MM-DD') : ''
+      });
+    }
+  }, [isEdit]);
 
   return (
     <>
       <Dialog open={isProjectModalOpen} scroll="paper" fullWidth>
         <Formik
-          initialValues={{
-            name: '',
-            code: '',
-            address: '',
-            status: 1,
-            startDate: '',
-            endDate: ''
-          }}
+          enableReinitialize
+          initialValues={formValue}
           validationSchema={Yup.object().shape({
             name: Yup.string().max(255).required('Project name is required')
           })}
@@ -90,7 +108,7 @@ const NewProject = ({ isProjectModalOpen, setProjectModal }) => {
               <Form noValidate onSubmit={handleSubmit}>
                 <Grid container spacing={2} justifyContent="space-between" alignItems="center">
                   <Grid item>
-                    <DialogTitle sx={{ fontSize: '1.3rem', fontWeight: '500' }}>New Project</DialogTitle>
+                    <DialogTitle sx={{ fontSize: '1.3rem', fontWeight: '500' }}>{isEdit ? 'Project Details' : 'New Project'}</DialogTitle>
                   </Grid>
                   <Grid item sx={{ mr: 1.5 }}>
                     <IconButton color="secondary" onClick={() => setProjectModal(false)}>
@@ -174,8 +192,10 @@ const NewProject = ({ isProjectModalOpen, setProjectModal }) => {
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
                             name="startDate"
+                            value={dayjs(values.start_date)}
+                            onBlur={handleBlur}
                             onChange={(newValue) => {
-                              handleChange({ target: { name: 'startDate', value: newValue } });
+                              handleChange({ target: { name: 'startDate', value: dayjs(newValue).format('YYYY-MM-DD') } });
                             }}
                             renderInput={(params) => <TextField {...params} />}
                           />
@@ -187,9 +207,12 @@ const NewProject = ({ isProjectModalOpen, setProjectModal }) => {
                         <InputLabel htmlFor="endDate">End Date</InputLabel>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
+                            value={dayjs(values.end_date)}
                             name="endDate"
+                            id="endDate"
+                            onBlur={handleBlur}
                             onChange={(newValue) => {
-                              handleChange({ target: { name: 'endDate', value: newValue } });
+                              handleChange({ target: { name: 'endDate', value: dayjs(newValue).format('YYYY-MM-DD') } });
                             }}
                             renderInput={(params) => <TextField {...params} />}
                           />
@@ -203,7 +226,7 @@ const NewProject = ({ isProjectModalOpen, setProjectModal }) => {
                     Cancel
                   </Button>
                   <Button disableElevation disabled={isSubmitting} variant="contained" type="submit">
-                    Create Project
+                    {isEdit ? 'Save' : 'Create Project'}
                   </Button>
                 </DialogActions>
               </Form>
@@ -215,4 +238,4 @@ const NewProject = ({ isProjectModalOpen, setProjectModal }) => {
   );
 };
 
-export default NewProject;
+export default ProjectForm;

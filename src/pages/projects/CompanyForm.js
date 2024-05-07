@@ -16,9 +16,12 @@ import {
   DialogActions,
   FormHelperText,
   Select,
+  IconButton,
   MenuItem
 } from '@mui/material';
 import { parseInt } from 'lodash';
+
+import { IconX } from '@tabler/icons-react';
 
 import { COUNTRIES, INDUSTRY, TITLE, TYPE } from 'utils/enum';
 import { MenuProps } from 'utils/utilsFn';
@@ -26,7 +29,7 @@ import { MenuProps } from 'utils/utilsFn';
 import { createCompanyService } from 'services/account';
 import { useDispatch } from 'store/index';
 
-const CreateCompany = ({ open }) => {
+const CompanyForm = ({ open, setCompanyModal, isEdit }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
 
@@ -72,7 +75,18 @@ const CreateCompany = ({ open }) => {
           {({ errors, handleBlur, handleChange, handleSubmit, touched, values, isSubmitting }) => {
             return (
               <Form noValidate onSubmit={handleSubmit}>
-                <DialogTitle sx={{ fontSize: '1.3rem', fontWeight: '500' }}>Company Details</DialogTitle>
+                <Grid container spacing={2} justifyContent="space-between" alignItems="center">
+                  <Grid item>
+                    <DialogTitle sx={{ fontSize: '1.3rem', fontWeight: '500' }}>Company Details</DialogTitle>
+                  </Grid>
+                  {isEdit && (
+                    <Grid item sx={{ mr: 1.5 }}>
+                      <IconButton color="secondary" onClick={() => setCompanyModal(false)}>
+                        <IconX />
+                      </IconButton>
+                    </Grid>
+                  )}
+                </Grid>
                 <DialogContent dividers>
                   <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -118,7 +132,7 @@ const CreateCompany = ({ open }) => {
                                   src={`https://flagcdn.com/w20/${option.code?.toLowerCase()}.png`}
                                   alt=""
                                 />
-                                {option.label} +{option.phone}
+                                +{option.phone}
                               </Box>
                             </MenuItem>
                           ))}
@@ -231,6 +245,11 @@ const CreateCompany = ({ open }) => {
                   </Grid>
                 </DialogContent>
                 <DialogActions sx={{ padding: '15px 24px' }}>
+                  {isEdit && (
+                    <Button onClick={() => setCompanyModal(false)} color="error">
+                      Cancel
+                    </Button>
+                  )}
                   <Button disableElevation disabled={isSubmitting} variant="contained" type="submit">
                     Save
                   </Button>
@@ -244,4 +263,4 @@ const CreateCompany = ({ open }) => {
   );
 };
 
-export default CreateCompany;
+export default CompanyForm;
