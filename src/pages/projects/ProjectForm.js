@@ -194,7 +194,7 @@ const ProjectForm = ({ isProjectModalOpen, setProjectModal, project, isEdit }) =
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
                             name="startDate"
-                            value={dayjs(values.start_date)}
+                            value={dayjs(values.startDate)}
                             onBlur={handleBlur}
                             onChange={(newValue) => {
                               handleChange({ target: { name: 'startDate', value: dayjs(newValue).format('YYYY-MM-DD') } });
@@ -209,7 +209,7 @@ const ProjectForm = ({ isProjectModalOpen, setProjectModal, project, isEdit }) =
                         <InputLabel htmlFor="endDate">End Date</InputLabel>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                           <DatePicker
-                            value={dayjs(values.end_date)}
+                            value={dayjs(values.endDate)}
                             name="endDate"
                             id="endDate"
                             onBlur={handleBlur}

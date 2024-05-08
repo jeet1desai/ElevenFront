@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { UserOutlined, LogoutOutlined, WalletOutlined } from '@ant-design/icons';
 
-const ProfileTab = ({ handleLogout }) => {
+const ProfileTab = ({ setOpen, handleLogout }) => {
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -20,6 +20,8 @@ const ProfileTab = ({ handleLogout }) => {
     } else {
       navigate('/billing');
     }
+
+    setOpen(false);
   };
 
   return (

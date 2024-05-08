@@ -8,7 +8,7 @@ import HeaderContent from './HeaderContent';
 
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 
-const Header = ({ open, handleDrawerToggle }) => {
+const Header = ({ open, handleDrawerToggle, isSimpleLayout }) => {
   const theme = useTheme();
   const matchDownMD = useMediaQuery(theme.breakpoints.down('lg'));
 
@@ -16,15 +16,17 @@ const Header = ({ open, handleDrawerToggle }) => {
 
   const mainHeader = (
     <Toolbar>
-      <IconButton
-        disableRipple
-        onClick={handleDrawerToggle}
-        edge="start"
-        color="secondary"
-        sx={{ color: 'text.primary', bgcolor: open ? '' : iconBackColor, ml: { xs: 0, lg: -2 }, borderRadius: '8px' }}
-      >
-        {!open ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-      </IconButton>
+      {!isSimpleLayout && (
+        <IconButton
+          disableRipple
+          onClick={handleDrawerToggle}
+          edge="start"
+          color="secondary"
+          sx={{ color: 'text.primary', bgcolor: open ? '' : iconBackColor, ml: { xs: 0, lg: -2 }, borderRadius: '8px' }}
+        >
+          {!open ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        </IconButton>
+      )}
       <HeaderContent />
     </Toolbar>
   );
@@ -53,6 +55,7 @@ const Header = ({ open, handleDrawerToggle }) => {
 
 Header.propTypes = {
   open: PropTypes.bool,
+  isSimpleLayout: PropTypes.bool,
   handleDrawerToggle: PropTypes.func
 };
 

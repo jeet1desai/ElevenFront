@@ -39,7 +39,7 @@ const SimpleLayout = () => {
   return (
     <Box sx={{ width: '100%' }}>
       <Box sx={{ display: 'flex', width: '100%' }}>
-        <Header open={false} handleDrawerToggle={handleDrawerToggle} />
+        <Header isSimpleLayout={true} open={false} handleDrawerToggle={handleDrawerToggle} />
       </Box>
       <Box component="main" sx={{ width: '100%' }}>
         <Toolbar />

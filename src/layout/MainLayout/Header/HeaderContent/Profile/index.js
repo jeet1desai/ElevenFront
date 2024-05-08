@@ -200,10 +200,10 @@ const Profile = () => {
                           </Tabs>
                         </Box>
                         <TabPanel value={value} index={0} dir={theme.direction}>
-                          <ProfileTab handleLogout={logout} />
+                          <ProfileTab setOpen={setOpen} handleLogout={logout} />
                         </TabPanel>
                         <TabPanel value={value} index={1} dir={theme.direction}>
-                          <SettingTab />
+                          <SettingTab setOpen={setOpen} />
                         </TabPanel>
                       </>
                     )}

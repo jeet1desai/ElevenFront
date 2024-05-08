@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { LockOutlined, QuestionCircleOutlined, CommentOutlined } from '@ant-design/icons';
 
-const SettingTab = () => {
+const SettingTab = ({ setOpen }) => {
   const theme = useTheme();
   const navigate = useNavigate();
 
@@ -21,6 +21,8 @@ const SettingTab = () => {
     } else {
       navigate('/releases');
     }
+
+    setOpen(false);
   };
 
   return (
