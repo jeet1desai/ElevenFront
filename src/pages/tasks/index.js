@@ -50,6 +50,23 @@ const TableHeaderBox = styled('div')({
   padding: '2px 0'
 });
 
+const TaskHeaderBox = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  margin: '16px 0',
+  flexWrap: 'wrap'
+});
+
+const TaskFilterBox = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  margin: '16px 0',
+  gap: '8px',
+  flexWrap: 'wrap'
+});
+
 const TaskStatus = ({ status }) => {
   let color;
   let title = TASK_STATUS[status];
@@ -247,7 +264,7 @@ const Tasks = () => {
         )}
         {(value === 1 || value === 2) && (
           <>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2, mx: 1 }}>
+            <TaskHeaderBox>
               <Typography variant="h4">
                 All <span style={{ color: '#d9d9d9' }}>({tasks.length})</span>
               </Typography>
@@ -259,33 +276,7 @@ const Tasks = () => {
                     <IconRefresh onClick={() => handleFetchData()} />
                   )}
                 </IconButton>
-                <TextField
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <IconSearch stroke={2} size={16} />
-                      </InputAdornment>
-                    )
-                  }}
-                  placeholder="Search by title"
-                  size="small"
-                  sx={{ '& input': { padding: '8px 8px 8px 2px' } }}
-                  onChange={() => {}}
-                />
-                <Select
-                  value=""
-                  displayEmpty
-                  onChange={() => {}}
-                  sx={{ width: '150px', '& .MuiInputBase-input': { py: 1.1, fontSize: '0.875rem' } }}
-                >
-                  <MenuItem disabled value="">
-                    Select Status
-                  </MenuItem>
-                  <MenuItem>Open</MenuItem>
-                  <MenuItem>In Review</MenuItem>
-                  <MenuItem>Pending</MenuItem>
-                  <MenuItem>Closed</MenuItem>
-                </Select>
+
                 {value === 1 && (
                   <Button
                     onClick={() => {
@@ -299,7 +290,52 @@ const Tasks = () => {
                   </Button>
                 )}
               </TableHeaderBox>
-            </Box>
+            </TaskHeaderBox>
+            <TaskFilterBox>
+              <TextField
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconSearch stroke={2} size={16} />
+                    </InputAdornment>
+                  )
+                }}
+                placeholder="Search by title"
+                size="small"
+                sx={{ '& input': { padding: '8px 8px 8px 2px' } }}
+                onChange={() => {}}
+              />
+              <Select
+                value=""
+                displayEmpty
+                onChange={() => {}}
+                sx={{ width: '150px', '& .MuiInputBase-input': { py: 1.1, fontSize: '0.875rem' } }}
+              >
+                <MenuItem disabled value="">
+                  Select Status
+                </MenuItem>
+                <MenuItem>Open</MenuItem>
+                <MenuItem>In Review</MenuItem>
+                <MenuItem>Pending</MenuItem>
+                <MenuItem>Closed</MenuItem>
+              </Select>
+              {value === 1 && (
+                <Select
+                  value=""
+                  displayEmpty
+                  onChange={() => {}}
+                  sx={{ width: '200px', '& .MuiInputBase-input': { py: 1.1, fontSize: '0.875rem' } }}
+                >
+                  <MenuItem disabled value="">
+                    Select Assigned User
+                  </MenuItem>
+                  <MenuItem>Open</MenuItem>
+                  <MenuItem>In Review</MenuItem>
+                  <MenuItem>Pending</MenuItem>
+                  <MenuItem>Closed</MenuItem>
+                </Select>
+              )}
+            </TaskFilterBox>
             <MainCard content={false}>
               <TableContainer
                 sx={{

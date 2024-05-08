@@ -45,10 +45,6 @@ button {
   height: 20px;
 }
 
-.MuiTab-root {
-  border-radius: 8px 8px 0 0 !important;
-}
-
 .MuiTab-root:hover {
   background-color: rgba(214, 228, 255, 0.6);
   color: rgb(51, 102, 255);
@@ -58,3 +54,26 @@ button {
   outline: none !important;
   box-shadow: none !important;
 }
+
+.MuiTabs-root {
+  min-height: 46px;
+}
+
+.MuiTabs-root .MuiTabs-flexContainer {
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.MuiTabs-root button.MuiTab-root {
+  min-height: 40px;
+}
+
+.MuiTabs-root button.MuiTab-root.Mui-selected {
+  background-color: #fafafb;
+}
+
+/* .MuiTabs-root button.MuiTab-root:hover,
+.MuiTabs-root button.MuiTab-root.Mui-selected {
+  background-color: #d0d7de33;
+  color: #1f2328;
+} */
