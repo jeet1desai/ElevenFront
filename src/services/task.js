@@ -102,3 +102,15 @@ export const addTaskCommentService = (taskId, data) => {
     }
   };
 };
+
+export const getDashboardTaskService = (projectId) => {
+  return async () => {
+    try {
+      const response = await axios.get(`tasks/dash/${projectId}`);
+      dispatch(getTasksSuccess({ tasks: response.data.data }));
+    } catch (error) {
+      openErrorSnackbar(error.msg, 'error');
+      dispatch(hasError());
+    }
+  };
+};

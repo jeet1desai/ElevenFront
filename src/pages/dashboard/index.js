@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { styled } from '@mui/material/styles';
 import {
@@ -12,12 +12,14 @@ import {
   CardActions,
   Divider,
   IconButton,
+  Checkbox,
+  FormControlLabel,
   OutlinedInput
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 
-import OrdersTable from './OrdersTable';
+import DashTaskTable from './DashTaskTable';
 import MainCard from 'components/MainCard';
 import ReportCard from 'components/cards/statistics/ReportCard';
 
@@ -25,9 +27,10 @@ import avatar from 'assets/images/users/avatar.png';
 
 import { useSelector, useDispatch } from 'store/index';
 import { checkedTodoSuccess, createTodoSuccess, deleteTodoSuccess } from 'store/slices/todo';
+import { dashboardStatCountService } from 'services/utils';
+import { getDashboardTaskService } from 'services/task';
 
-import { IconCalendarEvent, IconUsers, IconFileInvoice, IconFileDollar, IconPlus, IconSend, IconX, IconTrash } from '@tabler/icons-react';
-import { Checkbox, FormControlLabel } from '../../../node_modules/@mui/material/index';
+import { IconCalendarEvent, IconUsers, IconFileInvoice, IconPlus, IconSend, IconX, IconTrash } from '@tabler/icons-react';
 
 const StyledCrossIcon = styled(IconButton)({
   background: '#1677ff',
@@ -66,10 +69,12 @@ const StyledColText = styled('p')({
 
 const DashboardDefault = () => {
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
+
   const { project } = useSelector((state) => state.project);
   const { todo } = useSelector((state) => state.todo);
+  const { dashboardStats } = useSelector((state) => state.utils);
+  const { tasks } = useSelector((state) => state.task);
 
   const [isTodoOpen, setTodoOpen] = useState(false);
   const [todoTitle, setTodoTitle] = useState('');
@@ -89,23 +94,30 @@ const DashboardDefault = () => {
     dispatch(checkedTodoSuccess({ todo, checked }));
   };
 
+  useEffect(() => {
+    if (project) {
+      dispatch(dashboardStatCountService(project.id));
+      dispatch(getDashboardTaskService(project.id));
+    }
+  }, [dispatch, project]);
+
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
       <Grid item xs={12} sx={{ mb: -2.25 }}>
         <Typography variant="h5">Home - {project?.name}</Typography>
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <ReportCard secondary="Total Team Member" primary="0" iconPrimary={IconUsers} color="secondary" />
+      <Grid item xs={12} sm={6} md={4} lg={4}>
+        <ReportCard secondary="Total Team Member" primary={dashboardStats.teamCount} iconPrimary={IconUsers} color="secondary" />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <ReportCard secondary="Total Tasks" primary="0" iconPrimary={IconCalendarEvent} color="error" />
+      <Grid item xs={12} sm={6} md={4} lg={4}>
+        <ReportCard secondary="Total Tasks" primary={dashboardStats.taskCount} iconPrimary={IconCalendarEvent} color="error" />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <ReportCard secondary="Total Documents" primary="0" iconPrimary={IconFileInvoice} color="success" />
+      <Grid item xs={12} sm={6} md={4} lg={4}>
+        <ReportCard secondary="Total Documents" primary={dashboardStats.documentCount} iconPrimary={IconFileInvoice} color="primary" />
       </Grid>
-      <Grid item xs={12} sm={6} md={4} lg={3}>
+      {/* <Grid item xs={12} sm={6} md={4} lg={3}>
         <ReportCard secondary="Total Invoices" primary="0" iconPrimary={IconFileDollar} color="primary" />
-      </Grid>
+      </Grid> */}
 
       <Grid item md={8} sx={{ display: { sm: 'none', md: 'block', lg: 'none' } }} />
 
@@ -269,7 +281,7 @@ const DashboardDefault = () => {
           <Grid item />
         </Grid>
         <MainCard sx={{ mt: 2 }} content={false}>
-          <OrdersTable />
+          <DashTaskTable tasks={tasks} />
         </MainCard>
       </Grid>
 

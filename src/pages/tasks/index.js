@@ -67,7 +67,7 @@ const TaskFilterBox = styled('div')({
   flexWrap: 'wrap'
 });
 
-const TaskStatus = ({ status }) => {
+export const TaskStatus = ({ status }) => {
   let color;
   let title = TASK_STATUS[status];
 
