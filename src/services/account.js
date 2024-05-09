@@ -1,6 +1,7 @@
 import { dispatch } from 'store/index';
 import { createCompanySuccess, editCompanySuccess, getCompanySuccess, loginSuccess, logoutSuccess } from 'store/slices/account';
 import axios from 'utils/axios';
+import { cookieStorage } from 'utils/cookie';
 import { openErrorSnackbar } from 'utils/utilsFn';
 
 export const meUserService = () => {
@@ -10,7 +11,6 @@ export const meUserService = () => {
       dispatch(loginSuccess({ user: response.data.user, isCompany: response.data.is_company }));
     } catch (error) {
       openErrorSnackbar(error.msg, 'error');
-      dispatch(logoutSuccess());
     }
   };
 };
@@ -22,7 +22,6 @@ export const createCompanyService = (data) => {
       dispatch(createCompanySuccess(response.data));
     } catch (error) {
       openErrorSnackbar(error.msg, 'error');
-      dispatch(logoutSuccess());
     }
   };
 };
@@ -34,7 +33,6 @@ export const getCompanyService = () => {
       dispatch(getCompanySuccess({ company: response.data.data }));
     } catch (error) {
       openErrorSnackbar(error.msg, 'error');
-      dispatch(logoutSuccess());
     }
   };
 };
@@ -46,7 +44,30 @@ export const editCompanyService = (companyId, data) => {
       dispatch(editCompanySuccess({ company: response.data.data }));
     } catch (error) {
       openErrorSnackbar(error.msg, 'error');
+    }
+  };
+};
+
+export const changePasswordService = (data) => {
+  return async () => {
+    try {
+      await axios.post(`user/change-password`, data);
+      cookieStorage.clear();
       dispatch(logoutSuccess());
+    } catch (error) {
+      openErrorSnackbar(error.msg, 'error');
+    }
+  };
+};
+
+export const deleteAccountService = () => {
+  return async () => {
+    try {
+      await axios.delete(`user/delete`);
+      cookieStorage.clear();
+      dispatch(logoutSuccess());
+    } catch (error) {
+      openErrorSnackbar(error.msg, 'error');
     }
   };
 };

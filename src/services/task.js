@@ -39,11 +39,11 @@ export const editTaskService = (taskId, data) => {
   };
 };
 
-export const getProjectTaskService = (projectId) => {
+export const getProjectTaskService = (projectId, search, status, user) => {
   return async () => {
     try {
       dispatch(fetchRequest());
-      const response = await axios.get(`tasks/team/${projectId}`);
+      const response = await axios.get(`tasks/team/${projectId}?search=${search}&status=${status}&user=${user}`);
       dispatch(getTasksSuccess({ tasks: response.data.data }));
     } catch (error) {
       openErrorSnackbar(error.msg, 'error');
@@ -52,11 +52,11 @@ export const getProjectTaskService = (projectId) => {
   };
 };
 
-export const assignedTaskService = (projectId) => {
+export const assignedTaskService = (projectId, search, status) => {
   return async () => {
     try {
       dispatch(fetchRequest());
-      const response = await axios.get(`tasks/my/${projectId}`);
+      const response = await axios.get(`tasks/my/${projectId}?search=${search}&status=${status}`);
       dispatch(getTasksSuccess({ tasks: response.data.data }));
     } catch (error) {
       openErrorSnackbar(error.msg, 'error');

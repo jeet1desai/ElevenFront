@@ -39,7 +39,8 @@ import { useSelector, useDispatch } from 'store/index';
 import { assignedTaskService, getProjectTaskService } from 'services/task';
 
 import { TASK_STATUS } from 'utils/enum';
-import { isDatePastDueDateColor } from 'utils/utilsFn';
+import { handleUserName, isDatePastDueDateColor } from 'utils/utilsFn';
+import { getTeamMemberService } from 'services/utils';
 
 const TableHeaderBox = styled('div')({
   display: 'flex',
@@ -103,25 +104,60 @@ const Tasks = () => {
 
   const [taskDetail, setTaskDetail] = useState(null);
 
+  const [filter, setFilter] = useState({
+    search: '',
+    status: '',
+    assign: ''
+  });
+
   const { projectId } = useSelector((state) => state.project);
+  const { teamMember } = useSelector((state) => state.utils);
   const { loading, tasks } = useSelector((state) => state.task);
 
   const handleChange = (_, newValue) => {
+    setFilter({
+      search: '',
+      status: '',
+      assign: ''
+    });
     setValue(newValue);
   };
 
   useEffect(() => {
     if (projectId) {
-      handleFetchData();
+      dispatch(getTeamMemberService(projectId));
+      fetchData();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, projectId, value]);
+  }, [dispatch, projectId]);
 
-  const handleFetchData = () => {
+  const fetchData = () => {
     if (value === 1) {
-      dispatch(getProjectTaskService(projectId));
+      dispatch(getProjectTaskService(projectId, filter.search, filter.status, filter.assign));
     } else if (value === 2) {
-      dispatch(assignedTaskService(projectId));
+      dispatch(assignedTaskService(projectId, filter.search, filter.status));
+    }
+  };
+
+  useEffect(() => {
+    const debouncedFetchData = _.debounce(fetchData, 500);
+    debouncedFetchData();
+
+    return () => {
+      debouncedFetchData.cancel();
+    };
+  }, [dispatch, projectId, filter]);
+
+  const handleFilterChange = (key, value) => {
+    if (key === 'search') {
+      value = value.trim();
+    }
+    if (
+      (key === 'search' && value !== filter.search) ||
+      (key === 'status' && value !== filter.status) ||
+      (key === 'assign' && value !== filter.assign)
+    ) {
+      setFilter((prevFilter) => ({ ...prevFilter, [key]: value }));
     }
   };
 
@@ -276,7 +312,6 @@ const Tasks = () => {
                     <IconRefresh onClick={() => handleFetchData()} />
                   )}
                 </IconButton>
-
                 {value === 1 && (
                   <Button
                     onClick={() => {
@@ -303,36 +338,41 @@ const Tasks = () => {
                 placeholder="Search by title"
                 size="small"
                 sx={{ '& input': { padding: '8px 8px 8px 2px' } }}
-                onChange={() => {}}
+                value={filter.search}
+                onChange={(e) => handleFilterChange('search', e.target.value)}
               />
               <Select
-                value=""
+                value={filter.status}
+                onChange={(e) => handleFilterChange('status', e.target.value)}
                 displayEmpty
-                onChange={() => {}}
                 sx={{ width: '150px', '& .MuiInputBase-input': { py: 1.1, fontSize: '0.875rem' } }}
               >
-                <MenuItem disabled value="">
-                  Select Status
-                </MenuItem>
-                <MenuItem>Open</MenuItem>
-                <MenuItem>In Review</MenuItem>
-                <MenuItem>Pending</MenuItem>
-                <MenuItem>Closed</MenuItem>
+                <MenuItem value="">Select Status</MenuItem>
+                {Object.entries(TASK_STATUS)
+                  .map(([key, value]) => ({ id: parseInt(key), label: value }))
+                  .map((option) => (
+                    <MenuItem key={option.id} value={option.id}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
               </Select>
               {value === 1 && (
                 <Select
-                  value=""
+                  value={filter.assign}
+                  onChange={(e) => handleFilterChange('assign', e.target.value)}
                   displayEmpty
-                  onChange={() => {}}
                   sx={{ width: '200px', '& .MuiInputBase-input': { py: 1.1, fontSize: '0.875rem' } }}
                 >
                   <MenuItem disabled value="">
                     Select Assigned User
                   </MenuItem>
-                  <MenuItem>Open</MenuItem>
-                  <MenuItem>In Review</MenuItem>
-                  <MenuItem>Pending</MenuItem>
-                  <MenuItem>Closed</MenuItem>
+                  {teamMember.map((userItem) => {
+                    return (
+                      <MenuItem key={userItem.user.id} value={userItem.user.id}>
+                        {handleUserName(userItem.user)}
+                      </MenuItem>
+                    );
+                  })}
                 </Select>
               )}
             </TaskFilterBox>
