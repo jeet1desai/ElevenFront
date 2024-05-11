@@ -33,6 +33,11 @@ const accountSlice = createSlice({
       state.company = company;
       state.loading = false;
     },
+    updateAccountSuccess(state, action) {
+      const { user } = action.payload;
+      state.user = user;
+      state.loading = false;
+    },
     logoutSuccess(state) {
       state.isLoggedIn = false;
       state.user = null;
@@ -41,6 +46,7 @@ const accountSlice = createSlice({
   }
 });
 
-export const { loginSuccess, createCompanySuccess, getCompanySuccess, editCompanySuccess, logoutSuccess } = accountSlice.actions;
+export const { loginSuccess, createCompanySuccess, getCompanySuccess, editCompanySuccess, logoutSuccess, updateAccountSuccess } =
+  accountSlice.actions;
 
 export default accountSlice.reducer;

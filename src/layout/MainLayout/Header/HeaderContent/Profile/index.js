@@ -23,7 +23,6 @@ import Transitions from 'components/@extended/Transitions';
 import ProfileTab from './ProfileTab';
 import SettingTab from './SettingTab';
 
-import avatar from 'assets/images/users/avatar.png';
 import { SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { IconLogout } from '@tabler/icons-react';
 
@@ -108,7 +107,7 @@ const Profile = () => {
         onClick={handleToggle}
       >
         <Stack direction="row" spacing={2} alignItems="center" sx={{ p: 0.5 }}>
-          <Avatar alt="profile user" src={avatar} sx={{ width: 32, height: 32 }} />
+          <Avatar alt="profile user" src={user.profile_picture} sx={{ width: 32, height: 32 }} />
           <Typography sx={{ textTransform: 'capitalize' }} variant="subtitle1">{`${user.first_name} ${user.last_name}`}</Typography>
         </Stack>
       </ButtonBase>
@@ -150,7 +149,7 @@ const Profile = () => {
                       <Grid container justifyContent="space-between" alignItems="center">
                         <Grid item>
                           <Stack direction="row" spacing={1.25} alignItems="center">
-                            <Avatar alt="profile user" src={avatar} sx={{ width: 32, height: 32 }} />
+                            <Avatar alt="profile user" src={user.profile_picture} sx={{ width: 32, height: 32 }} />
                             <Stack>
                               <Typography
                                 sx={{ textTransform: 'capitalize' }}

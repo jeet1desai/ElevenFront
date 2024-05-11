@@ -1,3 +1,9 @@
+export const GENDER = {
+  1: 'Male',
+  2: 'Female',
+  3: 'Other'
+};
+
 export const ROLES = {
   1: 'Collaborator',
   2: 'Power Collaborator',
