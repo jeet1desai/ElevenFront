@@ -5,7 +5,7 @@
 
 fieldset {
   border-color: #e6ebf1 !important;
-  border-radius: 8px !important;
+  border-radius: 6px !important;
 }
 
 button {
@@ -61,7 +61,6 @@ button {
 }
 
 .MuiTabs-root .MuiTabs-flexContainer {
-  margin-bottom: 8px;
   gap: 8px;
 }
 
@@ -69,12 +68,18 @@ button {
   min-height: 40px;
 }
 
-/* .MuiTabs-root button.MuiTab-root.Mui-selected {
-  background-color: #fafafb;
-} */
-
-/* .MuiTabs-root button.MuiTab-root:hover,
 .MuiTabs-root button.MuiTab-root.Mui-selected {
-  background-color: #d0d7de33;
-  color: #1f2328;
-} */
+  border-radius: 8px 8px 0 0 !important;
+}
+
+.MuiMenu-paper {
+  box-shadow:
+    rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  border-radius: 0 0 8px 8px !important;
+  border: 0;
+}
+
+.MuiMenu-paper li.Mui-selected {
+  background-color: #7373731f !important;
+}

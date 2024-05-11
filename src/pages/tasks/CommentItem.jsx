@@ -9,7 +9,7 @@ const CommentItem = ({ comment }) => {
     <>
       <ListItemButton alignItems="flex-start">
         <ListItemAvatar>
-          <Avatar url={comment.created_by.profile_picture} />
+          <Avatar src={comment.created_by.profile_picture} />
         </ListItemAvatar>
         <ListItemText
           primary={

@@ -58,7 +58,7 @@ const Account = () => {
                     <Grid item xs={12} sm={12}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <Avatar src={user.profile_picture} />
-                        <Typography variant="body1">
+                        <Typography variant="h5">
                           {user.first_name} {user.last_name}
                         </Typography>
                       </Box>

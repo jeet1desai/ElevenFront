@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import { styled } from '@mui/material/styles';
 import {
   Avatar,
   AvatarGroup,
@@ -13,6 +12,8 @@ import {
   Divider,
   IconButton,
   Checkbox,
+  List,
+  Box,
   FormControlLabel,
   OutlinedInput
 } from '@mui/material';
@@ -22,7 +23,9 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import DashTaskTable from './DashTaskTable';
 import MainCard from 'components/MainCard';
 import ReportCard from 'components/cards/statistics/ReportCard';
+import UserList from 'pages/chat/UserList';
 
+import { StyledColText, StyledCrossIcon, StyledPlusIcon, StyledRow } from './styledComponent';
 import avatar from 'assets/images/users/avatar.png';
 
 import { useSelector, useDispatch } from 'store/index';
@@ -32,46 +35,11 @@ import { getDashboardTaskService } from 'services/task';
 
 import { IconCalendarEvent, IconUsers, IconFileInvoice, IconPlus, IconSend, IconX, IconTrash } from '@tabler/icons-react';
 
-const StyledCrossIcon = styled(IconButton)({
-  background: '#1677ff',
-  color: '#ffffff',
-  '&:hover': { background: '#1677ff', color: '#ffffff' }
-});
-
-const StyledPlusIcon = styled(IconButton)({
-  position: 'absolute',
-  bottom: '15px',
-  right: '20px',
-  background: '#1677ff',
-  color: '#ffffff',
-  '&:hover': { background: '#1677ff', color: '#ffffff' }
-});
-
-const StyledRow = styled('div')({
-  alignItems: 'center',
-  alignSelf: 'stretch',
-  borderBottom: '1px solid #f1f1f1',
-  display: 'flex',
-  justifyContent: 'space-between',
-  padding: '10px 18px',
-  '&:last-child': {
-    borderBottom: '0'
-  }
-});
-
-const StyledColText = styled('p')({
-  textAlign: 'center',
-  width: '100%',
-  color: '#333333',
-  fontSize: '1rem',
-  fontWeight: '500'
-});
-
 const DashboardDefault = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { project } = useSelector((state) => state.project);
+  const { project, projectId } = useSelector((state) => state.project);
   const { todo } = useSelector((state) => state.todo);
   const { dashboardStats } = useSelector((state) => state.utils);
   const { tasks } = useSelector((state) => state.task);
@@ -104,25 +72,28 @@ const DashboardDefault = () => {
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
       <Grid item xs={12} sx={{ mb: -2.25 }}>
-        <Typography variant="h5">Home - {project?.name}</Typography>
+        <Typography variant="h4">Home - {project?.name}</Typography>
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={4}>
-        <ReportCard secondary="Total Team Member" primary={dashboardStats.teamCount} iconPrimary={IconUsers} color="secondary" />
+        <Box onClick={() => navigate(`/projects/${projectId}/teams`)}>
+          <ReportCard secondary="Total Team Member" primary={dashboardStats.teamCount} iconPrimary={IconUsers} color="secondary" />
+        </Box>
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={4}>
-        <ReportCard secondary="Total Tasks" primary={dashboardStats.taskCount} iconPrimary={IconCalendarEvent} color="error" />
+        <Box onClick={() => navigate(`/projects/${projectId}/tasks`)}>
+          <ReportCard secondary="Total Tasks" primary={dashboardStats.taskCount} iconPrimary={IconCalendarEvent} color="error" />
+        </Box>
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={4}>
-        <ReportCard secondary="Total Documents" primary={dashboardStats.documentCount} iconPrimary={IconFileInvoice} color="primary" />
+        <Box onClick={() => navigate(`/projects/${projectId}/document`)}>
+          <ReportCard secondary="Total Documents" primary={dashboardStats.documentCount} iconPrimary={IconFileInvoice} color="primary" />
+        </Box>
       </Grid>
-      {/* <Grid item xs={12} sm={6} md={4} lg={3}>
-        <ReportCard secondary="Total Invoices" primary="0" iconPrimary={IconFileDollar} color="primary" />
-      </Grid> */}
 
       <Grid item md={8} sx={{ display: { sm: 'none', md: 'block', lg: 'none' } }} />
 
       {/* Todo */}
-      <Grid item xs={12} md={7} lg={8}>
+      <Grid item xs={12} sm={8} md={4} lg={5} xl={5}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
             <Typography variant="h5">Todos</Typography>
@@ -191,7 +162,27 @@ const DashboardDefault = () => {
         </MainCard>
       </Grid>
 
-      <Grid item xs={12} md={5} lg={4}>
+      {/* Chat */}
+      <Grid item xs={12} sm={4} md={4} lg={3.5} xl={3.5}>
+        <Grid container alignItems="center" justifyContent="space-between">
+          <Grid item>
+            <Typography variant="h5">Chats</Typography>
+          </Grid>
+          <Grid item />
+        </Grid>
+        <MainCard sx={{ mt: 2 }} content={false}>
+          <PerfectScrollbar style={{ height: 546, padding: 0 }}>
+            <List component="nav" sx={{ p: 0 }}>
+              {[1, 2, 4, 5, 6, 7, 8, 9, 10].map((index) => {
+                return <UserList key={index} />;
+              })}
+            </List>
+          </PerfectScrollbar>
+        </MainCard>
+      </Grid>
+
+      {/* Feed */}
+      <Grid item xs={12} sm={4} md={4} lg={3.5} xl={3.5}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
             <Typography variant="h5">Feeds</Typography>
@@ -273,7 +264,8 @@ const DashboardDefault = () => {
         </MainCard>
       </Grid>
 
-      <Grid item xs={12} md={12} lg={12}>
+      {/* Task */}
+      <Grid item xs={12} sm={8} md={12} lg={12} xl={12}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
             <Typography variant="h5">Pending Tasks</Typography>

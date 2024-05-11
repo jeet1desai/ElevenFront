@@ -2,12 +2,13 @@ import PropTypes from 'prop-types';
 
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import { Select, MenuItem } from '@mui/material';
+import { Select, MenuItem, InputAdornment } from '@mui/material';
+
+import { IconChevronDown } from '@tabler/icons-react';
 
 import DrawerHeaderStyled from './DrawerHeaderStyled';
 
-import { useSelector } from 'store/index';
-import { useDispatch } from 'store/index';
+import { useSelector, useDispatch } from 'store/index';
 
 import { setProjectIdSuccess } from 'store/slices/project';
 
@@ -32,7 +33,16 @@ const DrawerHeader = ({ open }) => {
             navigate(`/projects/${id}/home`);
           }
         }}
-        sx={{ '& .MuiInputBase-input': { py: 1, fontSize: '0.875rem' }, width: '100%' }}
+        IconComponent={() => (
+          <InputAdornment>
+            <IconChevronDown size={18} stroke={2} />
+          </InputAdornment>
+        )}
+        sx={{
+          '& .MuiInputBase-input': { py: '10px', fontSize: '0.875rem' },
+          width: '100%',
+          '& svg': { position: 'absolute', right: '8px' }
+        }}
       >
         <MenuItem disabled value="">
           Select Project
@@ -45,7 +55,6 @@ const DrawerHeader = ({ open }) => {
         <MenuItem
           value="all"
           sx={{
-            borderTop: '1px solid #e6ebf1',
             padding: '10px 16px',
             bgcolor: '#1677ff',
             color: '#fff',
