@@ -23,7 +23,12 @@ import UserList from './UserList';
 import EmojiPicker from 'components/third-party/EmojiPicker';
 
 import { MenuUnfoldOutlined } from '@ant-design/icons';
-import { IconPhone, IconExclamationCircle, IconPaperclip, IconSend } from '@tabler/icons-react';
+import { IconPhone, IconExclamationCircle, IconSend, IconTrash } from '@tabler/icons-react';
+// import { IconPaperclip } from '@tabler/icons-react';
+
+import { useDispatch, useSelector } from 'store/index';
+import { getChatsService } from 'services/chat';
+import { handleUserName } from 'utils/utilsFn';
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
   flexGrow: 1,
@@ -48,7 +53,12 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
 
 const Chat = () => {
   const theme = useTheme();
+  const dispatch = useDispatch();
+
   const matchDownLG = useMediaQuery(theme.breakpoints.down('lg'));
+
+  const { chat, chatUserList } = useSelector((state) => state.chat);
+  const { user } = useSelector((state) => state.account);
 
   const [openChatDrawer, setOpenChatDrawer] = useState(true);
   const [commentTitle, setCommentTitle] = useState('');
@@ -61,20 +71,13 @@ const Chat = () => {
     setOpenChatDrawer(!matchDownLG);
   }, [matchDownLG]);
 
-  // useEffect(() => {
-  //   // Fetch chats for the logged-in user
-  //   const fetchChats = async () => {
-  //     try {
-  //       const response = await axios.get(`chats/chat`);
-  //       // setChats(response.data);
-  //       console.log(response.data.data);
-  //     } catch (error) {
-  //       console.error('Error fetching chats:', error);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchChats = () => {
+      dispatch(getChatsService());
+    };
 
-  //   fetchChats();
-  // }, []);
+    fetchChats();
+  }, []);
 
   const drawerBG = theme.palette.mode === 'dark' ? 'dark.main' : '#fff';
 
@@ -118,9 +121,11 @@ const Chat = () => {
                       Messages
                     </Typography>
                   </Grid>
-                  {/* <Grid item>
-                    <IconButton>ALl</IconButton>
-                  </Grid> */}
+                  <Grid item>
+                    <Typography variant="h5">
+                      All <span style={{ color: '#d9d9d9' }}>({chatUserList.length})</span>
+                    </Typography>
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
@@ -130,13 +135,13 @@ const Chat = () => {
               overflowX: 'hidden',
               height: matchDownLG ? '100%' : 'calc(100vh - 445px)',
               maxHeight: matchDownLG ? 'calc(100vh - 60px)' : 0,
-              minHeight: matchDownLG ? 0 : 553
+              minHeight: matchDownLG ? 0 : 545
             }}
           >
             <Box sx={{ p: 1.5, pt: 0 }}>
               <List component="nav">
-                {[1, 2, 3, 4, 5, 6, 7].map((index) => {
-                  return <UserList key={index} />;
+                {chatUserList.map((user) => {
+                  return <UserList userDetail={user} key={user.id} />;
                 })}
               </List>
             </Box>
@@ -144,98 +149,109 @@ const Chat = () => {
         </MainCard>
       </Drawer>
       <Main theme={theme} open={openChatDrawer}>
-        <MainCard
-          sx={{
-            bgcolor: theme.palette.mode === 'dark' ? 'dark.main' : '#fff',
-            borderRadius: openChatDrawer ? '0px 8px 8px 0px' : '8px',
-            '& .MuiCardContent-root': {
-              padding: '0 !important'
-            }
-          }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <Box sx={{ padding: '14px 14px 0 14px' }}>
-                <Grid container alignItems="center" justifyContent="space-between" spacing={0.5}>
-                  <Grid item>
-                    <IconButton onClick={handleDrawerOpen}>
-                      <MenuUnfoldOutlined />
-                    </IconButton>
-                  </Grid>
-                  <Grid item>
-                    <Grid container spacing={2} alignItems="center" sx={{ flexWrap: 'nowrap' }}>
-                      <Grid item>
-                        <Avatar alt="Name" src="" />
-                      </Grid>
-                      <Grid item sm zeroMinWidth>
-                        <Grid container spacing={0} alignItems="center">
-                          <Grid item xs={12}>
-                            <Typography variant="h4" component="div">
-                              Name
-                            </Typography>
-                          </Grid>
-                          <Grid item xs={12}>
-                            <Typography variant="subtitle2">Last seen</Typography>
+        {chat ? (
+          <MainCard
+            sx={{
+              bgcolor: theme.palette.mode === 'dark' ? 'dark.main' : '#fff',
+              borderRadius: openChatDrawer ? '0px 8px 8px 0px' : '8px',
+              '& .MuiCardContent-root': {
+                padding: '0 !important'
+              }
+            }}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Box sx={{ padding: '14px 14px 0 14px' }}>
+                  <Grid container alignItems="center" justifyContent="space-between" spacing={0.5}>
+                    <Grid item>
+                      <IconButton onClick={handleDrawerOpen}>
+                        <MenuUnfoldOutlined />
+                      </IconButton>
+                    </Grid>
+                    <Grid item>
+                      <Grid container spacing={2} alignItems="center" sx={{ flexWrap: 'nowrap' }}>
+                        <Grid item>
+                          <Avatar alt="Name" src="" />
+                        </Grid>
+                        <Grid item sm zeroMinWidth>
+                          <Grid container spacing={0} alignItems="center">
+                            <Grid item xs={12}>
+                              <Typography variant="h4" component="div">
+                                {chat.participants[0].user.id === user.id
+                                  ? handleUserName(chat.participants[1].user)
+                                  : handleUserName(chat.participants[0].user)}
+                              </Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                              {/* <Typography variant="subtitle2">Last seen</Typography> */}
+                            </Grid>
                           </Grid>
                         </Grid>
                       </Grid>
                     </Grid>
+                    <Grid item sm zeroMinWidth />
+                    <Grid item>
+                      <IconButton>
+                        <IconPhone />
+                      </IconButton>
+                    </Grid>
+                    <Grid item>
+                      <IconButton>
+                        <IconTrash />
+                      </IconButton>
+                    </Grid>
+                    <Grid item>
+                      <IconButton>
+                        <IconExclamationCircle />
+                      </IconButton>
+                    </Grid>
                   </Grid>
-                  <Grid item sm zeroMinWidth />
-                  <Grid item>
-                    <IconButton>
-                      <IconPhone />
-                    </IconButton>
+                </Box>
+                <Divider sx={{ mt: theme.spacing(2) }} />
+              </Grid>
+              <PerfectScrollbar style={{ width: '100%', height: 'calc(100vh - 440px)', overflowX: 'hidden', minHeight: 436 }}>
+                <CardContent>
+                  {/* <ChartHistory theme={theme} user={user} data={data} /> */}
+                  {/* @ts-ignore */}
+                  {/* <span ref={scrollRef} /> */}
+                </CardContent>
+              </PerfectScrollbar>
+              <Grid item xs={12}>
+                <Divider sx={{ mt: theme.spacing(2) }} />
+                <Box sx={{ padding: '14px' }}>
+                  <Grid container spacing={1} alignItems="center">
+                    <Grid item xs zeroMinWidth>
+                      <OutlinedInput
+                        fullWidth
+                        placeholder="Type a message"
+                        startAdornment={
+                          <InputAdornment position="start">
+                            <IconButton>
+                              <EmojiPicker value={commentTitle} setValue={setCommentTitle} />
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                        endAdornment={
+                          <Stack direction="row" alignItems="center">
+                            {/* <IconButton>
+                              <IconPaperclip />
+                            </IconButton> */}
+                            <IconButton color="primary">
+                              <IconSend />
+                            </IconButton>
+                          </Stack>
+                        }
+                        sx={{ padding: '4px', '& input': { paddingLeft: '0' } }}
+                      />
+                    </Grid>
                   </Grid>
-                  <Grid item>
-                    <IconButton>
-                      <IconExclamationCircle />
-                    </IconButton>
-                  </Grid>
-                </Grid>
-              </Box>
-              <Divider sx={{ mt: theme.spacing(2) }} />
+                </Box>
+              </Grid>
             </Grid>
-            <PerfectScrollbar style={{ width: '100%', height: 'calc(100vh - 440px)', overflowX: 'hidden', minHeight: 436 }}>
-              <CardContent>
-                {/* <ChartHistory theme={theme} user={user} data={data} /> */}
-                {/* @ts-ignore */}
-                {/* <span ref={scrollRef} /> */}
-              </CardContent>
-            </PerfectScrollbar>
-            <Grid item xs={12}>
-              <Divider sx={{ mt: theme.spacing(2) }} />
-              <Box sx={{ padding: '14px' }}>
-                <Grid container spacing={1} alignItems="center">
-                  <Grid item xs zeroMinWidth>
-                    <OutlinedInput
-                      fullWidth
-                      placeholder="Type a message"
-                      startAdornment={
-                        <InputAdornment position="start">
-                          <IconButton>
-                            <EmojiPicker value={commentTitle} setValue={setCommentTitle} />
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                      endAdornment={
-                        <Stack direction="row" alignItems="center">
-                          <IconButton>
-                            <IconPaperclip />
-                          </IconButton>
-                          <IconButton color="primary">
-                            <IconSend />
-                          </IconButton>
-                        </Stack>
-                      }
-                      sx={{ padding: '4px', '& input': { paddingLeft: '0' } }}
-                    />
-                  </Grid>
-                </Grid>
-              </Box>
-            </Grid>
-          </Grid>
-        </MainCard>
+          </MainCard>
+        ) : (
+          <></>
+        )}
       </Main>
     </Box>
   );

@@ -32,6 +32,7 @@ import { useSelector, useDispatch } from 'store/index';
 import { checkedTodoSuccess, createTodoSuccess, deleteTodoSuccess } from 'store/slices/todo';
 import { dashboardStatCountService } from 'services/utils';
 import { getDashboardTaskService } from 'services/task';
+import { getChatsService } from 'services/chat';
 
 import { IconCalendarEvent, IconUsers, IconFileInvoice, IconPlus, IconSend, IconX, IconTrash } from '@tabler/icons-react';
 import { Pill } from 'components/Pill';
@@ -44,6 +45,7 @@ const DashboardDefault = () => {
   const { todo } = useSelector((state) => state.todo);
   const { dashboardStats } = useSelector((state) => state.utils);
   const { tasks } = useSelector((state) => state.task);
+  const { chatUserList } = useSelector((state) => state.chat);
 
   const [isTodoOpen, setTodoOpen] = useState(false);
   const [todoTitle, setTodoTitle] = useState('');
@@ -69,6 +71,14 @@ const DashboardDefault = () => {
       dispatch(getDashboardTaskService(project.id));
     }
   }, [dispatch, project]);
+
+  useEffect(() => {
+    const fetchChats = () => {
+      dispatch(getChatsService());
+    };
+
+    fetchChats();
+  }, []);
 
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
@@ -169,7 +179,6 @@ const DashboardDefault = () => {
           <Grid item>
             <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
               <Typography variant="h5">Chats</Typography>
-              <Pill label="Soon" />
             </Box>
           </Grid>
           <Grid item />
@@ -177,8 +186,12 @@ const DashboardDefault = () => {
         <MainCard sx={{ mt: 2 }} content={false}>
           <PerfectScrollbar style={{ height: 546, padding: 0 }}>
             <List component="nav" sx={{ p: 0 }}>
-              {[1, 2, 4, 5, 6, 7, 8, 9, 10].map((index) => {
-                return <UserList key={index} />;
+              {chatUserList.map((user) => {
+                return (
+                  <Box key={user.id} onClick={() => navigate(`/projects/${projectId}/chat`)}>
+                    <UserList userDetail={user} />
+                  </Box>
+                );
               })}
             </List>
           </PerfectScrollbar>

@@ -15,7 +15,7 @@ import {
   Chip,
   Stack
 } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import _ from 'lodash';
 
 import { IconSearch, IconEye, IconTrash } from '@tabler/icons-react';
@@ -28,6 +28,7 @@ import RemoveMember from './RemoveMember';
 
 import { useDispatch, useSelector } from 'store/index';
 import { getTeamsService } from 'services/team';
+import { createChatService } from 'services/chat';
 
 import { ROLES } from 'utils/enum';
 
@@ -84,8 +85,10 @@ const TeamRole = ({ role }) => {
 
 const Teams = () => {
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const { projectId } = useSelector((state) => state.project);
   const { teams } = useSelector((state) => state.team);
   const { user } = useSelector((state) => state.account);
 
@@ -199,7 +202,12 @@ const Teams = () => {
                     </TableCell>
                     <TableCell align="center">
                       {user.id !== team.user.id && (
-                        <IconButton>
+                        <IconButton
+                          onClick={() => {
+                            dispatch(createChatService(user.id, team.user.id));
+                            navigate(`/projects/${projectId}/chat`);
+                          }}
+                        >
                           <MessageOutlined />
                         </IconButton>
                       )}
