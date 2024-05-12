@@ -239,7 +239,7 @@ const Teams = () => {
         </TableContainer>
       </MainCard>
 
-      <ViewMember open={viewTeamDialogOpen} onClose={handleCloseViewDialog} teamMember={teamMember} />
+      <ViewMember open={viewTeamDialogOpen} onClose={handleCloseViewDialog} teamMember={teamMember} isOnlyView={false} />
 
       <AddMember open={isAddMemberOpen} onClose={() => setAddMember(false)} />
 

@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
 import dayjs from 'dayjs';
-// import { NumericFormat } from 'react-number-format';
 
 import { Box, Link, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip } from '@mui/material';
 
@@ -10,7 +9,7 @@ import { IconMessage, IconSunglasses } from '@tabler/icons-react';
 
 import { TaskStatus } from 'pages/tasks/index';
 
-import { isDatePastDueDateColor } from 'utils/utilsFn';
+import { isDatePastDueDateColor } from 'utils/format/date';
 
 const headCells = [
   {

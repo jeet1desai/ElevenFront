@@ -36,11 +36,56 @@ import TaskForm from './TaskForm';
 import DeleteTask from './DeleteTask';
 
 import { useSelector, useDispatch } from 'store/index';
-import { assignedTaskService, getProjectTaskService } from 'services/task';
+import { assignedTaskService, getProjectTaskService, getProjectTaskStatsService } from 'services/task';
+import { getTeamMemberService } from 'services/utils';
 
 import { TASK_STATUS } from 'utils/enum';
-import { handleUserName, isDatePastDueDateColor } from 'utils/utilsFn';
-import { getTeamMemberService } from 'services/utils';
+import { handleUserName } from 'utils/utilsFn';
+import { formatNumber } from 'utils/format/number';
+import { isDatePastDueDateColor } from 'utils/format/date';
+
+const TasksOptions = {
+  chart: {
+    id: 'task-chart',
+    height: 300,
+    type: 'pie'
+  },
+  labels: ['Open', 'In Review', 'Pending', 'Closed'],
+  legend: {
+    show: true,
+    position: 'bottom',
+    fontFamily: 'inherit',
+    labels: {
+      colors: 'inherit'
+    }
+  },
+  dataLabels: {
+    enabled: true,
+    dropShadow: {
+      enabled: false
+    }
+  }
+};
+
+const UsersOptions = {
+  chart: {
+    id: 'user-chart',
+    height: 300,
+    type: 'bar',
+    toolbar: {
+      show: false
+    }
+  },
+  legend: {
+    show: false,
+    labels: {
+      colors: 'inherit'
+    }
+  },
+  xaxis: {
+    categories: [['John Doe']]
+  }
+};
 
 const TableHeaderBox = styled('div')({
   display: 'flex',
@@ -110,9 +155,15 @@ const Tasks = () => {
     assign: ''
   });
 
+  const [taskOptions] = useState(TasksOptions);
+  const [taskSeries, setTasksSeries] = useState([0, 0, 0, 0]);
+
+  const [userOptions, setUserOption] = useState(UsersOptions);
+  const [userSeries, setUserSeries] = useState([]);
+
   const { projectId } = useSelector((state) => state.project);
   const { teamMember } = useSelector((state) => state.utils);
-  const { loading, tasks } = useSelector((state) => state.task);
+  const { loading, tasks, stats } = useSelector((state) => state.task);
 
   const handleChange = (_, newValue) => {
     setFilter({
@@ -124,6 +175,21 @@ const Tasks = () => {
   };
 
   useEffect(() => {
+    if (stats) {
+      setTasksSeries([stats.stat.open, stats.stat.in_review, stats.stat.pending, stats.stat.closed]);
+
+      setUserOption((prevOption) => ({
+        ...prevOption,
+        xaxis: {
+          categories: stats.user.map((user) => [user.first_name && user.last_name ? user.first_name + ' ' + user.last_name : user.email])
+        }
+      }));
+
+      setUserSeries([{ name: 'Tasks', data: stats.user.map((user) => user.task_count) }]);
+    }
+  }, [stats]);
+
+  useEffect(() => {
     if (projectId) {
       dispatch(getTeamMemberService(projectId));
       fetchData();
@@ -132,7 +198,9 @@ const Tasks = () => {
   }, [dispatch, projectId]);
 
   const fetchData = () => {
-    if (value === 1) {
+    if (value === 0) {
+      dispatch(getProjectTaskStatsService(projectId));
+    } else if (value === 1) {
       dispatch(getProjectTaskService(projectId, filter.search, filter.status, filter.assign));
     } else if (value === 2) {
       dispatch(assignedTaskService(projectId, filter.search, filter.status));
@@ -161,32 +229,10 @@ const Tasks = () => {
     }
   };
 
-  const SatisfactionChartCardOptions = {
-    chart: {
-      id: 'satisfaction-chart',
-      height: 300,
-      type: 'pie'
-    },
-    labels: ['Open', 'In Review', 'Pending', 'Closed'],
-    legend: {
-      show: true,
-      position: 'bottom',
-      fontFamily: 'inherit',
-      labels: {
-        colors: 'inherit'
-      }
-    },
-    dataLabels: {
-      enabled: true,
-      dropShadow: {
-        enabled: false
-      }
-    }
-  };
+  const taskChartData = { series: taskSeries, options: taskOptions };
+  const userChartData = { series: userSeries, options: userOptions };
 
-  const [satisfactionChartCardSeries] = useState([66, 50, 40, 30]);
-
-  const chartData = { series: satisfactionChartCardSeries, options: SatisfactionChartCardOptions };
+  const normalise = (value) => ((value - 0) * 100) / (10000 - 0);
 
   return (
     <>
@@ -199,10 +245,10 @@ const Tasks = () => {
         {value === 0 && (
           <Box sx={{ py: 2 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} sm={12}>
+              <Grid item xs={12} sm={6}>
                 <MainCard>
                   <Grid container alignItems="center" spacing={2}>
-                    <Grid item xs={12} lg={3} sm={6}>
+                    <Grid item xs={12} lg={6} sm={6}>
                       <Grid container spacing={1}>
                         <Grid item xs={12}>
                           <Typography variant="subtitle2" align="left">
@@ -211,15 +257,15 @@ const Tasks = () => {
                         </Grid>
                         <Grid item xs={12}>
                           <Typography variant="h3" align="left">
-                            532
+                            {formatNumber(stats.stat.open)}
                           </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                          <LinearProgress variant="determinate" value={40} color="primary" />
+                          <LinearProgress variant="determinate" value={normalise(stats.stat.open)} color="primary" />
                         </Grid>
                       </Grid>
                     </Grid>
-                    <Grid item xs={12} lg={3} sm={6}>
+                    <Grid item xs={12} lg={6} sm={6}>
                       <Grid container spacing={1}>
                         <Grid item xs={12}>
                           <Typography variant="subtitle2" align="left">
@@ -228,15 +274,15 @@ const Tasks = () => {
                         </Grid>
                         <Grid item xs={12}>
                           <Typography variant="h3" align="left">
-                            4,569
+                            {formatNumber(stats.stat.in_review)}
                           </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                          <LinearProgress variant="determinate" value={70} color="success" />
+                          <LinearProgress variant="determinate" value={normalise(stats.stat.in_review)} color="success" />
                         </Grid>
                       </Grid>
                     </Grid>
-                    <Grid item xs={12} lg={3} sm={6}>
+                    <Grid item xs={12} lg={6} sm={6}>
                       <Grid container spacing={1}>
                         <Grid item xs={12}>
                           <Typography variant="subtitle2" align="left">
@@ -245,15 +291,15 @@ const Tasks = () => {
                         </Grid>
                         <Grid item xs={12}>
                           <Typography variant="h3" align="left">
-                            1,005
+                            {formatNumber(stats.stat.pending)}
                           </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                          <LinearProgress variant="determinate" value={30} color="secondary" />
+                          <LinearProgress variant="determinate" value={normalise(stats.stat.pending)} color="secondary" />
                         </Grid>
                       </Grid>
                     </Grid>
-                    <Grid item xs={12} lg={3} sm={6}>
+                    <Grid item xs={12} lg={6} sm={6}>
                       <Grid container spacing={1}>
                         <Grid item xs={12}>
                           <Typography variant="subtitle2" align="left">
@@ -262,36 +308,36 @@ const Tasks = () => {
                         </Grid>
                         <Grid item xs={12}>
                           <Typography variant="h3" align="left">
-                            365
+                            {formatNumber(stats.stat.closed)}
                           </Typography>
                         </Grid>
                         <Grid item xs={12}>
-                          <LinearProgress variant="determinate" value={10} color="error" />
+                          <LinearProgress variant="determinate" value={normalise(stats.stat.closed)} color="error" />
                         </Grid>
                       </Grid>
                     </Grid>
                   </Grid>
                 </MainCard>
               </Grid>
-              <Grid item xs={12} sm={6} md={6}>
+              <Grid item xs={12} sm={6}>
                 <MainCard>
                   <Typography variant="subtitle1">Tasks</Typography>
                   <ReactApexChart
-                    options={chartData.options}
-                    series={chartData.series}
-                    type={chartData.options?.chart?.type}
-                    height={chartData.options?.chart?.height}
+                    options={taskChartData.options}
+                    series={taskChartData.series}
+                    type={taskChartData.options?.chart?.type}
+                    height={taskChartData.options?.chart?.height}
                   />
                 </MainCard>
               </Grid>
-              <Grid item xs={12} sm={6} md={6}>
+              <Grid item xs={12}>
                 <MainCard>
                   <Typography variant="subtitle1">Users</Typography>
                   <ReactApexChart
-                    options={chartData.options}
-                    series={chartData.series}
-                    type={chartData.options?.chart?.type}
-                    height={chartData.options?.chart?.height}
+                    options={userChartData.options}
+                    series={userChartData.series}
+                    type={userChartData.options?.chart?.type}
+                    height={userChartData.options?.chart?.height}
                   />
                 </MainCard>
               </Grid>

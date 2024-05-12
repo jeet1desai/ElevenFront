@@ -14,12 +14,14 @@ import TaskForm from './TaskForm';
 import DeleteTask from './DeleteTask';
 import CommentItem from './CommentItem';
 import EmojiPicker from 'components/third-party/EmojiPicker';
+import ViewMember from 'pages/teams/ViewMember';
 
 import { useDispatch, useSelector } from 'store/index';
 import { addTaskCommentService, getTaskService } from 'services/task';
 
 import { TASK_STATUS } from 'utils/enum';
-import { handleUserName, isDatePastDueDateColor } from 'utils/utilsFn';
+import { handleUserName } from 'utils/utilsFn';
+import { isDatePastDueDateColor } from 'utils/format/date';
 
 const HeaderIconBox = styled('div')({
   display: 'flex',
@@ -111,6 +113,9 @@ const ViewTask = () => {
   const [isEditTaskOpen, setEditTask] = useState(false);
   const [isDeleteTaskOpen, setDeleteTask] = useState(false);
 
+  const [isAssignUserOpen, setAssignUserModal] = useState(false);
+  const [assignUser, setAssignUser] = useState(null);
+
   const [isImageOpen, setImageTask] = useState(false);
   const [image, setImage] = useState('');
 
@@ -121,6 +126,11 @@ const ViewTask = () => {
       dispatch(addTaskCommentService(task.id, { comment: commentTitle }));
       setCommentTitle('');
     }
+  };
+
+  const handleOpenAssignUser = (user) => {
+    setAssignUser(user);
+    setAssignUserModal(true);
   };
 
   useEffect(() => {
@@ -181,7 +191,7 @@ const ViewTask = () => {
                   {task.assign.length > 0 ? (
                     <Box sx={{ display: 'flex', gap: '10px', mt: 0.5 }}>
                       {task.assign.map((user) => (
-                        <Chip key={user.id} label={handleUserName(user)} />
+                        <Chip onClick={() => handleOpenAssignUser(user)} key={user.id} label={handleUserName(user)} />
                       ))}
                     </Box>
                   ) : (
@@ -290,8 +300,12 @@ const ViewTask = () => {
 
       {isDeleteTaskOpen && <DeleteTask open={isDeleteTaskOpen} onClose={setDeleteTask} task={task} formClose={setTaskForm} />}
 
+      {isAssignUserOpen && (
+        <ViewMember open={isAssignUserOpen} onClose={() => setAssignUserModal(false)} teamMember={{ user: assignUser }} isOnlyView={true} />
+      )}
+
       {isImageOpen && (
-        <Modal open={isImageOpen}>
+        <Modal open={isImageOpen} onClose={() => setImageTask(false)}>
           <ModalBox>
             <img src={image} alt="task" />
             <ModalCloseButton onClick={() => setImageTask(false)}>

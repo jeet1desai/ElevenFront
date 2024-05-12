@@ -3,7 +3,16 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   loading: true,
   task: null,
-  tasks: []
+  tasks: [],
+  stats: {
+    stat: {
+      closed: 0,
+      in_review: 0,
+      open: 0,
+      pending: 0
+    },
+    user: []
+  }
 };
 
 const taskSlice = createSlice({
@@ -44,6 +53,14 @@ const taskSlice = createSlice({
       state.tasks = state.tasks.filter((taskItem) => taskItem.id !== task.id);
       state.loading = false;
     },
+    getTasksStatsSuccess(state, action) {
+      const { stats } = action.payload;
+      state.stats = {
+        stat: stats.stats,
+        user: stats.user
+      };
+      state.loading = false;
+    },
     hasError(state) {
       state.loading = false;
     }
@@ -58,6 +75,7 @@ export const {
   getTasksSuccess,
   getTaskSuccess,
   deleteTaskSuccess,
+  getTasksStatsSuccess,
   addTaskCommentSuccess
 } = taskSlice.actions;
 

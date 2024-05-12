@@ -22,10 +22,10 @@ import { IconX } from '@tabler/icons-react';
 import { useDispatch, useSelector } from 'store/index';
 import { updateTeamMemberRoleService } from 'services/team';
 
-import { ROLES } from 'utils/enum';
+import { GENDER, ROLES } from 'utils/enum';
 import { MenuProps } from 'utils/utilsFn';
 
-const ViewMember = ({ open, onClose, teamMember }) => {
+const ViewMember = ({ open, onClose, teamMember, isOnlyView }) => {
   const dispatch = useDispatch();
 
   const { project } = useSelector((state) => state.project);
@@ -70,11 +70,19 @@ const ViewMember = ({ open, onClose, teamMember }) => {
                   </Typography>
                   <Typography variant="body1">{teamMember.user.email}</Typography>
                 </Grid>
+                {!isOnlyView && (
+                  <Grid item xs={12} sm={6}>
+                    <Typography variant="body1" sx={{ color: '#8c8c8c' }}>
+                      Company
+                    </Typography>
+                    <Typography variant="body1">{teamMember.company.company}</Typography>
+                  </Grid>
+                )}
                 <Grid item xs={12} sm={6}>
                   <Typography variant="body1" sx={{ color: '#8c8c8c' }}>
-                    Compony
+                    Gender
                   </Typography>
-                  <Typography variant="body1">{teamMember.company.company}</Typography>
+                  <Typography variant="body1">{GENDER[teamMember.user.gender]}</Typography>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Typography variant="body1" sx={{ color: '#8c8c8c' }}>
@@ -86,36 +94,40 @@ const ViewMember = ({ open, onClose, teamMember }) => {
                       : 'Na'}
                   </Typography>
                 </Grid>
-                {project.user_role === 4 && teamMember.user.id !== user.id ? (
-                  <Grid item xs={12}>
-                    <Stack spacing={1}>
-                      <InputLabel htmlFor="email">Permissions</InputLabel>
-                      <Select
-                        value={permission}
-                        onChange={(e) => setPermission(e.target.value)}
-                        displayEmpty
-                        fullWidth
-                        input={<OutlinedInput />}
-                        MenuProps={MenuProps}
-                      >
-                        {Object.entries(ROLES)
-                          .map(([key, value]) => ({ id: parseInt(key), label: value }))
-                          .slice(0, 3)
-                          .map((option) => (
-                            <MenuItem key={option.id} value={option.id}>
-                              {option.label}
-                            </MenuItem>
-                          ))}
-                      </Select>
-                    </Stack>
-                  </Grid>
-                ) : (
-                  <Grid item xs={12}>
-                    <Typography variant="body1" sx={{ color: '#8c8c8c' }}>
-                      Permission
-                    </Typography>
-                    <Typography variant="body1">{ROLES[teamMember.role]}</Typography>
-                  </Grid>
+                {!isOnlyView && (
+                  <>
+                    {project.user_role === 4 && teamMember.user.id !== user.id ? (
+                      <Grid item xs={12}>
+                        <Stack spacing={1}>
+                          <InputLabel htmlFor="email">Permissions</InputLabel>
+                          <Select
+                            value={permission}
+                            onChange={(e) => setPermission(e.target.value)}
+                            displayEmpty
+                            fullWidth
+                            input={<OutlinedInput />}
+                            MenuProps={MenuProps}
+                          >
+                            {Object.entries(ROLES)
+                              .map(([key, value]) => ({ id: parseInt(key), label: value }))
+                              .slice(0, 3)
+                              .map((option) => (
+                                <MenuItem key={option.id} value={option.id}>
+                                  {option.label}
+                                </MenuItem>
+                              ))}
+                          </Select>
+                        </Stack>
+                      </Grid>
+                    ) : (
+                      <Grid item xs={12}>
+                        <Typography variant="body1" sx={{ color: '#8c8c8c' }}>
+                          Permission
+                        </Typography>
+                        <Typography variant="body1">{ROLES[teamMember.role]}</Typography>
+                      </Grid>
+                    )}{' '}
+                  </>
                 )}
               </Grid>
             </DialogContent>

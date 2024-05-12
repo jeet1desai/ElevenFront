@@ -2,7 +2,8 @@ import React from 'react';
 
 import { Avatar, Grid, ListItemAvatar, ListItemButton, ListItemText, Typography } from '@mui/material';
 
-import { formatDate, handleUserName } from 'utils/utilsFn';
+import { handleUserName } from 'utils/utilsFn';
+import { formatDate } from 'utils/format/date';
 
 const CommentItem = ({ comment }) => {
   return (

@@ -6,6 +6,7 @@ import {
   editTaskSuccess,
   fetchRequest,
   getTaskSuccess,
+  getTasksStatsSuccess,
   getTasksSuccess,
   hasError
 } from 'store/slices/task';
@@ -32,6 +33,19 @@ export const editTaskService = (taskId, data) => {
       dispatch(fetchRequest());
       const response = await axios.put(`tasks/task/${taskId}`, data);
       dispatch(editTaskSuccess({ task: response.data.data }));
+    } catch (error) {
+      openErrorSnackbar(error.msg, 'error');
+      dispatch(hasError());
+    }
+  };
+};
+
+export const getProjectTaskStatsService = (projectId) => {
+  return async () => {
+    try {
+      dispatch(fetchRequest());
+      const response = await axios.get(`tasks/task/stats/${projectId}`);
+      dispatch(getTasksStatsSuccess({ stats: response.data.data }));
     } catch (error) {
       openErrorSnackbar(error.msg, 'error');
       dispatch(hasError());
