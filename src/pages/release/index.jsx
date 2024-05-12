@@ -7,7 +7,7 @@ import { IconFolders } from '@tabler/icons-react';
 
 import MainCard from 'components/MainCard';
 
-const Privacy = () => {
+const Release = () => {
   const navigate = useNavigate();
 
   return (
@@ -15,7 +15,7 @@ const Privacy = () => {
       <Box sx={{ display: 'flex', width: '100%' }}>
         <Box component="main" sx={{ width: '100%', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
           <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Typography variant="h2">Privacy</Typography>
+            <Typography variant="h2">Releases</Typography>
             <IconButton sx={{ bgcolor: 'primary.lighter' }} onClick={() => navigate('/projects')}>
               <IconFolders />
             </IconButton>
@@ -31,4 +31,4 @@ const Privacy = () => {
   );
 };
 
-export default Privacy;
+export default Release;

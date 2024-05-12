@@ -34,6 +34,7 @@ import { dashboardStatCountService } from 'services/utils';
 import { getDashboardTaskService } from 'services/task';
 
 import { IconCalendarEvent, IconUsers, IconFileInvoice, IconPlus, IconSend, IconX, IconTrash } from '@tabler/icons-react';
+import { Pill } from 'components/Pill';
 
 const DashboardDefault = () => {
   const navigate = useNavigate();
@@ -166,7 +167,10 @@ const DashboardDefault = () => {
       <Grid item xs={12} sm={4} md={4} lg={3.5} xl={3.5}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
-            <Typography variant="h5">Chats</Typography>
+            <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <Typography variant="h5">Chats</Typography>
+              <Pill label="Soon" />
+            </Box>
           </Grid>
           <Grid item />
         </Grid>
@@ -185,7 +189,10 @@ const DashboardDefault = () => {
       <Grid item xs={12} sm={4} md={4} lg={3.5} xl={3.5}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
-            <Typography variant="h5">Feeds</Typography>
+            <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <Typography variant="h5">Feeds</Typography>
+              <Pill label="Soon" />
+            </Box>
           </Grid>
           <Grid item />
         </Grid>

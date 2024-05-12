@@ -8,7 +8,7 @@ const ProjectsPage = Loadable(lazy(() => import('pages/projects')));
 const AccountPage = Loadable(lazy(() => import('pages/account')));
 const HelpSupportPage = Loadable(lazy(() => import('pages/help-feedback/help')));
 const FeedbackPage = Loadable(lazy(() => import('pages/help-feedback/feedback')));
-const PrivacyPage = Loadable(lazy(() => import('pages/privacy')));
+const ReleasePage = Loadable(lazy(() => import('pages/release')));
 const BillingPage = Loadable(lazy(() => import('pages/billing')));
 
 const MainRoutes = {
@@ -33,7 +33,7 @@ const MainRoutes = {
     },
     {
       path: 'releases',
-      element: <PrivacyPage />
+      element: <ReleasePage />
     },
     {
       path: 'billing',

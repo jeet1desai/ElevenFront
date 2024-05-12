@@ -80,6 +80,10 @@ const Profile = () => {
 
   const iconBackColorOpen = 'grey.300';
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <Box
       sx={{
@@ -178,7 +182,11 @@ const Profile = () => {
                                 flexDirection: 'row',
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                textTransform: 'capitalize'
+                                textTransform: 'capitalize',
+                                backgroundColor: 'white !important',
+                                '&.Mui-selected': {
+                                  backgroundColor: 'white !important'
+                                }
                               }}
                               icon={<UserOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
                               label="Profile"
@@ -190,7 +198,11 @@ const Profile = () => {
                                 flexDirection: 'row',
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                textTransform: 'capitalize'
+                                textTransform: 'capitalize',
+                                backgroundColor: 'white !important',
+                                '&.Mui-selected': {
+                                  backgroundColor: 'white !important'
+                                }
                               }}
                               icon={<SettingOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
                               label="Setting"

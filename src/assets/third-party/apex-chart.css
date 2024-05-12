@@ -84,3 +84,7 @@ button {
 .MuiMenu-paper li.Mui-selected {
   background-color: #7373731f !important;
 }
+
+.MuiDrawer-paper {
+  box-shadow: none !important;
+}

@@ -16,14 +16,14 @@ import {
   List,
   Drawer
 } from '@mui/material';
+import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import MainCard from 'components/MainCard';
+import UserList from './UserList';
+import EmojiPicker from 'components/third-party/EmojiPicker';
 
 import { MenuUnfoldOutlined } from '@ant-design/icons';
-import { IconPhone, IconExclamationCircle, IconMoodHappyFilled, IconPaperclip, IconSend } from '@tabler/icons-react';
-
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import UserList from './UserList';
+import { IconPhone, IconExclamationCircle, IconPaperclip, IconSend } from '@tabler/icons-react';
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
   flexGrow: 1,
@@ -51,6 +51,7 @@ const Chat = () => {
   const matchDownLG = useMediaQuery(theme.breakpoints.down('lg'));
 
   const [openChatDrawer, setOpenChatDrawer] = useState(true);
+  const [commentTitle, setCommentTitle] = useState('');
 
   const handleDrawerOpen = () => {
     setOpenChatDrawer((prevState) => !prevState);
@@ -59,6 +60,21 @@ const Chat = () => {
   useEffect(() => {
     setOpenChatDrawer(!matchDownLG);
   }, [matchDownLG]);
+
+  // useEffect(() => {
+  //   // Fetch chats for the logged-in user
+  //   const fetchChats = async () => {
+  //     try {
+  //       const response = await axios.get(`chats/chat`);
+  //       // setChats(response.data);
+  //       console.log(response.data.data);
+  //     } catch (error) {
+  //       console.error('Error fetching chats:', error);
+  //     }
+  //   };
+
+  //   fetchChats();
+  // }, []);
 
   const drawerBG = theme.palette.mode === 'dark' ? 'dark.main' : '#fff';
 
@@ -113,12 +129,13 @@ const Chat = () => {
             style={{
               overflowX: 'hidden',
               height: matchDownLG ? '100%' : 'calc(100vh - 445px)',
+              maxHeight: matchDownLG ? 'calc(100vh - 60px)' : 0,
               minHeight: matchDownLG ? 0 : 553
             }}
           >
             <Box sx={{ p: 1.5, pt: 0 }}>
               <List component="nav">
-                {[1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((index) => {
+                {[1, 2, 3, 4, 5, 6, 7].map((index) => {
                   return <UserList key={index} />;
                 })}
               </List>
@@ -197,7 +214,7 @@ const Chat = () => {
                       startAdornment={
                         <InputAdornment position="start">
                           <IconButton>
-                            <IconMoodHappyFilled />
+                            <EmojiPicker value={commentTitle} setValue={setCommentTitle} />
                           </IconButton>
                         </InputAdornment>
                       }

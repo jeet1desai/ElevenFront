@@ -21,7 +21,6 @@ export const dashboardStatCountService = (projectId) => {
       const response = await axios.get(`user/stats/${projectId}`);
       dispatch(getDashboardStatsSuccess({ count: response.data.data }));
     } catch (error) {
-      dispatch(getDashboardStatsSuccess({ count: error.data }));
       openErrorSnackbar(error.msg, 'error');
       dispatch(hasError());
     }

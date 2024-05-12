@@ -58,7 +58,7 @@ const ViewMember = ({ open, onClose, teamMember, isOnlyView }) => {
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={12} alignItems="center">
                   <Stack spacing={1} alignItems="center">
-                    <Avatar src={user.profile_picture} sx={{ width: 56, height: 56 }} />
+                    <Avatar src={teamMember.user.profile_picture} sx={{ width: 56, height: 56 }} />
                     <Typography variant="h5">
                       {teamMember.user.first_name} {teamMember.user.last_name}
                     </Typography>
