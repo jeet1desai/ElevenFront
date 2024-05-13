@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   loading: false,
   chatUserList: [],
-  chat: null
+  chat: null,
+  chatId: ''
 };
 
 const chatSlice = createSlice({
@@ -17,6 +18,7 @@ const chatSlice = createSlice({
       const { chatUser } = action.payload;
       if (chatUser.length > 0) {
         state.chat = chatUser[0];
+        state.chatId = chatUser[0].id;
       }
       state.chatUserList = chatUser;
       state.loading = false;

@@ -5,8 +5,9 @@ import { Grid, Avatar, Typography, ListItemButton, ListItemAvatar, ListItemText 
 import { useSelector } from 'store/index';
 
 import { handleUserName } from 'utils/utilsFn';
+import { formatDate } from 'utils/format/date';
 
-const UserList = ({ userDetail }) => {
+const UserList = ({ userDetail, messages }) => {
   const { user } = useSelector((state) => state.account);
 
   if (!user || !userDetail) {
@@ -14,6 +15,7 @@ const UserList = ({ userDetail }) => {
   }
 
   const userMap = userDetail.participants[0].user.id === user.id ? userDetail.participants[1] : userDetail.participants[0];
+  const lastMessage = messages.length > 0 ? messages[messages.length - 1] : { timestamp: '', content: '' };
 
   return (
     <ListItemButton>
@@ -39,16 +41,16 @@ const UserList = ({ userDetail }) => {
               </Typography>
             </Grid>
             <Grid item component="span">
-              {/* <Typography component="span" variant="subtitle2">
-                2h ago
-              </Typography> */}
+              <Typography component="span" variant="subtitle2">
+                {formatDate(lastMessage.timestamp)}
+              </Typography>
             </Grid>
           </Grid>
         }
         secondary={
           <Grid container alignItems="center" spacing={1} component="span">
             <Grid item xs zeroMinWidth component="span">
-              {/* <Typography
+              <Typography
                 variant="caption"
                 component="span"
                 sx={{
@@ -58,8 +60,8 @@ const UserList = ({ userDetail }) => {
                   display: 'block'
                 }}
               >
-                Last message
-              </Typography> */}
+                {lastMessage.content}
+              </Typography>
             </Grid>
             <Grid item component="span">
               {/* <Chip

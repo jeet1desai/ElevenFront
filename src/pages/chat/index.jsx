@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { useTheme, styled } from '@mui/material/styles';
 import {
@@ -20,6 +20,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import MainCard from 'components/MainCard';
 import UserList from './UserList';
+import ChartHistory from './ChartHistory';
 import EmojiPicker from 'components/third-party/EmojiPicker';
 
 import { MenuUnfoldOutlined } from '@ant-design/icons';
@@ -29,6 +30,8 @@ import { IconPhone, IconExclamationCircle, IconSend, IconTrash } from '@tabler/i
 import { useDispatch, useSelector } from 'store/index';
 import { getChatsService } from 'services/chat';
 import { handleUserName } from 'utils/utilsFn';
+import WebSocketInstance from 'utils/WebSocket/Websocket';
+import { formatDate } from 'utils/format/date';
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
   flexGrow: 1,
@@ -54,14 +57,18 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
 const Chat = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
+  const messagesEndRef = useRef(null);
+
+  const [friend, setFriend] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [messageInput, setMessageInput] = useState('');
 
   const matchDownLG = useMediaQuery(theme.breakpoints.down('lg'));
 
-  const { chat, chatUserList } = useSelector((state) => state.chat);
+  const { chatId, chat, chatUserList } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.account);
 
   const [openChatDrawer, setOpenChatDrawer] = useState(true);
-  const [commentTitle, setCommentTitle] = useState('');
 
   const handleDrawerOpen = () => {
     setOpenChatDrawer((prevState) => !prevState);
@@ -79,7 +86,73 @@ const Chat = () => {
     fetchChats();
   }, []);
 
+  useEffect(() => {
+    if (chatId) {
+      setFriend(chat.participants[0].user.id === user.id ? chat.participants[1].user : chat.participants[0].user);
+
+      const waitForSocketConnection = (callback) => {
+        setTimeout(() => {
+          if (WebSocketInstance.state() === 1) {
+            console.log('Connection is secure');
+            if (callback != null) {
+              callback();
+            }
+            return;
+          } else {
+            console.log('Waiting for connection...');
+            waitForSocketConnection(callback);
+          }
+        }, 100);
+      };
+
+      WebSocketInstance.addCallbacks(setMessagesCallback, addMessageCallback);
+      waitForSocketConnection(() => {
+        WebSocketInstance.fetchMessages(user.id, chatId);
+      });
+      WebSocketInstance.connect(chatId);
+    }
+  }, [chatId]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    if (messagesEndRef?.current) {
+      messagesEndRef.current.scrollIntoView();
+    }
+  };
+
+  useLayoutEffect(() => {
+    if (messagesEndRef?.current) {
+      messagesEndRef.current.scrollIntoView();
+    }
+  });
+
+  const setMessagesCallback = (newMessages) => {
+    setMessages(() => [...newMessages.reverse()]);
+  };
+
+  const addMessageCallback = (message) => {
+    setMessages((prevMessages) => [...prevMessages, message]);
+  };
+
+  const handleSendMessageClick = () => {
+    if (messageInput !== '') {
+      const messageObject = {
+        content: messageInput,
+        command: 'new_message',
+        from: user.id,
+        chatID: chatId
+      };
+
+      setMessageInput('');
+      WebSocketInstance.newChatMessage(messageObject);
+    }
+  };
+
   const drawerBG = theme.palette.mode === 'dark' ? 'dark.main' : '#fff';
+  const lastMessage = messages.length > 0 ? messages[messages.length - 1] : { timestamp: '', content: '' };
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -89,11 +162,11 @@ const Chat = () => {
           flexShrink: 0,
           zIndex: { xs: 1100, lg: 0 },
           '& .MuiDrawer-paper': {
-            height: matchDownLG ? '100%' : 'auto',
             width: 320,
             boxSizing: 'border-box',
             position: 'relative',
             border: 'none',
+            height: '100%',
             borderRadius: matchDownLG ? 'none' : `8px 0 0 8px`
           }
         }}
@@ -107,6 +180,7 @@ const Chat = () => {
           sx={{
             bgcolor: matchDownLG ? 'transparent' : drawerBG,
             borderRadius: '8px 0 0 8px',
+            height: '100%',
             borderRight: '0'
           }}
           border={!matchDownLG}
@@ -141,7 +215,7 @@ const Chat = () => {
             <Box sx={{ p: 1.5, pt: 0 }}>
               <List component="nav">
                 {chatUserList.map((user) => {
-                  return <UserList userDetail={user} key={user.id} />;
+                  return <UserList userDetail={user} messages={user.messages} key={user.id} />;
                 })}
               </List>
             </Box>
@@ -154,7 +228,7 @@ const Chat = () => {
             sx={{
               bgcolor: theme.palette.mode === 'dark' ? 'dark.main' : '#fff',
               borderRadius: openChatDrawer ? '0px 8px 8px 0px' : '8px',
-              '& .MuiCardContent-root': {
+              '& > .MuiCardContent-root': {
                 padding: '0 !important'
               }
             }}
@@ -171,19 +245,17 @@ const Chat = () => {
                     <Grid item>
                       <Grid container spacing={2} alignItems="center" sx={{ flexWrap: 'nowrap' }}>
                         <Grid item>
-                          <Avatar alt="Name" src="" />
+                          <Avatar src={friend ? friend.profile_picture : ''} />
                         </Grid>
                         <Grid item sm zeroMinWidth>
                           <Grid container spacing={0} alignItems="center">
                             <Grid item xs={12}>
                               <Typography variant="h4" component="div">
-                                {chat.participants[0].user.id === user.id
-                                  ? handleUserName(chat.participants[1].user)
-                                  : handleUserName(chat.participants[0].user)}
+                                {friend ? handleUserName(friend) : ''}
                               </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                              {/* <Typography variant="subtitle2">Last seen</Typography> */}
+                              <Typography variant="subtitle2">Last seen {formatDate(lastMessage.timestamp)}</Typography>
                             </Grid>
                           </Grid>
                         </Grid>
@@ -191,9 +263,13 @@ const Chat = () => {
                     </Grid>
                     <Grid item sm zeroMinWidth />
                     <Grid item>
-                      <IconButton>
-                        <IconPhone />
-                      </IconButton>
+                      {friend && friend.country_code && friend.phone_number && (
+                        <a href={`tel:+${friend.country_code}${friend.phone_number}`}>
+                          <IconButton>
+                            <IconPhone />
+                          </IconButton>
+                        </a>
+                      )}
                     </Grid>
                     <Grid item>
                       <IconButton>
@@ -210,14 +286,13 @@ const Chat = () => {
                 <Divider sx={{ mt: theme.spacing(2) }} />
               </Grid>
               <PerfectScrollbar style={{ width: '100%', height: 'calc(100vh - 440px)', overflowX: 'hidden', minHeight: 436 }}>
-                <CardContent>
-                  {/* <ChartHistory theme={theme} user={user} data={data} /> */}
-                  {/* @ts-ignore */}
-                  {/* <span ref={scrollRef} /> */}
+                <CardContent sx={{ pl: 4 }}>
+                  <ChartHistory user={user} messages={messages} />
+                  <span ref={messagesEndRef} />
                 </CardContent>
               </PerfectScrollbar>
               <Grid item xs={12}>
-                <Divider sx={{ mt: theme.spacing(2) }} />
+                <Divider />
                 <Box sx={{ padding: '14px' }}>
                   <Grid container spacing={1} alignItems="center">
                     <Grid item xs zeroMinWidth>
@@ -227,16 +302,19 @@ const Chat = () => {
                         startAdornment={
                           <InputAdornment position="start">
                             <IconButton>
-                              <EmojiPicker value={commentTitle} setValue={setCommentTitle} />
+                              <EmojiPicker value={messageInput} setValue={setMessageInput} />
                             </IconButton>
                           </InputAdornment>
                         }
+                        value={messageInput}
+                        onChange={(e) => setMessageInput(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSendMessageClick()}
                         endAdornment={
                           <Stack direction="row" alignItems="center">
                             {/* <IconButton>
                               <IconPaperclip />
                             </IconButton> */}
-                            <IconButton color="primary">
+                            <IconButton color="primary" onClick={() => handleSendMessageClick()}>
                               <IconSend />
                             </IconButton>
                           </Stack>
