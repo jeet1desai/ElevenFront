@@ -42,7 +42,7 @@ const UserList = ({ userDetail, messages }) => {
             </Grid>
             <Grid item component="span">
               <Typography component="span" variant="subtitle2">
-                {formatDate(lastMessage.timestamp)}
+                {lastMessage.timestamp && formatDate(lastMessage.timestamp)}
               </Typography>
             </Grid>
           </Grid>

@@ -255,7 +255,9 @@ const Chat = () => {
                               </Typography>
                             </Grid>
                             <Grid item xs={12}>
-                              <Typography variant="subtitle2">Last seen {formatDate(lastMessage.timestamp)}</Typography>
+                              <Typography variant="subtitle2">
+                                {lastMessage.timestamp && `Last seen ${formatDate(lastMessage.timestamp)}`}
+                              </Typography>
                             </Grid>
                           </Grid>
                         </Grid>
