@@ -1,3 +1,5 @@
+import { WEB_SOCKET_URL } from 'setting';
+
 class WebSocketService {
   static instance = null;
   callbacks = {};
@@ -13,28 +15,22 @@ class WebSocketService {
     this.socketRef = null;
   }
 
-  // https://https://textyyyapi.azurewebsites.net
   connect(chatID) {
-    const path = `ws://127.0.0.1:8000/ws/chat/${chatID}/`;
-    console.log(path);
+    const path = `ws://${WEB_SOCKET_URL}/ws/chat/${chatID}/`;
     this.socketRef = new WebSocket(path);
-    this.socketRef.onopen = () => {
-      console.log('WebSocket open');
-    };
+    this.socketRef.onopen = () => {};
     this.socketNewMessage(
       JSON.stringify({
         command: 'fetch_messages'
       })
     );
     this.socketRef.onmessage = (e) => {
-      // console.log(e.data)
       this.socketNewMessage(e.data);
     };
     this.socketRef.onerror = (e) => {
-      console.log(e);
+      console.log(e.data);
     };
     this.socketRef.onclose = () => {
-      console.log('WebSocket is closed');
       this.connect(chatID);
     };
   }
@@ -42,32 +38,25 @@ class WebSocketService {
   socketNewMessage(data) {
     const parseData = JSON.parse(data);
     const command = parseData.command;
-    // console.log(command)
 
     if (Object.keys(this.callbacks).length === 0) {
-      // console.log("return")
       return;
     }
 
     if (command === 'messages') {
-      // console.log("fetch")
       this.callbacks[command](parseData.messages);
     }
 
     if (command === 'new_message') {
-      // console.log("new")
-
       this.callbacks[command](parseData.message);
     }
   }
 
   fetchMessages(username, chatID) {
-    // console.log("FETCH")
     this.sendMessage({ command: 'fetch_messages', username: username, chatID: chatID });
   }
 
   newChatMessage(message) {
-    // console.log("NEW")
     this.sendMessage({ command: 'new_message', from: message.from, message: message.content, chatID: message.chatID });
   }
 
@@ -78,7 +67,6 @@ class WebSocketService {
 
   sendMessage(data) {
     try {
-      // console.log({...data})
       this.socketRef.send(JSON.stringify({ ...data }));
     } catch (err) {
       console.log(err.message);
@@ -90,13 +78,11 @@ class WebSocketService {
     const recursion = this.waitForSocketConnection;
     setTimeout(() => {
       if (socket.readyState === 1) {
-        console.log('Connection is secure');
         if (callback != null) {
           callback();
         }
         return;
       } else {
-        console.log('Waiting for connection...');
         recursion(callback);
       }
     }, 1);

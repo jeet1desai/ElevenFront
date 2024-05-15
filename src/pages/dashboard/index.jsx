@@ -187,7 +187,6 @@ const DashboardDefault = () => {
           <PerfectScrollbar style={{ height: 546, padding: 0 }}>
             <List component="nav" sx={{ p: 0 }}>
               {chatUserList.map((user) => {
-                console.log(user);
                 return (
                   <Box key={user.id} onClick={() => navigate(`/projects/${projectId}/chat`)}>
                     <UserList userDetail={user} messages={user.messages} />

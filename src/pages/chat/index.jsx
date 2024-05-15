@@ -24,18 +24,21 @@ import ChartHistory from './ChartHistory';
 import EmojiPicker from 'components/third-party/EmojiPicker';
 
 import { MenuUnfoldOutlined } from '@ant-design/icons';
-import { IconPhone, IconExclamationCircle, IconSend, IconTrash } from '@tabler/icons-react';
+import { IconPhone, IconExclamationCircle, IconSend, IconX } from '@tabler/icons-react';
 // import { IconPaperclip } from '@tabler/icons-react';
 
 import { useDispatch, useSelector } from 'store/index';
 import { getChatsService } from 'services/chat';
+
 import { handleUserName } from 'utils/utilsFn';
 import WebSocketInstance from 'utils/WebSocket/Websocket';
 import { formatDate } from 'utils/format/date';
+import { GENDER } from 'utils/enum';
 
-const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
+const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open, userOpen }) => ({
   flexGrow: 1,
   paddingLeft: 0,
+  zIndex: 100,
   transition: theme.transitions.create('margin', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.shorter
@@ -43,8 +46,10 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(({
   marginLeft: `-320px`,
   [theme.breakpoints.down('lg')]: {
     paddingLeft: 0,
-    marginLeft: 0
+    marginLeft: 0,
+    ...(!userOpen && { marginRight: `0` })
   },
+  ...(!userOpen && { marginRight: `-320px` }),
   ...(open && {
     transition: theme.transitions.create('margin', {
       easing: theme.transitions.easing.easeOut,
@@ -69,6 +74,7 @@ const Chat = () => {
   const { user } = useSelector((state) => state.account);
 
   const [openChatDrawer, setOpenChatDrawer] = useState(true);
+  const [openUserDrawer, setOpenUserDrawer] = useState(false);
 
   const handleDrawerOpen = () => {
     setOpenChatDrawer((prevState) => !prevState);
@@ -84,7 +90,7 @@ const Chat = () => {
     };
 
     fetchChats();
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (chatId) {
@@ -93,13 +99,11 @@ const Chat = () => {
       const waitForSocketConnection = (callback) => {
         setTimeout(() => {
           if (WebSocketInstance.state() === 1) {
-            console.log('Connection is secure');
             if (callback != null) {
               callback();
             }
             return;
           } else {
-            console.log('Waiting for connection...');
             waitForSocketConnection(callback);
           }
         }, 100);
@@ -209,25 +213,33 @@ const Chat = () => {
               overflowX: 'hidden',
               height: matchDownLG ? '100%' : 'calc(100vh - 445px)',
               maxHeight: matchDownLG ? 'calc(100vh - 60px)' : 0,
-              minHeight: matchDownLG ? 0 : 545
+              minHeight: matchDownLG ? 0 : 528
             }}
           >
-            <Box sx={{ p: 1.5, pt: 0 }}>
-              <List component="nav">
+            <Box sx={{ p: 1, pt: 0 }}>
+              <List component="nav" sx={{ '& .MuiListItemButton-root': { px: 1, py: 0.5 } }}>
                 {chatUserList.map((user) => {
-                  return <UserList userDetail={user} messages={user.messages} key={user.id} />;
+                  console.log(user);
+                  return (
+                    <Box key={user.id} sx={{ borderRadius: '8px', bgcolor: user.id === chatId ? '#0000000a' : 'inherit' }}>
+                      <UserList userDetail={user} messages={user.messages} />
+                    </Box>
+                  );
                 })}
               </List>
             </Box>
           </PerfectScrollbar>
         </MainCard>
       </Drawer>
-      <Main theme={theme} open={openChatDrawer}>
+      <Main theme={theme} open={openChatDrawer} userOpen={openUserDrawer}>
         {chat ? (
           <MainCard
             sx={{
               bgcolor: theme.palette.mode === 'dark' ? 'dark.main' : '#fff',
-              borderRadius: openChatDrawer ? '0px 8px 8px 0px' : '8px',
+              borderTopLeftRadius: openChatDrawer ? 0 : '8px',
+              borderBottomLeftRadius: openChatDrawer ? 0 : '8px',
+              borderTopRightRadius: openUserDrawer ? 0 : '8px',
+              borderBottomRightRadius: openUserDrawer ? 0 : '8px',
               '& > .MuiCardContent-root': {
                 padding: '0 !important'
               }
@@ -274,13 +286,8 @@ const Chat = () => {
                       )}
                     </Grid>
                     <Grid item>
-                      <IconButton>
-                        <IconTrash />
-                      </IconButton>
-                    </Grid>
-                    <Grid item>
-                      <IconButton>
-                        <IconExclamationCircle />
+                      <IconButton onClick={() => setOpenUserDrawer(!openUserDrawer)}>
+                        {openUserDrawer ? <IconX /> : <IconExclamationCircle />}
                       </IconButton>
                     </Grid>
                   </Grid>
@@ -333,6 +340,94 @@ const Chat = () => {
           <></>
         )}
       </Main>
+      <Drawer
+        sx={{
+          width: 320,
+          flexShrink: 0,
+          zIndex: { xs: 1100, lg: 0 },
+          '& .MuiDrawer-paper': {
+            width: 320,
+            transform: openUserDrawer ? 'translateX(0) !important' : 'none !important',
+            boxSizing: 'border-box',
+            position: 'relative',
+            border: 'none',
+            height: '100%',
+            borderRadius: matchDownLG ? 'none' : `0 8px 8px 0`
+          }
+        }}
+        variant={matchDownLG ? 'temporary' : 'persistent'}
+        anchor="right"
+        open={openUserDrawer}
+        onClose={() => setOpenUserDrawer(false)}
+        ModalProps={{ keepMounted: true }}
+      >
+        <MainCard
+          sx={{
+            bgcolor: matchDownLG ? 'transparent' : drawerBG,
+            borderRadius: '0 8px 8px 0',
+            height: '100%',
+            borderLeft: '0'
+          }}
+          border={!matchDownLG}
+          content={false}
+        >
+          <Box sx={{ p: 2.5, pb: 3 }}>
+            <Stack spacing={2} alignItems="center">
+              <Avatar src={friend ? friend.profile_picture : ''} sx={{ width: 56, height: 56 }} />
+              <Typography variant="h4" component="div">
+                {friend ? handleUserName(friend) : ''}
+              </Typography>
+            </Stack>
+          </Box>
+          <Divider />
+          <PerfectScrollbar
+            style={{
+              overflowX: 'hidden',
+              height: matchDownLG ? '100%' : 'calc(100vh - 445px)',
+              maxHeight: matchDownLG ? 'calc(100vh - 60px)' : 0,
+              minHeight: matchDownLG ? 0 : 464
+            }}
+          >
+            <Box sx={{ p: 2.5 }}>
+              <Grid container spacing={1}>
+                <Grid item xs={12}>
+                  <Stack flexDirection="row" gap="8px">
+                    <Typography sx={{ color: '#8c8c8c' }}>Email:</Typography>
+                    <Typography>{friend && friend.email}</Typography>
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack flexDirection="row" gap="8px">
+                    <Typography sx={{ color: '#8c8c8c' }}>Gender:</Typography>
+                    <Typography>{friend && GENDER[friend.gender]}</Typography>
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack flexDirection="row" gap="8px">
+                    <Typography sx={{ color: '#8c8c8c' }}>Phone:</Typography>
+                    <Typography>
+                      {friend && friend.country_code && friend.phone_number && '+' + friend.country_code + ' ' + friend.phone_number}
+                    </Typography>
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack flexDirection="row" gap="8px">
+                    <Typography sx={{ color: '#8c8c8c' }}>Address:</Typography>
+                    <Typography>{friend && friend.address}</Typography>
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack flexDirection="row" gap="8px">
+                    <Typography sx={{ color: '#8c8c8c' }}>Is User Exist:</Typography>
+                    <Typography>{friend && friend.is_active ? 'Yes' : 'No'}</Typography>
+                  </Stack>
+                </Grid>
+              </Grid>
+            </Box>
+            <Divider />
+          </PerfectScrollbar>
+        </MainCard>
+      </Drawer>
     </Box>
   );
 };

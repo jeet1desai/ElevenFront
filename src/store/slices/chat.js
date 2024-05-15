@@ -22,10 +22,16 @@ const chatSlice = createSlice({
       }
       state.chatUserList = chatUser;
       state.loading = false;
+    },
+    changeChatUserSuccess(state, action) {
+      const { chat } = action.payload;
+      state.chat = chat;
+      state.chatId = chat.id;
+      state.loading = false;
     }
   }
 });
 
-export const { hasError, getChatUserSuccess } = chatSlice.actions;
+export const { hasError, getChatUserSuccess, changeChatUserSuccess } = chatSlice.actions;
 
 export default chatSlice.reducer;

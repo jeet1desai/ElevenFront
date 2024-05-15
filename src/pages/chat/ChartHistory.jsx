@@ -32,7 +32,7 @@ const ChartHistory = ({ user, messages }) => {
                         </Grid>
                         <Grid item xs={12}>
                           <Typography variant="subtitle2" align="right" color={theme.palette.mode === 'dark' ? 'dark.900' : ''}>
-                            {dayjs(history.timestamp).format('HH:mm A')}
+                            {dayjs(history.timestamp).format('MMM DD, YYYY HH:mm A')}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -57,7 +57,7 @@ const ChartHistory = ({ user, messages }) => {
                         </Grid>
                         <Grid item xs={12}>
                           <Typography variant="subtitle2" color={theme.palette.mode === 'dark' ? 'dark.900' : ''}>
-                            {dayjs(history.timestamp).format('HH:mm A')}
+                            {dayjs(history.timestamp).format('MMM DD, YYYY HH:mm A')}
                           </Typography>
                         </Grid>
                       </Grid>

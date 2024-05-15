@@ -7,7 +7,12 @@ import { useSelector } from 'store/index';
 import { handleUserName } from 'utils/utilsFn';
 import { formatDate } from 'utils/format/date';
 
+import { changeChatUserSuccess } from 'store/slices/chat';
+import { useDispatch } from 'store/index';
+
 const UserList = ({ userDetail, messages }) => {
+  const dispatch = useDispatch();
+
   const { user } = useSelector((state) => state.account);
 
   if (!user || !userDetail) {
@@ -17,8 +22,12 @@ const UserList = ({ userDetail, messages }) => {
   const userMap = userDetail.participants[0].user.id === user.id ? userDetail.participants[1] : userDetail.participants[0];
   const lastMessage = messages.length > 0 ? messages[messages.length - 1] : { timestamp: '', content: '' };
 
+  const handleChangeUser = () => {
+    dispatch(changeChatUserSuccess({ chat: userDetail }));
+  };
+
   return (
-    <ListItemButton>
+    <ListItemButton onClick={() => handleChangeUser()}>
       <ListItemAvatar>
         <Avatar src={userMap.user.profile_picture} />
       </ListItemAvatar>
