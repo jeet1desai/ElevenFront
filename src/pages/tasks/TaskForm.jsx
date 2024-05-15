@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
@@ -261,9 +261,10 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
                       <Stack spacing={1}>
                         <InputLabel htmlFor="start_date">Start Date</InputLabel>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
+                          <DesktopDatePicker
                             value={dayjs(values.start_date)}
                             name="start_date"
+                            inputFormat="DD/MM/YYYY"
                             id="start_date"
                             onBlur={handleBlur}
                             onChange={(newValue) => {
@@ -278,9 +279,10 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
                       <Stack spacing={1}>
                         <InputLabel htmlFor="end_date">Due Date</InputLabel>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
+                          <DesktopDatePicker
                             value={dayjs(values.end_date)}
                             name="end_date"
+                            inputFormat="DD/MM/YYYY"
                             id="end_date"
                             onBlur={handleBlur}
                             onChange={(newValue) => {

@@ -18,7 +18,7 @@
     "@fullcalendar/timeline": "^6.1.11",
     "@mui/lab": "^5.0.0-alpha.162",
     "@mui/material": "^5.15.6",
-    "@mui/x-date-pickers": "^7.3.1",
+    "@mui/x-date-pickers": "^5.0.12",
     "@reduxjs/toolkit": "^2.1.0",
     "@szhsin/react-menu": "^4.1.0",
     "@tabler/icons": "^3.2.0",

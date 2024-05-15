@@ -22,7 +22,7 @@ import {
 } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { parseInt } from 'lodash';
 
 import { CloseOutlined } from '@ant-design/icons';
@@ -192,7 +192,8 @@ const ProjectForm = ({ isProjectModalOpen, setProjectModal, project, isEdit }) =
                       <Stack spacing={1}>
                         <InputLabel htmlFor="startDate">Start Date</InputLabel>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
+                          <DesktopDatePicker
+                            inputFormat="DD/MM/YYYY"
                             name="startDate"
                             value={dayjs(values.startDate)}
                             onBlur={handleBlur}
@@ -208,7 +209,8 @@ const ProjectForm = ({ isProjectModalOpen, setProjectModal, project, isEdit }) =
                       <Stack spacing={1}>
                         <InputLabel htmlFor="endDate">End Date</InputLabel>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
+                          <DesktopDatePicker
+                            inputFormat="DD/MM/YYYY"
                             value={dayjs(values.endDate)}
                             name="endDate"
                             id="endDate"

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 
-import { useMediaQuery } from '@mui/material';
+import { Dialog, useMediaQuery } from '@mui/material';
 
 import MainCard from 'components/MainCard';
 import CalendarStyled from 'components/styled-css/CalendarStyled';
@@ -12,7 +12,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
 import interactionPlugin from '@fullcalendar/interaction';
-import { Dialog } from '../../../node_modules/@mui/material/index';
+
+import EventForm from './EventForm';
 
 const Calender = () => {
   const calendarRef = useRef(null);
@@ -112,7 +113,45 @@ const Calender = () => {
       </MainCard>
 
       <Dialog maxWidth="sm" fullWidth onClose={handleModalClose} open={isModalOpen} sx={{ '& .MuiDialog-paper': { p: 0 } }}>
-        hello
+        {/* <Grid container spacing={2} justifyContent="space-between" alignItems="center" sx={{ flexWrap: 'nowrap' }}>
+          <Grid item>
+            <DialogTitle sx={{ fontSize: '1.3rem', fontWeight: '500' }}>
+              {1 === Number('2') ? `Edit Event: task name` : 'Add Event'}
+            </DialogTitle>
+          </Grid>
+          <Grid item sx={{ mr: 1.5 }}>
+            <IconButton color="secondary" onClick={() => onClose(false)}>
+              <IconX />
+            </IconButton>
+          </Grid>
+        </Grid>
+        <DialogActions sx={{ padding: '15px 24px', justifyContent: 'space-between' }}>
+          {1 === Number('2') ? (
+            <IconButton color="error">
+              <IconTrash />
+            </IconButton>
+          ) : (
+            <div></div>
+          )}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Button color="error" onClick={() => handleModalClose(false)}>
+              Cancel
+            </Button>
+            <Button disableElevation variant="contained" type="submit">
+              {1 === Number('2') ? 'Save' : 'Add'}
+            </Button>
+          </Box>
+        </DialogActions> */}
+        {isModalOpen && (
+          <EventForm
+            // event={selectedEvent}
+            // range={selectedRange}
+            onCancel={handleModalClose}
+            // handleDelete={handleEventDelete}
+            // handleCreate={handleEventCreate}
+            // handleUpdate={handleUpdateEvent}
+          />
+        )}
       </Dialog>
     </>
   );
