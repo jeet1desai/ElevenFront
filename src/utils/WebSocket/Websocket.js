@@ -16,7 +16,7 @@ class WebSocketService {
   }
 
   connect(chatID) {
-    const path = `ws://${WEB_SOCKET_URL}/ws/chat/${chatID}/`;
+    const path = `wss://${WEB_SOCKET_URL}/ws/chat/${chatID}/`;
     this.socketRef = new WebSocket(path);
     this.socketRef.onopen = () => {};
     this.socketNewMessage(
@@ -30,8 +30,13 @@ class WebSocketService {
     this.socketRef.onerror = (e) => {
       console.log(e.data);
     };
+    // this.socketRef.onclose = () => {
+    //   this.connect(chatID);
+    // };
     this.socketRef.onclose = () => {
-      this.connect(chatID);
+      setTimeout(() => {
+        this.connect(chatID);
+      }, 5000);
     };
   }
 

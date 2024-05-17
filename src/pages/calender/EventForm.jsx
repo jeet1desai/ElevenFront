@@ -1,4 +1,3 @@
-// import { useTheme } from '@mui/material/styles';
 import {
   Button,
   DialogActions,
@@ -47,7 +46,6 @@ const getInitialValues = (event, range) => {
 };
 
 const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onCancel }) => {
-  //   const theme = useTheme();
   const isCreating = !event;
 
   const backgroundColor = [
