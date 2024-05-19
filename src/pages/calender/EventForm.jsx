@@ -1,29 +1,31 @@
+import React from 'react';
+
+import { styled } from '@mui/material/styles';
 import {
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  Divider,
-  FormControl,
   Grid,
   IconButton,
-  OutlinedInput,
   InputAdornment,
   RadioGroup,
   Stack,
-  InputLabel,
   TextField,
-  Tooltip,
-  Typography
+  Tooltip
 } from '@mui/material';
 import { LocalizationProvider, MobileDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-
 import _ from 'lodash';
 import * as Yup from 'yup';
 import { useFormik, Form, FormikProvider } from 'formik';
 
+import { useCreateBlockNote } from '@blocknote/react';
+import { BlockNoteView } from '@blocknote/mantine';
+
 import ColorPalette from './ColorPalette';
+import Comment from 'components/Comment/index';
+import { StyledTitleInput, StyledInputLabel } from 'components/styled-css/FormStyled';
+import { StyledCommentActionBar, StyledThreadItemListContainer } from 'components/styled-css/CommentStyled';
 
 import { IconX, IconTrash, IconCalendar } from '@tabler/icons-react';
 
@@ -33,7 +35,6 @@ const getInitialValues = (event, range) => {
     description: '',
     color: '#2196f3',
     textColor: '',
-    allDay: false,
     start: range ? new Date(range.start) : new Date(),
     end: range ? new Date(range.end) : new Date()
   };
@@ -45,8 +46,32 @@ const getInitialValues = (event, range) => {
   return newEvent;
 };
 
+const StyledEditor = styled('div')({
+  width: '100%',
+  minHeight: '300px',
+  padding: '20px 0',
+  borderTop: '1px solid #e6ebf1',
+  borderBottom: '1px solid #e6ebf1',
+  '& .editor': {
+    background: '#ffffff',
+    fontSize: '12px',
+    color: '#333333'
+  },
+  '& .editor [class^="_inlineContent"]:before': {
+    color: '#999999'
+  }
+});
+
 const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onCancel }) => {
   const isCreating = !event;
+
+  const editor = useCreateBlockNote({
+    initialContent: [
+      {
+        type: 'paragraph'
+      }
+    ]
+  });
 
   const backgroundColor = [
     {
@@ -65,12 +90,6 @@ const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onC
       color: 'warning.dark'
     },
     {
-      color: 'orange.dark'
-    },
-    {
-      color: 'grey.500'
-    },
-    {
       color: 'primary.light'
     },
     {
@@ -84,9 +103,6 @@ const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onC
     },
     {
       color: 'warning.light'
-    },
-    {
-      color: 'orange.light'
     }
   ];
 
@@ -104,9 +120,6 @@ const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onC
       color: 'warning.light'
     },
     {
-      color: 'orange.light'
-    },
-    {
       color: 'primary.light'
     },
     {
@@ -119,13 +132,7 @@ const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onC
       color: 'success.dark'
     },
     {
-      color: 'secondary.main'
-    },
-    {
       color: 'warning.dark'
-    },
-    {
-      color: 'orange.dark'
     },
     {
       color: 'grey.500'
@@ -176,50 +183,36 @@ const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onC
   return (
     <FormikProvider value={formik}>
       <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={2} justifyContent="space-between" alignItems="center" sx={{ flexWrap: 'nowrap' }}>
-          <Grid item>
-            <DialogTitle sx={{ fontSize: '1.3rem', fontWeight: '500' }}>{event ? 'Edit Event' : 'Add Event'}</DialogTitle>
-          </Grid>
-          <Grid item sx={{ mr: 1.5 }}>
-            <IconButton color="secondary" onClick={() => onCancel(false)}>
-              <IconX />
-            </IconButton>
-          </Grid>
-        </Grid>
-        <Divider />
-        <DialogContent dividers>
+        <Stack direction="row" spacing={2} alignItems="center" sx={{ p: '8px 10px', borderBottom: '1px solid #e6ebf1' }}>
+          <IconButton color="secondary" onClick={() => onCancel(false)}>
+            <IconX />
+          </IconButton>
+          {!isCreating && (
+            <Tooltip title="Delete Event">
+              <IconButton color="error" onClick={() => handleDelete(event?.id)}>
+                <IconTrash />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Stack>
+        <DialogContent>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Stack spacing={1}>
-                <InputLabel htmlFor="title">Title</InputLabel>
-                <OutlinedInput
+                <StyledTitleInput
                   fullWidth
                   id="title"
-                  placeholder="Enter title"
+                  placeholder="Enter event title"
                   {...getFieldProps('title')}
                   error={Boolean(touched.title && errors.title)}
-                  helperText={touched.title && errors.title}
-                />
-              </Stack>
-            </Grid>
-            <Grid item xs={12}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="description">Description</InputLabel>
-                <OutlinedInput
-                  fullWidth
-                  id="description"
-                  placeholder="Enter description"
-                  {...getFieldProps('description')}
-                  error={Boolean(touched.description && errors.description)}
-                  helperText={touched.description && errors.description}
+                  rows={2}
                   multiline
-                  rows={3}
                 />
               </Stack>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="start">Start Date</InputLabel>
+            <Grid item xs={12} md={12}>
+              <Stack spacing={1} flexDirection="row" alignItems="center" width="100%">
+                <StyledInputLabel htmlFor="start">Start Date</StyledInputLabel>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <MobileDateTimePicker
                     value={values.start}
@@ -228,7 +221,7 @@ const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onC
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        fullWidth
+                        sx={{ m: '0 !important' }}
                         InputProps={{
                           endAdornment: (
                             <InputAdornment position="end">
@@ -236,15 +229,16 @@ const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onC
                             </InputAdornment>
                           )
                         }}
+                        error={Boolean(touched.start && errors.start)}
                       />
                     )}
                   />
                 </LocalizationProvider>
               </Stack>
             </Grid>
-            <Grid item xs={12} md={6}>
-              <Stack spacing={1}>
-                <InputLabel htmlFor="end">End Date</InputLabel>
+            <Grid item xs={12} md={12}>
+              <Stack spacing={1} flexDirection="row" alignItems="center" width="100%">
+                <StyledInputLabel htmlFor="end">End Date</StyledInputLabel>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <MobileDateTimePicker
                     value={values.end}
@@ -253,9 +247,8 @@ const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onC
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        fullWidth
+                        sx={{ m: '0 !important' }}
                         error={Boolean(touched.end && errors.end)}
-                        helperText={touched.end && errors.end}
                         InputProps={{
                           endAdornment: (
                             <InputAdornment position="end">
@@ -270,74 +263,64 @@ const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onC
               </Stack>
             </Grid>
             <Grid item xs={12}>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Typography variant="subtitle1">Background Color</Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl>
-                    <RadioGroup
-                      row
-                      {...getFieldProps('color')}
-                      onChange={(e) => setFieldValue('color', e.target.value)}
-                      name="color-radio-buttons-group"
-                      sx={{ '& .MuiFormControlLabel-root': { mr: 0 } }}
-                    >
-                      {backgroundColor.map((item, index) => (
-                        <ColorPalette key={index} value={item.color} color={item.color} label={item.label} />
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                </Grid>
-              </Grid>
+              <Stack spacing={1} flexDirection="row" alignItems="center" width="100%">
+                <StyledInputLabel>Background Color</StyledInputLabel>
+                <RadioGroup
+                  row
+                  {...getFieldProps('color')}
+                  onChange={(e) => setFieldValue('color', e.target.value)}
+                  name="color-radio-buttons-group"
+                  sx={{ '& .MuiFormControlLabel-root': { mr: 0 } }}
+                >
+                  {backgroundColor.map((item, index) => (
+                    <ColorPalette key={index} value={item.color} color={item.color} label={item.label} />
+                  ))}
+                </RadioGroup>
+              </Stack>
             </Grid>
             <Grid item xs={12}>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
-                  <Typography variant="subtitle1">Text Color</Typography>
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl component="fieldset">
-                    <RadioGroup
-                      row
-                      {...getFieldProps('textColor')}
-                      onChange={(e) => setFieldValue('textColor', e.target.value)}
-                      name="text-color-radio-buttons-group"
-                      sx={{ '& .MuiFormControlLabel-root': { mr: 0 } }}
-                    >
-                      {textColor.map((item, index) => (
-                        <ColorPalette key={index} value={item.color} color={item.color} label={item.label} />
-                      ))}
-                    </RadioGroup>
-                  </FormControl>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </DialogContent>
-        <DialogActions sx={{ padding: '15px 24px' }}>
-          <Grid container justifyContent="space-between" alignItems="center">
-            <Grid item>
-              {!isCreating && (
-                <Tooltip title="Delete Event">
-                  <IconButton color="error" onClick={() => handleDelete(event?.id)}>
-                    <IconTrash />
-                  </IconButton>
-                </Tooltip>
-              )}
-            </Grid>
-            <Grid item>
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Button color="error" onClick={onCancel}>
-                  Cancel
-                </Button>
-                <Button type="submit" variant="contained" disabled={isSubmitting}>
-                  {event ? 'Edit' : 'Add'}
-                </Button>
+              <Stack spacing={1} flexDirection="row" alignItems="center" width="100%">
+                <StyledInputLabel>Text Color</StyledInputLabel>
+                <RadioGroup
+                  row
+                  {...getFieldProps('textColor')}
+                  onChange={(e) => setFieldValue('textColor', e.target.value)}
+                  name="text-color-radio-buttons-group"
+                  sx={{ '& .MuiFormControlLabel-root': { mr: 0 } }}
+                >
+                  {textColor.map((item, index) => (
+                    <ColorPalette key={index} value={item.color} color={item.color} label={item.label} />
+                  ))}
+                </RadioGroup>
               </Stack>
             </Grid>
           </Grid>
+        </DialogContent>
+        <Stack spacing={1}>
+          <StyledEditor>
+            <BlockNoteView editor={editor} theme="white" />
+          </StyledEditor>
+        </Stack>
+        <DialogActions sx={{ padding: '15px 24px' }}>
+          <Button type="submit" variant="contained" disabled={isSubmitting}>
+            {event ? 'Edit' : 'Add'}
+          </Button>
         </DialogActions>
+        <StyledThreadItemListContainer>
+          <StyledInputLabel>Comments</StyledInputLabel>
+          {[
+            { id: 1, body: 'abc' },
+            { id: 1, body: 'abc' }
+          ].map((comment) => (
+            <Comment key={comment.id} comment={comment} />
+          ))}
+        </StyledThreadItemListContainer>
+        <StyledCommentActionBar>
+          <TextField fullWidth placeholder={'Reply...'} />
+          <Button variant="contained" color="secondary">
+            Comment
+          </Button>
+        </StyledCommentActionBar>
       </Form>
     </FormikProvider>
   );

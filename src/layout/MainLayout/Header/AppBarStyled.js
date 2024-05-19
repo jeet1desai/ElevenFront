@@ -10,6 +10,7 @@ const AppBarStyled = styled(AppBar, { shouldForwardProp: (prop) => prop !== 'ope
     duration: theme.transitions.duration.leavingScreen
   }),
   ...(open && {
+    zIndex: 1,
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'margin'], {

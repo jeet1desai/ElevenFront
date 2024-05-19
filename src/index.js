@@ -11,6 +11,9 @@ import '@szhsin/react-menu/dist/transitions/slide.css';
 
 import 'react-perfect-scrollbar/dist/css/styles.css';
 
+import '@blocknote/core/fonts/inter.css';
+import '@blocknote/mantine/style.css';
+
 import { Provider as ReduxProvider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
