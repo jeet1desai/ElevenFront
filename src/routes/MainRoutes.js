@@ -10,6 +10,7 @@ const HelpSupportPage = Loadable(lazy(() => import('pages/help-feedback/help')))
 const FeedbackPage = Loadable(lazy(() => import('pages/help-feedback/feedback')));
 const ReleasePage = Loadable(lazy(() => import('pages/release')));
 const BillingPage = Loadable(lazy(() => import('pages/billing')));
+const Chat = Loadable(lazy(() => import('pages/chat')));
 
 const MainRoutes = {
   path: '/',
@@ -42,6 +43,10 @@ const MainRoutes = {
     {
       path: 'account',
       element: <AccountPage />
+    },
+    {
+      path: 'chat',
+      element: <Chat />
     }
   ]
 };

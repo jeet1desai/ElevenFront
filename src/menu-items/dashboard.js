@@ -89,14 +89,14 @@ const dashboard = {
       icon: icons.TeamOutlined,
       breadcrumbs: true
     },
-    {
-      id: 'chat',
-      title: <FormattedMessage id="chat" />,
-      type: 'item',
-      url: 'chat',
-      icon: icons.MessageOutlined,
-      breadcrumbs: false
-    },
+    // {
+    //   id: 'chat',
+    //   title: <FormattedMessage id="chat" />,
+    //   type: 'item',
+    //   url: 'chat',
+    //   icon: icons.MessageOutlined,
+    //   breadcrumbs: false
+    // },
     // {
     //   id: 'invoice',
     //   title: <FormattedMessage id="invoice" />,

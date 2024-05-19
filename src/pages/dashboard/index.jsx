@@ -188,7 +188,7 @@ const DashboardDefault = () => {
             <List component="nav" sx={{ p: 0 }}>
               {chatUserList.map((user) => {
                 return (
-                  <Box key={user.id} onClick={() => navigate(`/projects/${projectId}/chat`)}>
+                  <Box key={user.id} onClick={() => navigate(`/chat`)}>
                     <UserList userDetail={user} messages={user.messages} />
                   </Box>
                 );

@@ -12,7 +12,6 @@ const RequestInformation = Loadable(lazy(() => import('pages/request-information
 const FieldReports = Loadable(lazy(() => import('pages/field-reports')));
 const Invoice = Loadable(lazy(() => import('pages/invoice')));
 const Document = Loadable(lazy(() => import('pages/document')));
-const Chat = Loadable(lazy(() => import('pages/chat')));
 const Calender = Loadable(lazy(() => import('pages/calender')));
 const Setting = Loadable(lazy(() => import('pages/setting')));
 
@@ -55,10 +54,6 @@ const ProjectRoutes = {
     {
       path: 'projects/:id/teams',
       element: <Teams />
-    },
-    {
-      path: 'projects/:id/chat',
-      element: <Chat />
     },
     {
       path: 'projects/:id/calender',
