@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { styled } from '@mui/material/styles';
 import {
   Button,
   DialogActions,
@@ -19,10 +18,8 @@ import _ from 'lodash';
 import * as Yup from 'yup';
 import { useFormik, Form, FormikProvider } from 'formik';
 
-import { useCreateBlockNote } from '@blocknote/react';
-import { BlockNoteView } from '@blocknote/mantine';
-
 import ColorPalette from './ColorPalette';
+import BlackEditor from 'components/BlackEditor/index';
 import Comment from 'components/Comment/index';
 import { StyledTitleInput, StyledInputLabel } from 'components/styled-css/FormStyled';
 import { StyledCommentActionBar, StyledThreadItemListContainer } from 'components/styled-css/CommentStyled';
@@ -46,32 +43,8 @@ const getInitialValues = (event, range) => {
   return newEvent;
 };
 
-const StyledEditor = styled('div')({
-  width: '100%',
-  minHeight: '300px',
-  padding: '20px 0',
-  borderTop: '1px solid #e6ebf1',
-  borderBottom: '1px solid #e6ebf1',
-  '& .editor': {
-    background: '#ffffff',
-    fontSize: '12px',
-    color: '#333333'
-  },
-  '& .editor [class^="_inlineContent"]:before': {
-    color: '#999999'
-  }
-});
-
 const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onCancel }) => {
   const isCreating = !event;
-
-  const editor = useCreateBlockNote({
-    initialContent: [
-      {
-        type: 'paragraph'
-      }
-    ]
-  });
 
   const backgroundColor = [
     {
@@ -297,9 +270,7 @@ const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onC
           </Grid>
         </DialogContent>
         <Stack spacing={1}>
-          <StyledEditor>
-            <BlockNoteView editor={editor} theme="white" />
-          </StyledEditor>
+          <BlackEditor />
         </Stack>
         <DialogActions sx={{ padding: '15px 24px' }}>
           <Button type="submit" variant="contained" disabled={isSubmitting}>
