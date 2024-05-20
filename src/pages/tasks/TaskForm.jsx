@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { styled } from '@mui/material/styles';
 import {
   Autocomplete,
   Box,
@@ -15,7 +14,6 @@ import {
   InputLabel,
   MenuItem,
   OutlinedInput,
-  Paper,
   Select,
   Stack,
   TextField
@@ -27,12 +25,12 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import dayjs from 'dayjs';
-import { useDropzone } from 'react-dropzone';
 
-import { StyledContainer, StyledUploadDragIcon, StyledUploadDragSubTitle, StyledUploadDragTitle } from 'components/styled-css/DropZoneCSS';
 import DeleteTask from './DeleteTask';
+import DropBox from 'components/DropBox/index';
+import { StyledImage, StyledImageContainer, StyledRemoveButton } from 'components/styled-css/ImageStyled';
 
-import { IconX, IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconX, IconTrash } from '@tabler/icons-react';
 
 import { MenuProps, handleUserName, uploadDocument } from 'utils/utilsFn';
 import { TASK_STATUS } from 'utils/enum';
@@ -40,55 +38,6 @@ import { TASK_STATUS } from 'utils/enum';
 import { useSelector, useDispatch } from 'store/index';
 import { addTaskService, editTaskService } from 'services/task';
 import { getTeamMemberService } from 'services/utils';
-
-const StyledUploadIcon = styled(IconPlus)({
-  color: '#999999',
-  marginBottom: '12px'
-});
-
-const StyledButton = styled(Button)({
-  color: '#666666',
-  marginBottom: '12px',
-  width: '150px',
-  display: 'flex',
-  gap: '4px',
-  border: '1px solid #e6ebf1',
-  '& svg': {
-    margin: '0',
-    width: '20px',
-    height: '20px'
-  }
-});
-
-const StyledImageContainer = styled('div')({
-  width: 100,
-  height: 100,
-  borderRadius: 0.25,
-  overflow: 'hidden',
-  position: 'relative'
-});
-
-const StyledRemoveButton = styled(IconButton)({
-  p: '1px',
-  color: '#f44336',
-  bgcolor: '#fff',
-  border: ' 1px solid red',
-  borderRadius: '50px !important',
-  width: '20px',
-  background: 'transparent',
-  height: '20px',
-  '&:hover': {
-    bgcolor: '#fff'
-  }
-});
-
-const StyledImage = styled(Paper)({
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  position: 'absolute',
-  borderRadius: 8
-});
 
 const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
   const dispatch = useDispatch();
@@ -347,7 +296,7 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
                     <Grid item xs={12} sm={12}>
                       <Stack spacing={1}>
                         <InputLabel htmlFor="url">Photos</InputLabel>
-                        <TaskDropZone handleChange={handleChange} />
+                        <DropBox handleChange={handleChange} />
                         <Grid container spacing={1}>
                           {values.firebaseUrl.map((link, index) => {
                             return (
@@ -424,66 +373,6 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
 
       {isDeleteTaskOpen && <DeleteTask open={isDeleteTaskOpen} onClose={setDeleteTask} formClose={onClose} task={task} />}
     </>
-  );
-};
-
-const TaskDropZone = ({ handleChange }) => {
-  const fileInputRef = useRef(null);
-
-  const handleChangeFiles = (files) => {
-    const fileList = [...files];
-    handleChange({ target: { name: 'files', value: fileList } });
-    handleChange({
-      target: {
-        name: 'url',
-        value: fileList.map((file) => {
-          const reader = new FileReader();
-          reader.readAsArrayBuffer(file);
-          return URL.createObjectURL(file);
-        })
-      }
-    });
-  };
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    noClick: true,
-    noKeyboard: true,
-    onDragEnter: () => {},
-    onDragLeave: () => {},
-    onDrop: () => {},
-    onDropAccepted: async (files) => {
-      handleChangeFiles(files);
-    }
-  });
-
-  return (
-    <StyledContainer {...getRootProps()}>
-      {isDragActive ? (
-        <>
-          <input accept="image/*" {...getInputProps()} />
-          <StyledUploadDragIcon />
-          <StyledUploadDragTitle>Upload a photos</StyledUploadDragTitle>
-          <StyledUploadDragSubTitle>Drag and Drop Here</StyledUploadDragSubTitle>
-        </>
-      ) : (
-        <>
-          <input
-            onChange={(e) => handleChangeFiles(e.target.files)}
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept="image/*"
-            style={{ display: 'none' }}
-          />
-          <StyledButton onClick={() => fileInputRef.current.click()}>
-            <StyledUploadIcon />
-            Upload a photos
-          </StyledButton>
-          <StyledUploadDragSubTitle>OR</StyledUploadDragSubTitle>
-          <StyledUploadDragTitle>Drag and Drop Here</StyledUploadDragTitle>
-        </>
-      )}
-    </StyledContainer>
   );
 };
 

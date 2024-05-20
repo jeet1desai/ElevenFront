@@ -68,7 +68,7 @@ const StyledNoContent = styled('div')({
   justifyContent: 'center',
   display: 'flex',
   gap: '12px',
-  height: '500px',
+  height: '470px',
   width: '100%'
 });
 
