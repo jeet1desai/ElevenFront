@@ -10,10 +10,8 @@ import { Mention } from './Mention';
 
 const StyledEditor = styled('div')({
   width: '100%',
-  minHeight: '300px',
   padding: '20px 0',
   borderTop: '1px solid #e6ebf1',
-  borderBottom: '1px solid #e6ebf1',
   '& .editor': {
     background: '#ffffff',
     fontSize: '12px',

@@ -5,8 +5,6 @@ import { Button, FormHelperText, Grid, InputLabel, OutlinedInput, Stack, Typogra
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
 
-import AnimateButton from 'components/@extended/AnimateButton';
-
 const AuthForgetPassword = () => {
   return (
     <>
@@ -56,11 +54,9 @@ const AuthForgetPassword = () => {
                 <Typography variant="body2">Do not forgot to check SPAM box.</Typography>
               </Grid>
               <Grid item xs={12}>
-                <AnimateButton>
-                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Send Password Reset Email
-                  </Button>
-                </AnimateButton>
+                <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
+                  Send Password Reset Email
+                </Button>
               </Grid>
             </Grid>
           </Form>

@@ -19,8 +19,6 @@ import {
 import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
 
-import AnimateButton from 'components/@extended/AnimateButton';
-
 import { EyeOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 
 import useAuth from 'hooks/useAuth';
@@ -133,7 +131,7 @@ const AuthLogin = () => {
                     }
                     label={<Typography variant="h6">Keep me sign in</Typography>}
                   />
-                  <Link variant="h6" component={RouterLink} to="" color="text.primary">
+                  <Link variant="h6" component={RouterLink} to="/forgot-password" color="text.primary">
                     Forgot Password?
                   </Link>
                 </Stack>
@@ -144,11 +142,9 @@ const AuthLogin = () => {
                 </Grid>
               )}
               <Grid item xs={12}>
-                <AnimateButton>
-                  <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
-                    Login
-                  </Button>
-                </AnimateButton>
+                <Button disableElevation disabled={isSubmitting} fullWidth size="large" type="submit" variant="contained" color="primary">
+                  Login
+                </Button>
               </Grid>
             </Grid>
           </Form>

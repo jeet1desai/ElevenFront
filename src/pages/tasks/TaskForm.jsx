@@ -2,33 +2,28 @@ import React, { useEffect, useState } from 'react';
 
 import {
   Autocomplete,
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
+  Drawer,
   DialogContent,
-  DialogTitle,
-  FormHelperText,
+  Tooltip,
   Grid,
   IconButton,
-  InputLabel,
   MenuItem,
   OutlinedInput,
   Select,
   Stack,
+  useMediaQuery,
   TextField
 } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-
-import { Formik, Form } from 'formik';
+import { Form, FormikProvider, useFormik } from 'formik';
 import * as Yup from 'yup';
 import dayjs from 'dayjs';
 
 import DeleteTask from './DeleteTask';
-import DropBox from 'components/DropBox/index';
-import { StyledImage, StyledImageContainer, StyledRemoveButton } from 'components/styled-css/ImageStyled';
+import { StyledInputLabel, StyledTitleInput } from 'components/styled-css/FormStyled';
+import BlackEditor from 'components/BlackEditor/index';
 
 import { IconX, IconTrash } from '@tabler/icons-react';
 
@@ -41,11 +36,11 @@ import { getTeamMemberService } from 'services/utils';
 
 const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
   const dispatch = useDispatch();
+  const matchSm = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
   const { projectId } = useSelector((state) => state.project);
   const { teamMember } = useSelector((state) => state.utils);
 
-  const [loading, setLoading] = useState(false);
   const [isDeleteTaskOpen, setDeleteTask] = useState(false);
   const [formValue, setFormValue] = useState({
     title: '',
@@ -85,291 +80,203 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
     }
   }, [isEditTaskOpen]);
 
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: formValue,
+    validationSchema: Yup.object().shape({
+      title: Yup.string().max(255).required('Task name is required')
+    }),
+    onSubmit: async (values) => {
+      try {
+        let fileUrls = [];
+        const uploadPromises = [];
+
+        values.files.forEach((file) => {
+          const uploadPromise = uploadDocument('eleven/tasks', file).then((url) => {
+            fileUrls.push(url);
+          });
+          uploadPromises.push(uploadPromise);
+        });
+
+        Promise.all(uploadPromises).then(async () => {
+          const body = {
+            title: values.title,
+            status: values.status,
+            address: values.address,
+            start_date: values.start_date,
+            end_date: values.end_date,
+            description: values.description,
+            assign: values.assign.map((user) => user.id),
+            url: [...fileUrls, ...values.firebaseUrl],
+            project: Number(projectId)
+          };
+
+          onClose(false);
+
+          if (isEditTaskOpen) {
+            await dispatch(editTaskService(task.id, body));
+          } else {
+            await dispatch(addTaskService(body));
+          }
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  });
+
+  const { values, errors, touched, handleSubmit, getFieldProps, handleChange } = formik;
+
+  const handleCloseDialog = () => {
+    handleSubmit();
+    onClose(false);
+  };
+
   return (
     <>
-      <Dialog open={open} scroll="paper" fullWidth>
-        <Grid container spacing={2} justifyContent="space-between" alignItems="center" sx={{ flexWrap: 'nowrap' }}>
-          <Grid item>
-            <DialogTitle sx={{ fontSize: '1.3rem', fontWeight: '500' }}>
-              {isEditTaskOpen ? `Edit Task: ${task.title}` : 'Add New Task'}
-            </DialogTitle>
-          </Grid>
-          <Grid item sx={{ mr: 1.5 }}>
-            <IconButton color="secondary" onClick={() => onClose(false)}>
-              <IconX />
-            </IconButton>
-          </Grid>
-        </Grid>
-        <Formik
-          enableReinitialize
-          initialValues={formValue}
-          validationSchema={Yup.object().shape({
-            title: Yup.string().max(255).required('Task name is required')
-          })}
-          onSubmit={async (values) => {
-            setLoading(true);
-            try {
-              let fileUrls = [];
-              const uploadPromises = [];
-
-              values.files.forEach((file) => {
-                const uploadPromise = uploadDocument('eleven/tasks', file).then((url) => {
-                  fileUrls.push(url);
-                });
-                uploadPromises.push(uploadPromise);
-              });
-
-              Promise.all(uploadPromises).then(async () => {
-                const body = {
-                  title: values.title,
-                  status: values.status,
-                  address: values.address,
-                  start_date: values.start_date,
-                  end_date: values.end_date,
-                  description: values.description,
-                  assign: values.assign.map((user) => user.id),
-                  url: [...fileUrls, ...values.firebaseUrl],
-                  project: Number(projectId)
-                };
-
-                onClose(false);
-
-                if (isEditTaskOpen) {
-                  await dispatch(editTaskService(task.id, body));
-                } else {
-                  await dispatch(addTaskService(body));
-                }
-
-                setLoading(false);
-              });
-            } catch (err) {
-              setLoading(false);
-            }
-          }}
+      <Drawer
+        open={open}
+        scroll="paper"
+        fullWidth
+        anchor="right"
+        onClose={() => handleCloseDialog()}
+        variant="temporary"
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: matchSm ? '100%' : 600,
+            zIndex: 999999
+          }
+        }}
+      >
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ p: '8px 10px', borderBottom: '1px solid #e6ebf1' }}
         >
-          {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => {
-            return (
-              <Form noValidate onSubmit={handleSubmit}>
-                <DialogContent dividers>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="title">Title</InputLabel>
-                        <OutlinedInput
-                          value={values.title}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          name="title"
-                          id="title"
-                          placeholder="Enter title"
-                          fullWidth
-                          error={Boolean(touched.title && errors.title)}
-                        />
-                        {touched.title && errors.title && <FormHelperText error>{errors.title}</FormHelperText>}
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="status">Status</InputLabel>
-                        <Select
-                          onBlur={handleBlur}
-                          onChange={handleChange}
-                          value={values.status}
-                          name="status"
-                          id="status"
-                          displayEmpty
-                          fullWidth
-                          input={<OutlinedInput />}
-                          MenuProps={MenuProps}
-                        >
-                          {Object.entries(TASK_STATUS)
-                            .map(([key, value]) => ({ id: parseInt(key), label: value }))
-                            .map((option) => (
-                              <MenuItem key={option.id} value={option.id}>
-                                {option.label}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} sm={12}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="address">Address</InputLabel>
-                        <OutlinedInput
-                          value={values.address}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          name="address"
-                          id="address"
-                          placeholder="Enter address"
-                          fullWidth
-                        />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="start_date">Start Date</InputLabel>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DesktopDatePicker
-                            value={dayjs(values.start_date)}
-                            name="start_date"
-                            inputFormat="DD/MM/YYYY"
-                            id="start_date"
-                            onBlur={handleBlur}
-                            onChange={(newValue) => {
-                              handleChange({ target: { name: 'start_date', value: dayjs(newValue).format('YYYY-MM-DD') } });
-                            }}
-                            renderInput={(params) => <TextField {...params} />}
-                          />
-                        </LocalizationProvider>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} sm={6}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="end_date">Due Date</InputLabel>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DesktopDatePicker
-                            value={dayjs(values.end_date)}
-                            name="end_date"
-                            inputFormat="DD/MM/YYYY"
-                            id="end_date"
-                            onBlur={handleBlur}
-                            onChange={(newValue) => {
-                              handleChange({ target: { name: 'end_date', value: dayjs(newValue).format('YYYY-MM-DD') } });
-                            }}
-                            renderInput={(params) => <TextField {...params} />}
-                          />
-                        </LocalizationProvider>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} sm={12}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="assign">Assigned To</InputLabel>
-                        <Autocomplete
-                          multiple
-                          id="assign"
-                          name="assign"
-                          limitTags={2}
-                          options={teamMember.map((option) => {
-                            const { user } = option;
-                            if (user) {
-                              return { label: handleUserName(user), id: user.id };
-                            }
-                          })}
-                          onBlur={handleBlur}
-                          value={values.assign}
-                          filterSelectedOptions
-                          onChange={(event, newValue) => {
-                            const newValues = newValue.map((member) => ({ label: member.label, id: member.id }));
-                            handleChange({ target: { name: 'assign', value: newValues } });
+          <IconButton color="secondary" onClick={() => handleCloseDialog()}>
+            <IconX />
+          </IconButton>
+          {isEditTaskOpen && (
+            <Tooltip title="Delete Task">
+              <IconButton color="error" onClick={() => setDeleteTask(true)}>
+                <IconTrash />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Stack>
+        <FormikProvider value={formik}>
+          <Form noValidate>
+            <DialogContent>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Stack spacing={1}>
+                    <StyledTitleInput
+                      fullWidth
+                      id="title"
+                      placeholder="Enter task title"
+                      {...getFieldProps('title')}
+                      error={Boolean(touched.title && errors.title)}
+                    />
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack spacing={1} flexDirection="row" alignItems="center" width="100%" flexWrap={matchSm ? 'wrap' : 'nowrap'}>
+                    <StyledInputLabel htmlFor="status">Status</StyledInputLabel>
+                    <Select id="status" displayEmpty fullWidth input={<OutlinedInput />} MenuProps={MenuProps} {...getFieldProps('status')}>
+                      {Object.entries(TASK_STATUS)
+                        .map(([key, value]) => ({ id: parseInt(key), label: value }))
+                        .map((option) => (
+                          <MenuItem key={option.id} value={option.id}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack spacing={1} flexDirection="row" alignItems="center" width="100%" flexWrap={matchSm ? 'wrap' : 'nowrap'}>
+                    <StyledInputLabel htmlFor="address">Address</StyledInputLabel>
+                    <OutlinedInput id="address" placeholder="Enter address" fullWidth {...getFieldProps('address')} />
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack spacing={1} flexDirection="row" alignItems="center" width="100%" flexWrap={matchSm ? 'wrap' : 'nowrap'}>
+                    <StyledInputLabel htmlFor="start_date">Start Date</StyledInputLabel>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DesktopDatePicker
+                        {...getFieldProps('start_date')}
+                        value={dayjs(values.start_date)}
+                        inputFormat="DD/MM/YYYY"
+                        id="start_date"
+                        onChange={(newValue) => {
+                          handleChange({ target: { name: 'start_date', value: dayjs(newValue).format('YYYY-MM-DD') } });
+                        }}
+                        renderInput={(params) => <TextField fullWidth {...params} />}
+                      />
+                    </LocalizationProvider>
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack spacing={1} flexDirection="row" alignItems="center" width="100%" flexWrap={matchSm ? 'wrap' : 'nowrap'}>
+                    <StyledInputLabel htmlFor="end_date">Due Date</StyledInputLabel>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DesktopDatePicker
+                        {...getFieldProps('end_date')}
+                        value={dayjs(values.end_date)}
+                        inputFormat="DD/MM/YYYY"
+                        id="end_date"
+                        onChange={(newValue) => {
+                          handleChange({ target: { name: 'end_date', value: dayjs(newValue).format('YYYY-MM-DD') } });
+                        }}
+                        renderInput={(params) => <TextField fullWidth {...params} />}
+                      />
+                    </LocalizationProvider>
+                  </Stack>
+                </Grid>
+                <Grid item xs={12}>
+                  <Stack spacing={1} flexDirection="row" alignItems="center" width="100%" flexWrap={matchSm ? 'wrap' : 'nowrap'}>
+                    <StyledInputLabel htmlFor="assign">Assigned To</StyledInputLabel>
+                    <Autocomplete
+                      {...getFieldProps('assign')}
+                      multiple
+                      id="assign"
+                      limitTags={2}
+                      options={teamMember.map((option) => {
+                        const { user } = option;
+                        if (user) {
+                          return { label: handleUserName(user), id: user.id };
+                        }
+                      })}
+                      filterSelectedOptions
+                      onChange={(event, newValue) => {
+                        const newValues = newValue.map((member) => ({ label: member.label, id: member.id }));
+                        handleChange({ target: { name: 'assign', value: newValues } });
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          sx={{
+                            p: 0,
+                            '& .MuiInputBase-root': { p: values.assign.length === 0 ? '10px 12px !important' : '2px 12px !important' }
                           }}
-                          renderInput={(params) => (
-                            <TextField
-                              {...params}
-                              sx={{
-                                p: 0,
-                                '& .MuiInputBase-root': { p: values.assign.length === 0 ? '10px 12px !important' : '2px 12px !important' }
-                              }}
-                              placeholder="Who needs to do this?"
-                            />
-                          )}
-                          MenuProps={MenuProps}
+                          placeholder="Who needs to do this?"
                         />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} sm={12}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="description">Description</InputLabel>
-                        <OutlinedInput
-                          value={values.description}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          name="description"
-                          id="description"
-                          placeholder="Enter description"
-                          fullWidth
-                          multiline
-                          rows={3}
-                        />
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12} sm={12}>
-                      <Stack spacing={1}>
-                        <InputLabel htmlFor="url">Photos</InputLabel>
-                        <DropBox handleChange={handleChange} />
-                        <Grid container spacing={1}>
-                          {values.firebaseUrl.map((link, index) => {
-                            return (
-                              <Grid item xs={4} sm={3} md={2} lg={2} key={index}>
-                                <StyledImageContainer>
-                                  <StyledImage component="img" src={link} />
-                                  <Box sx={{ top: 6, right: 6, position: 'absolute' }}>
-                                    <StyledRemoveButton
-                                      size="small"
-                                      onClick={() => {
-                                        handleChange({
-                                          target: { name: 'firebaseUrl', value: values.firebaseUrl.filter((file, i) => i !== index) }
-                                        });
-                                      }}
-                                    >
-                                      <IconX />
-                                    </StyledRemoveButton>
-                                  </Box>
-                                </StyledImageContainer>
-                              </Grid>
-                            );
-                          })}
-                          {values.url.map((link, index) => {
-                            return (
-                              <Grid item xs={4} sm={3} md={2} lg={2} key={index}>
-                                <StyledImageContainer>
-                                  <StyledImage component="img" src={link} />
-                                  <Box sx={{ top: 6, right: 6, position: 'absolute' }}>
-                                    <StyledRemoveButton
-                                      size="small"
-                                      onClick={() => {
-                                        handleChange({
-                                          target: { name: 'files', value: values.files.filter((file, i) => i !== index) }
-                                        });
-                                        handleChange({
-                                          target: { name: 'url', value: values.url.filter((file, i) => i !== index) }
-                                        });
-                                      }}
-                                    >
-                                      <IconX />
-                                    </StyledRemoveButton>
-                                  </Box>
-                                </StyledImageContainer>
-                              </Grid>
-                            );
-                          })}
-                        </Grid>
-                      </Stack>
-                    </Grid>
-                  </Grid>
-                </DialogContent>
-                <DialogActions sx={{ padding: '15px 24px', justifyContent: 'space-between' }}>
-                  {isEditTaskOpen ? (
-                    <IconButton color="error" onClick={() => setDeleteTask(true)}>
-                      <IconTrash />
-                    </IconButton>
-                  ) : (
-                    <div></div>
-                  )}
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <Button onClick={() => onClose(false)} color="error">
-                      Cancel
-                    </Button>
-                    <Button disableElevation disabled={loading} variant="contained" type="submit">
-                      {loading ? 'Saving' : isEditTaskOpen ? 'Save Task' : 'Add Task'}
-                    </Button>
-                  </Box>
-                </DialogActions>
-              </Form>
-            );
-          }}
-        </Formik>
-      </Dialog>
+                      )}
+                      MenuProps={MenuProps}
+                      fullWidth
+                    />
+                  </Stack>
+                </Grid>
+              </Grid>
+            </DialogContent>
+            <BlackEditor />
+          </Form>
+        </FormikProvider>
+      </Drawer>
 
       {isDeleteTaskOpen && <DeleteTask open={isDeleteTaskOpen} onClose={setDeleteTask} formClose={onClose} task={task} />}
     </>

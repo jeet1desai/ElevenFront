@@ -18,5 +18,6 @@ export const StyledTitleInput = styled('input')(({ value }) => ({
 }));
 
 export const StyledInputLabel = styled(InputLabel)({
-  width: '150px'
+  width: '200px',
+  minWidth: '200px'
 });

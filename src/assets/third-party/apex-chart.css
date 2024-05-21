@@ -9,7 +9,7 @@ fieldset {
 }
 
 button {
-  border-radius: 8px !important;
+  border-radius: 6px !important;
 }
 
 .MuiOutlinedInput-root .MuiAutocomplete-input {
@@ -44,12 +44,6 @@ button {
   width: 20px;
   height: 20px;
   color: #8c8c8c;
-}
-
-.MuiTab-root:hover,
-.MuiTab-root.Mui-selected {
-  background-color: rgba(214, 228, 255, 0.6);
-  color: rgb(51, 102, 255);
 }
 
 .MuiOutlinedInput-root {
