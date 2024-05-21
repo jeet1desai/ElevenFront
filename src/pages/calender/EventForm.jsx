@@ -1,17 +1,6 @@
 import React from 'react';
 
-import {
-  Button,
-  DialogActions,
-  DialogContent,
-  Grid,
-  IconButton,
-  InputAdornment,
-  RadioGroup,
-  Stack,
-  TextField,
-  Tooltip
-} from '@mui/material';
+import { Button, DialogContent, Grid, IconButton, InputAdornment, RadioGroup, Stack, TextField, Tooltip } from '@mui/material';
 import { LocalizationProvider, MobileDateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import _ from 'lodash';
@@ -151,7 +140,7 @@ const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onC
     }
   });
 
-  const { values, errors, touched, handleSubmit, isSubmitting, getFieldProps, setFieldValue } = formik;
+  const { values, errors, touched, handleSubmit, getFieldProps, setFieldValue } = formik;
 
   return (
     <FormikProvider value={formik}>
@@ -272,11 +261,6 @@ const EventFrom = ({ event, range, handleDelete, handleCreate, handleUpdate, onC
         <Stack spacing={1}>
           <BlackEditor />
         </Stack>
-        <DialogActions sx={{ padding: '15px 24px' }}>
-          <Button type="submit" variant="contained" disabled={isSubmitting}>
-            {event ? 'Edit' : 'Add'}
-          </Button>
-        </DialogActions>
         <StyledThreadItemListContainer>
           <StyledInputLabel>Comments</StyledInputLabel>
           {[
