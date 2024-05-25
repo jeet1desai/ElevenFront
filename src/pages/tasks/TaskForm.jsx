@@ -23,24 +23,29 @@ import dayjs from 'dayjs';
 
 import DeleteTask from './DeleteTask';
 import { StyledInputLabel, StyledTitleInput } from 'components/styled-css/FormStyled';
+import { StyledCommentActionBar, StyledThreadItemListContainer } from 'components/styled-css/CommentStyled';
 import BlackEditor from 'components/BlackEditor/index';
+import Comment from 'components/Comment';
+import EmojiPicker from 'components/third-party/EmojiPicker';
 
-import { IconX, IconTrash } from '@tabler/icons-react';
+import { IconX, IconTrash, IconSend } from '@tabler/icons-react';
 
-import { MenuProps, handleUserName, uploadDocument } from 'utils/utilsFn';
+import { MenuProps, handleUserName } from 'utils/utilsFn';
 import { TASK_STATUS } from 'utils/enum';
 
 import { useSelector, useDispatch } from 'store/index';
-import { addTaskService, editTaskService } from 'services/task';
+import { addTaskCommentService, addTaskService, editTaskService } from 'services/task';
 import { getTeamMemberService } from 'services/utils';
 
-const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
+const TaskForm = ({ open, onClose, isEditTaskOpen }) => {
   const dispatch = useDispatch();
   const matchSm = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
   const { projectId } = useSelector((state) => state.project);
   const { teamMember } = useSelector((state) => state.utils);
+  const { task } = useSelector((state) => state.task);
 
+  const [commentTitle, setCommentTitle] = useState('');
   const [isDeleteTaskOpen, setDeleteTask] = useState(false);
   const [formValue, setFormValue] = useState({
     title: '',
@@ -48,11 +53,8 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
     address: '',
     start_date: '',
     end_date: '',
-    description: '',
-    assign: [],
-    firebaseUrl: [],
-    files: [],
-    url: []
+    description: [{ type: 'paragraph', content: [] }],
+    assign: []
   });
 
   useEffect(() => {
@@ -62,20 +64,17 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
   }, [dispatch, projectId]);
 
   useEffect(() => {
-    if (isEditTaskOpen) {
+    if (isEditTaskOpen && task) {
       setFormValue({
         title: task.title,
+        description: JSON.parse(task.description),
         status: task.status,
         address: task.address,
         start_date: task.start_date ? dayjs(task.start_date).format('YYYY-MM-DD') : '',
         end_date: task.end_date ? dayjs(task.end_date).format('YYYY-MM-DD') : '',
-        description: task.description,
         assign: task.assign.map((user) => {
           return { label: handleUserName(user), id: user.id };
-        }),
-        firebaseUrl: task.urls,
-        files: [],
-        url: []
+        })
       });
     }
   }, [isEditTaskOpen]);
@@ -88,37 +87,24 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
     }),
     onSubmit: async (values) => {
       try {
-        let fileUrls = [];
-        const uploadPromises = [];
+        const body = {
+          title: values.title,
+          status: values.status,
+          address: values.address,
+          start_date: values.start_date,
+          end_date: values.end_date,
+          description: JSON.stringify(values.description),
+          assign: values.assign.map((user) => user.id),
+          project: Number(projectId)
+        };
 
-        values.files.forEach((file) => {
-          const uploadPromise = uploadDocument('eleven/tasks', file).then((url) => {
-            fileUrls.push(url);
-          });
-          uploadPromises.push(uploadPromise);
-        });
+        if (isEditTaskOpen) {
+          await dispatch(editTaskService(task.id, body));
+        } else {
+          await dispatch(addTaskService(body));
+        }
 
-        Promise.all(uploadPromises).then(async () => {
-          const body = {
-            title: values.title,
-            status: values.status,
-            address: values.address,
-            start_date: values.start_date,
-            end_date: values.end_date,
-            description: values.description,
-            assign: values.assign.map((user) => user.id),
-            url: [...fileUrls, ...values.firebaseUrl],
-            project: Number(projectId)
-          };
-
-          onClose(false);
-
-          if (isEditTaskOpen) {
-            await dispatch(editTaskService(task.id, body));
-          } else {
-            await dispatch(addTaskService(body));
-          }
-        });
+        onClose(false);
       } catch (err) {
         console.log(err);
       }
@@ -130,6 +116,13 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
   const handleCloseDialog = () => {
     handleSubmit();
     onClose(false);
+  };
+
+  const handleAddComment = () => {
+    if (commentTitle !== '') {
+      dispatch(addTaskCommentService(task.id, { comment: commentTitle }));
+      setCommentTitle('');
+    }
   };
 
   return (
@@ -169,7 +162,7 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
           )}
         </Stack>
         <FormikProvider value={formik}>
-          <Form noValidate>
+          <Form>
             <DialogContent>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
@@ -266,6 +259,7 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
                           placeholder="Who needs to do this?"
                         />
                       )}
+                      error={Boolean(touched.assign && errors.assign)}
                       MenuProps={MenuProps}
                       fullWidth
                     />
@@ -273,7 +267,45 @@ const TaskForm = ({ open, onClose, task, isEditTaskOpen }) => {
                 </Grid>
               </Grid>
             </DialogContent>
-            <BlackEditor />
+            <Stack spacing={1}>
+              <BlackEditor
+                userList={teamMember}
+                value={isEditTaskOpen ? JSON.parse(task.description) || values.description : values.description}
+                handleChange={(value) => handleChange({ target: { name: 'description', value: value } })}
+              />
+            </Stack>
+            {isEditTaskOpen && (
+              <>
+                {task.comments.length > 0 && (
+                  <StyledThreadItemListContainer>
+                    <StyledInputLabel>Comments</StyledInputLabel>
+                    {task.comments.map((comment) => {
+                      return <Comment key={comment.id} comment={comment} />;
+                    })}
+                  </StyledThreadItemListContainer>
+                )}
+                <StyledCommentActionBar>
+                  <OutlinedInput
+                    value={commentTitle}
+                    fullWidth
+                    placeholder="Add a comment"
+                    onChange={(e) => setCommentTitle(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
+                    startAdornment={
+                      <IconButton>
+                        <EmojiPicker value={commentTitle} setValue={setCommentTitle} />
+                      </IconButton>
+                    }
+                    endAdornment={
+                      <IconButton color="success" onClick={() => handleAddComment()}>
+                        <IconSend />
+                      </IconButton>
+                    }
+                    sx={{ padding: '4px 12px' }}
+                  />
+                </StyledCommentActionBar>
+              </>
+            )}
           </Form>
         </FormikProvider>
       </Drawer>

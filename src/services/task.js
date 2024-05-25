@@ -5,7 +5,6 @@ import {
   deleteTaskSuccess,
   editTaskSuccess,
   fetchRequest,
-  getTaskSuccess,
   getTasksStatsSuccess,
   getTasksSuccess,
   hasError
@@ -85,19 +84,6 @@ export const deleteTaskService = (taskId) => {
       dispatch(fetchRequest());
       const response = await axios.delete(`tasks/task/${taskId}`);
       dispatch(deleteTaskSuccess({ task: response.data.data }));
-    } catch (error) {
-      openErrorSnackbar(error.msg, 'error');
-      dispatch(hasError());
-    }
-  };
-};
-
-export const getTaskService = (taskId) => {
-  return async () => {
-    try {
-      dispatch(fetchRequest());
-      const response = await axios.get(`tasks/task/${taskId}`);
-      dispatch(getTaskSuccess({ task: response.data.data }));
     } catch (error) {
       openErrorSnackbar(error.msg, 'error');
       dispatch(hasError());

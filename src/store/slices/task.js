@@ -45,7 +45,7 @@ const taskSlice = createSlice({
     },
     addTaskCommentSuccess(state, action) {
       const { comment } = action.payload;
-      state.task = { ...state.task, comments: [comment, ...state.task.comments] };
+      state.task = { ...state.task, comments: [...state.task.comments, comment] };
       state.loading = false;
     },
     deleteTaskSuccess(state, action) {

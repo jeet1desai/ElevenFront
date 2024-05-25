@@ -25,10 +25,9 @@ import {
   IconButton
 } from '@mui/material';
 import dayjs from 'dayjs';
-import { Link } from 'react-router-dom';
 import ReactApexChart from 'react-apexcharts';
 
-import { IconSearch, IconEye, IconTrash, IconEdit, IconMessage, IconSunglasses, IconRefresh } from '@tabler/icons-react';
+import { IconSearch, IconEye, IconTrash, IconMessage, IconSunglasses, IconRefresh } from '@tabler/icons-react';
 
 import MainCard from 'components/MainCard';
 import Dot from 'components/@extended/Dot';
@@ -43,6 +42,7 @@ import { TASK_STATUS } from 'utils/enum';
 import { handleUserName } from 'utils/utilsFn';
 import { formatNumber } from 'utils/format/number';
 import { isDatePastDueDateColor } from 'utils/format/date';
+import { getTaskSuccess } from 'store/slices/task';
 
 const TasksOptions = {
   chart: {
@@ -146,8 +146,6 @@ const Tasks = () => {
   const [isTaskFormOpen, setTaskForm] = useState(false);
   const [isEditTaskOpen, setEditTask] = useState(false);
   const [isDeleteTaskOpen, setDeleteTask] = useState(false);
-
-  const [taskDetail, setTaskDetail] = useState(null);
 
   const [filter, setFilter] = useState({
     search: '',
@@ -355,7 +353,7 @@ const Tasks = () => {
                   {loading ? (
                     <CircularProgress color="secondary" sx={{ height: 'unset !important' }} />
                   ) : (
-                    <IconRefresh onClick={() => handleFetchData()} />
+                    <IconRefresh onClick={() => fetchData()} />
                   )}
                 </IconButton>
                 {value === 1 && (
@@ -481,25 +479,21 @@ const Tasks = () => {
                             {task.end_date ? dayjs(task.end_date).format('MMM DD, YYYY') : ''}
                           </TableCell>
                           <TableCell align="center">
-                            <Link to={`/projects/${projectId}/tasks/view/${task.id}`}>
-                              <IconButton>
-                                <IconEye />
-                              </IconButton>
-                            </Link>
                             <IconButton
                               color="primary"
                               onClick={() => {
-                                setTaskDetail(task);
+                                dispatch(getTaskSuccess({ task: task }));
+                                // setTaskDetail(task);
                                 setEditTask(true);
                                 setTaskForm(true);
                               }}
                             >
-                              <IconEdit />
+                              <IconEye />
                             </IconButton>
                             <IconButton
                               color="error"
                               onClick={() => {
-                                setTaskDetail(task);
+                                dispatch(getTaskSuccess({ task: task }));
                                 setDeleteTask(true);
                               }}
                             >
@@ -517,9 +511,9 @@ const Tasks = () => {
         )}
       </MainCard>
 
-      {isTaskFormOpen && <TaskForm open={isTaskFormOpen} onClose={setTaskForm} isEditTaskOpen={isEditTaskOpen} task={taskDetail} />}
+      {isTaskFormOpen && <TaskForm open={isTaskFormOpen} onClose={setTaskForm} isEditTaskOpen={isEditTaskOpen} />}
 
-      {isDeleteTaskOpen && <DeleteTask open={isDeleteTaskOpen} onClose={setDeleteTask} task={taskDetail} formClose={setTaskForm} />}
+      {isDeleteTaskOpen && <DeleteTask open={isDeleteTaskOpen} onClose={setDeleteTask} formClose={setTaskForm} />}
     </>
   );
 };

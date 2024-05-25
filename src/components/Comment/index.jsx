@@ -1,16 +1,18 @@
 import React from 'react';
 
-import { Avatar } from '@mui/material';
+import { Avatar, Grid, ListItemAvatar, ListItemButton, ListItemText, Typography } from '@mui/material';
 
 import { StyledContainer } from 'components/styled-css/CommentStyled';
-import { Grid, ListItemAvatar, ListItemButton, ListItemText, Typography } from '@mui/material';
+
+import { handleUserName } from 'utils/utilsFn';
+import { formatDate } from 'utils/format/date';
 
 const Comment = ({ comment }) => {
   return (
     <StyledContainer>
-      <ListItemButton sx={{ width: '100%' }}>
+      <ListItemButton sx={{ width: '100%', '&:hover': { background: 'white' } }}>
         <ListItemAvatar>
-          <Avatar src="" />
+          <Avatar src={comment.created_by.profile_picture} />
         </ListItemAvatar>
         <ListItemText
           primary={
@@ -27,12 +29,12 @@ const Comment = ({ comment }) => {
                     display: 'block'
                   }}
                 >
-                  Name
+                  {handleUserName(comment.created_by)}
                 </Typography>
               </Grid>
               <Grid item component="span">
                 <Typography component="span" variant="subtitle2">
-                  Time
+                  {formatDate(comment.created_date)}
                 </Typography>
               </Grid>
             </Grid>
@@ -41,8 +43,8 @@ const Comment = ({ comment }) => {
             <Grid container alignItems="center" spacing={1} component="span">
               <Grid item xs zeroMinWidth component="span">
                 <Typography
-                  variant="caption"
-                  component="span"
+                  // variant="caption"
+                  component="body2"
                   sx={{
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -50,7 +52,7 @@ const Comment = ({ comment }) => {
                     display: 'block'
                   }}
                 >
-                  {comment.body}
+                  {comment.comment}
                 </Typography>
               </Grid>
             </Grid>

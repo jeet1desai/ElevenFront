@@ -2,14 +2,17 @@ import React from 'react';
 
 import { styled } from '@mui/material/styles';
 
-import { useCreateBlockNote, SuggestionMenuController } from '@blocknote/react';
-import { filterSuggestionItems, BlockNoteSchema, defaultInlineContentSpecs } from '@blocknote/core';
+import { SuggestionMenuController, useCreateBlockNote } from '@blocknote/react';
+import { BlockNoteSchema, defaultInlineContentSpecs, filterSuggestionItems } from '@blocknote/core';
 import { BlockNoteView } from '@blocknote/mantine';
 
 import { Mention } from './Mention';
 
+import { handleUserName, uploadDocument } from 'utils/utilsFn';
+
 const StyledEditor = styled('div')({
   width: '100%',
+  minHeight: '285px',
   padding: '20px 0',
   borderTop: '1px solid #e6ebf1',
   '& .editor': {
@@ -22,7 +25,7 @@ const StyledEditor = styled('div')({
   }
 });
 
-const BlackEditor = () => {
+const BlackEditor = ({ value, handleChange, userList }) => {
   const schema = BlockNoteSchema.create({
     inlineContentSpecs: {
       ...defaultInlineContentSpecs,
@@ -30,17 +33,8 @@ const BlackEditor = () => {
     }
   });
 
-  const editor = useCreateBlockNote({
-    schema,
-    initialContent: [
-      {
-        type: 'paragraph'
-      }
-    ]
-  });
-
   const getMentionMenuItems = (editor) => {
-    const users = ['Steve', 'Bob', 'Joe', 'Mike'];
+    const users = userList.map((data) => handleUserName(data.user));
 
     return users.map((user) => ({
       title: user,
@@ -58,9 +52,20 @@ const BlackEditor = () => {
     }));
   };
 
+  const handleUpload = async (file) => {
+    const url = await uploadDocument('eleven/task', file);
+    return url;
+  };
+
+  const editor = useCreateBlockNote({
+    schema,
+    uploadFile: handleUpload,
+    initialContent: value
+  });
+
   return (
     <StyledEditor>
-      <BlockNoteView editor={editor} theme="white">
+      <BlockNoteView key={value} editor={editor} theme="white" onChange={() => handleChange(editor.document)}>
         <SuggestionMenuController
           triggerCharacter={'@'}
           getItems={async (query) => filterSuggestionItems(getMentionMenuItems(editor), query)}

@@ -33,7 +33,6 @@ const MainDrawer = ({ open, handleDrawerToggle, window }) => {
           onClose={handleDrawerToggle}
           ModalProps={{ keepMounted: true }}
           sx={{
-            zIndex: 1,
             display: { xs: 'block', lg: 'none' },
             '& .MuiDrawer-paper': {
               boxSizing: 'border-box',

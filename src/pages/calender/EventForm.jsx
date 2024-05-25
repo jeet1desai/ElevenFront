@@ -9,7 +9,7 @@ import { useFormik, Form, FormikProvider } from 'formik';
 
 import ColorPalette from './ColorPalette';
 import BlackEditor from 'components/BlackEditor/index';
-import Comment from 'components/Comment/index';
+import Comment from 'components/Comment';
 import { StyledTitleInput, StyledInputLabel } from 'components/styled-css/FormStyled';
 import { StyledCommentActionBar, StyledThreadItemListContainer } from 'components/styled-css/CommentStyled';
 

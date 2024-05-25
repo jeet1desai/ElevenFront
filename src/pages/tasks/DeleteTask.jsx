@@ -8,10 +8,11 @@ import { IconTrash } from '@tabler/icons-react';
 import { useDispatch, useSelector } from 'store/index';
 import { deleteTaskService } from 'services/task';
 
-const DeleteTask = ({ open, onClose, task, formClose }) => {
+const DeleteTask = ({ open, onClose, formClose }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const { task } = useSelector((state) => state.task);
   const { projectId } = useSelector((state) => state.project);
 
   return (
