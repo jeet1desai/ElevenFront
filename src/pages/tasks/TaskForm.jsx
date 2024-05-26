@@ -111,7 +111,7 @@ const TaskForm = ({ open, onClose, isEditTaskOpen }) => {
     }
   });
 
-  const { values, errors, touched, handleSubmit, getFieldProps, handleChange } = formik;
+  const { values, handleSubmit, getFieldProps, handleChange } = formik;
 
   const handleCloseDialog = () => {
     handleSubmit();
@@ -167,13 +167,7 @@ const TaskForm = ({ open, onClose, isEditTaskOpen }) => {
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Stack spacing={1}>
-                    <StyledTitleInput
-                      fullWidth
-                      id="title"
-                      placeholder="Enter task title"
-                      {...getFieldProps('title')}
-                      error={Boolean(touched.title && errors.title)}
-                    />
+                    <StyledTitleInput fullWidth id="title" placeholder="Enter task title" {...getFieldProps('title')} />
                   </Stack>
                 </Grid>
                 <Grid item xs={12}>
@@ -259,7 +253,6 @@ const TaskForm = ({ open, onClose, isEditTaskOpen }) => {
                           placeholder="Who needs to do this?"
                         />
                       )}
-                      error={Boolean(touched.assign && errors.assign)}
                       MenuProps={MenuProps}
                       fullWidth
                     />

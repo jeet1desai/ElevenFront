@@ -54,19 +54,19 @@ const ExperimentalStyled = styled('div')(({ theme }) => ({
 
   '& .fc .fc-more-popover': {
     border: 'none',
-    borderRadius: '14px'
+    borderRadius: '6px'
   },
 
   '& .fc .fc-more-popover .fc-popover-body': {
     backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark[800] : theme.palette.grey[200],
-    borderBottomLeftRadius: '12px',
-    borderBottomRightRadius: '12px'
+    borderBottomLeftRadius: '6px',
+    borderBottomRightRadius: '6px'
   },
 
   '& .fc .fc-popover-header': {
     padding: 12,
-    borderTopLeftRadius: '12px',
-    borderTopRightRadius: '12px',
+    borderTopLeftRadius: '6px',
+    borderTopRightRadius: '6px',
     backgroundColor: theme.palette.mode === 'dark' ? theme.palette.dark[800] : theme.palette.grey[200],
     color: theme.palette.mode === 'dark' ? theme.palette.dark.light : theme.palette.text.primary
   },

@@ -1,10 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
-import { useMediaQuery, Drawer } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
+import { useMediaQuery } from '@mui/material';
+import dayjs from 'dayjs';
 
 import MainCard from 'components/MainCard';
 import CalendarStyled from 'components/styled-css/CalendarStyled';
 import Toolbar from './Toolbar';
+import EventForm from './EventForm';
 
 import FullCalendar from '@fullcalendar/react';
 import listPlugin from '@fullcalendar/list';
@@ -13,15 +16,25 @@ import timeGridPlugin from '@fullcalendar/timegrid';
 import timelinePlugin from '@fullcalendar/timeline';
 import interactionPlugin from '@fullcalendar/interaction';
 
-import EventForm from './EventForm';
+import { useDispatch, useSelector } from 'store/index';
+import { addCalendarEventService, getProjectEventsService } from 'services/calendar';
 
 const Calender = () => {
+  const theme = useTheme();
+  const dispatch = useDispatch();
   const calendarRef = useRef(null);
   const matchSm = useMediaQuery((theme) => theme.breakpoints.down('md'));
+
+  const { projectId } = useSelector((state) => state.project);
+  const { events } = useSelector((state) => state.calendar);
 
   const [date, setDate] = useState(new Date());
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRange, setSelectedRange] = useState(null);
+  const [formValue, setFormValue] = useState(null);
+
+  console.log(theme.palette);
 
   const handleDateToday = () => {
     const calendarEl = calendarRef.current;
@@ -66,38 +79,62 @@ const Calender = () => {
       const calendarApi = calendarEl.getApi();
       calendarApi.unselect();
     }
-
-    console.log(arg.start, arg.end);
+    setSelectedRange({
+      start: dayjs(arg.start).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+      end: dayjs(arg.end).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]')
+    });
     setIsModalOpen(true);
   };
 
   const handleEventSelect = (arg) => {
     if (arg.event.id) {
       const selectEvent = events.find((_event) => _event.id === arg.event.id);
-      console.log(selectEvent);
-      // setSelectedEvent(selectEvent);
+      setFormValue(selectEvent);
     } else {
-      // setSelectedEvent(null);
+      setFormValue(null);
     }
     setIsModalOpen(true);
   };
+
+  const handleEventCreate = async (data) => {
+    dispatch(addCalendarEventService(data));
+    handleModalClose();
+  };
+
+  const handleFetchEvents = () => {
+    dispatch(getProjectEventsService(projectId));
+  };
+
+  useEffect(() => {
+    if (projectId) {
+      handleFetchEvents();
+    }
+  }, [dispatch, projectId]);
+
+  console.log(events);
 
   return (
     <>
       <MainCard>
         <CalendarStyled>
-          <Toolbar date={date} onClickNext={handleDateNext} onClickPrev={handleDatePrev} onClickToday={handleDateToday} />
+          <Toolbar
+            date={date}
+            onClickNext={handleDateNext}
+            onClickPrev={handleDatePrev}
+            onClickToday={handleDateToday}
+            fetchData={handleFetchEvents}
+          />
           <FullCalendar
             weekends
             editable
             droppable
             selectable
-            // events={events}
+            events={events}
             ref={calendarRef}
             rerenderDelay={10}
             initialDate={date}
             initialView={'dayGridMonth'}
-            dayMaxEventRows={3}
+            dayMaxEventRows={2}
             eventDisplay="block"
             headerToolbar={false}
             allDayMaintainDuration
@@ -112,31 +149,17 @@ const Calender = () => {
         </CalendarStyled>
       </MainCard>
 
-      <Drawer
-        anchor="right"
-        open={isModalOpen}
-        onClose={handleModalClose}
-        variant="temporary"
-        ModalProps={{ keepMounted: true }}
-        sx={{
-          '& .MuiDrawer-paper': {
-            boxSizing: 'border-box',
-            width: matchSm ? '100%' : 600,
-            zIndex: 999999
-          }
-        }}
-      >
-        {isModalOpen && (
-          <EventForm
-            // event={selectedEvent}
-            // range={selectedRange}
-            onCancel={handleModalClose}
-            // handleDelete={handleEventDelete}
-            // handleCreate={handleEventCreate}
-            // handleUpdate={handleUpdateEvent}
-          />
-        )}
-      </Drawer>
+      {isModalOpen && (
+        <EventForm
+          isOpen={isModalOpen}
+          event={formValue}
+          range={selectedRange}
+          onCancel={handleModalClose}
+          // handleDelete={handleEventDelete}
+          handleCreate={handleEventCreate}
+          // handleUpdate={handleUpdateEvent}
+        />
+      )}
     </>
   );
 };

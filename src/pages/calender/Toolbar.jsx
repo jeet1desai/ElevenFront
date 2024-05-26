@@ -1,11 +1,15 @@
 import React from 'react';
 
-import { Button, Grid, IconButton, Stack, Typography } from '@mui/material';
+import { Button, Grid, IconButton, Stack, Typography, CircularProgress } from '@mui/material';
 import dayjs from 'dayjs';
 
-import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { IconChevronLeft, IconChevronRight, IconRefresh } from '@tabler/icons-react';
 
-const Toolbar = ({ date, onClickNext, onClickPrev, onClickToday, ...others }) => {
+import { useSelector } from 'store/index';
+
+const Toolbar = ({ date, onClickNext, onClickPrev, onClickToday, fetchData, ...others }) => {
+  const { loading } = useSelector((state) => state.calendar);
+
   return (
     <Grid alignItems="center" container justifyContent="space-between" spacing={3} {...others} sx={{ pb: 3 }}>
       <Grid item>
@@ -26,7 +30,15 @@ const Toolbar = ({ date, onClickNext, onClickPrev, onClickToday, ...others }) =>
           </IconButton>
         </Stack>
       </Grid>
-      <Grid item></Grid>
+      <Grid item>
+        <IconButton>
+          {loading ? (
+            <CircularProgress color="secondary" sx={{ height: 'unset !important' }} />
+          ) : (
+            <IconRefresh onClick={() => fetchData()} />
+          )}
+        </IconButton>
+      </Grid>
     </Grid>
   );
 };

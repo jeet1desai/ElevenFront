@@ -379,3 +379,89 @@ export const FileExtensionMapping = {
   rar: 'Archive',
   '7z': 'Archive'
 };
+
+export const BackgroundColor = [
+  {
+    color: 'primary.main',
+    value: '#1677ff'
+  },
+  {
+    color: 'error.main',
+    value: '#ff4d4f'
+  },
+  {
+    color: 'success.dark',
+    value: '#237804'
+  },
+  {
+    color: 'secondary.main',
+    value: '#8c8c8c'
+  },
+  {
+    color: 'warning.dark',
+    value: '#ad6800'
+  },
+  {
+    color: 'primary.light',
+    value: '#69b1ff'
+  },
+  {
+    color: 'error.light',
+    value: '#ffa39e'
+  },
+  {
+    color: 'success.light',
+    value: '#95de64'
+  },
+  {
+    color: 'secondary.light',
+    value: '#d9d9d9'
+  },
+  {
+    color: 'warning.light',
+    value: '#ffd666'
+  }
+];
+
+export const TextColor = [
+  {
+    color: 'error.light',
+    value: '#ffa39e'
+  },
+  {
+    color: 'success.light',
+    value: '#95de64'
+  },
+  {
+    color: 'secondary.light',
+    value: '#d9d9d9'
+  },
+  {
+    color: 'warning.light',
+    value: '#ffd666'
+  },
+  {
+    color: 'primary.light',
+    value: '#69b1ff'
+  },
+  {
+    color: 'primary.main',
+    value: '#1677ff'
+  },
+  {
+    color: 'error.main',
+    value: '#ff4d4f'
+  },
+  {
+    color: 'success.dark',
+    value: '#237804'
+  },
+  {
+    color: 'warning.dark',
+    value: '#ad6800'
+  },
+  {
+    color: 'grey.500',
+    value: '#8c8c8c'
+  }
+];

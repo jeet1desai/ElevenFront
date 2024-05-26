@@ -10,6 +10,7 @@ import todoReduce from './slices/todo';
 import taskReduce from './slices/task';
 import utilsReduce from './slices/utils';
 import chatReduce from './slices/chat';
+import calendarReduce from './slices/calendar';
 
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
@@ -29,6 +30,7 @@ const reducers = combineReducers({
   task: taskReduce,
   utils: utilsReduce,
   chat: chatReduce,
+  calendar: calendarReduce,
   todo: persistReducer(persistConfig, todoReduce)
 });
 
