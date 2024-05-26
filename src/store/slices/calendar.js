@@ -36,12 +36,17 @@ const calendarSlice = createSlice({
       }));
       state.loading = false;
     },
+    setEventSuccess(state, action) {
+      const { calendar } = action.payload;
+      state.event = calendar;
+      state.loading = false;
+    },
     hasError(state) {
       state.loading = false;
     }
   }
 });
 
-export const { fetchRequest, hasError, addCalendarEventSuccess, getCalendarEventsSuccess } = calendarSlice.actions;
+export const { fetchRequest, hasError, addCalendarEventSuccess, getCalendarEventsSuccess, setEventSuccess } = calendarSlice.actions;
 
 export default calendarSlice.reducer;

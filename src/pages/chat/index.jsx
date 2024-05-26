@@ -229,7 +229,6 @@ const Chat = () => {
                 <Box sx={{ p: 1, pt: 0 }}>
                   <List component="nav" sx={{ '& .MuiListItemButton-root': { px: 1, py: 0.5 } }}>
                     {chatUserList.map((user) => {
-                      console.log(user);
                       return (
                         <Box key={user.id} sx={{ borderRadius: '8px', bgcolor: user.id === chatId ? '#0000000a' : 'inherit' }}>
                           <UserList userDetail={user} messages={user.messages} />

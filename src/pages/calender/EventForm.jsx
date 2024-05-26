@@ -23,7 +23,7 @@ import dayjs from 'dayjs';
 
 import ColorPalette from './ColorPalette';
 import BlackEditor from 'components/BlackEditor/index';
-// import Comment from 'components/Comment';
+import Comment from 'components/Comment';
 import { StyledTitleInput, StyledInputLabel } from 'components/styled-css/FormStyled';
 import { StyledCommentActionBar, StyledThreadItemListContainer } from 'components/styled-css/CommentStyled';
 import EmojiPicker from 'components/third-party/EmojiPicker';
@@ -59,6 +59,7 @@ const EventFrom = ({ isOpen, event, range, handleDelete, handleCreate, handleUpd
 
   const { projectId } = useSelector((state) => state.project);
   const { teamMember } = useSelector((state) => state.utils);
+  const calendarObj = useSelector((state) => state.calendar);
 
   const [commentTitle, setCommentTitle] = useState('');
 
@@ -125,7 +126,13 @@ const EventFrom = ({ isOpen, event, range, handleDelete, handleCreate, handleUpd
     >
       <FormikProvider value={formik}>
         <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-          <Stack direction="row" spacing={2} alignItems="center" sx={{ p: '8px 10px', borderBottom: '1px solid #e6ebf1' }}>
+          <Stack
+            direction="row"
+            spacing={2}
+            justifyContent="space-between"
+            alignItems="center"
+            sx={{ p: '8px 10px', borderBottom: '1px solid #e6ebf1' }}
+          >
             <IconButton color="secondary" onClick={handleCloseDialog}>
               <IconX />
             </IconButton>
@@ -279,35 +286,38 @@ const EventFrom = ({ isOpen, event, range, handleDelete, handleCreate, handleUpd
               handleChange={(value) => handleChange({ target: { name: 'description', value: value } })}
             />
           </Stack>
-          <StyledThreadItemListContainer>
-            <StyledInputLabel>Comments</StyledInputLabel>
-            {/* {[
-            { id: 1, body: 'abc' },
-            { id: 1, body: 'abc' }
-          ].map((comment) => (
-            <Comment key={comment.id} comment={comment} />
-          ))} */}
-          </StyledThreadItemListContainer>
-          <StyledCommentActionBar>
-            <OutlinedInput
-              value={commentTitle}
-              fullWidth
-              placeholder="Add a comment"
-              onChange={(e) => setCommentTitle(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
-              startAdornment={
-                <IconButton>
-                  <EmojiPicker value={commentTitle} setValue={setCommentTitle} />
-                </IconButton>
-              }
-              endAdornment={
-                <IconButton color="success" onClick={() => handleAddComment()}>
-                  <IconSend />
-                </IconButton>
-              }
-              sx={{ padding: '4px 12px' }}
-            />
-          </StyledCommentActionBar>
+          {!isCreating && (
+            <>
+              {calendarObj.event.comments.length > 0 && (
+                <StyledThreadItemListContainer>
+                  <StyledInputLabel>Comments</StyledInputLabel>
+                  {calendarObj.event.comments.map((comment) => {
+                    return <Comment key={comment.id} comment={comment} />;
+                  })}
+                </StyledThreadItemListContainer>
+              )}
+              <StyledCommentActionBar>
+                <OutlinedInput
+                  value={commentTitle}
+                  fullWidth
+                  placeholder="Add a comment"
+                  onChange={(e) => setCommentTitle(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
+                  startAdornment={
+                    <IconButton>
+                      <EmojiPicker value={commentTitle} setValue={setCommentTitle} />
+                    </IconButton>
+                  }
+                  endAdornment={
+                    <IconButton color="success" onClick={() => handleAddComment()}>
+                      <IconSend />
+                    </IconButton>
+                  }
+                  sx={{ padding: '4px 12px' }}
+                />
+              </StyledCommentActionBar>
+            </>
+          )}
         </Form>
       </FormikProvider>
     </Drawer>

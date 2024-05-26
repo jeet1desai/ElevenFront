@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { useTheme } from '@mui/material/styles';
 import { useMediaQuery } from '@mui/material';
 import dayjs from 'dayjs';
 
@@ -17,10 +16,12 @@ import timelinePlugin from '@fullcalendar/timeline';
 import interactionPlugin from '@fullcalendar/interaction';
 
 import { useDispatch, useSelector } from 'store/index';
+import { setEventSuccess } from 'store/slices/calendar';
 import { addCalendarEventService, getProjectEventsService } from 'services/calendar';
 
+import { handleUserName } from 'utils/utilsFn';
+
 const Calender = () => {
-  const theme = useTheme();
   const dispatch = useDispatch();
   const calendarRef = useRef(null);
   const matchSm = useMediaQuery((theme) => theme.breakpoints.down('md'));
@@ -33,8 +34,6 @@ const Calender = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRange, setSelectedRange] = useState(null);
   const [formValue, setFormValue] = useState(null);
-
-  console.log(theme.palette);
 
   const handleDateToday = () => {
     const calendarEl = calendarRef.current;
@@ -87,9 +86,20 @@ const Calender = () => {
   };
 
   const handleEventSelect = (arg) => {
-    if (arg.event.id) {
-      const selectEvent = events.find((_event) => _event.id === arg.event.id);
-      setFormValue(selectEvent);
+    if (arg.event.id !== undefined) {
+      const selectEvent = events.find((_event) => _event.id === Number(arg.event.id));
+      dispatch(setEventSuccess({ calendar: selectEvent }));
+      setFormValue({
+        title: selectEvent.title,
+        assign: selectEvent.assign.map((user) => {
+          return { label: handleUserName(user), id: user.id };
+        }),
+        description: JSON.parse(selectEvent.description),
+        color: selectEvent.color,
+        background_color: selectEvent.background_color,
+        start_date: selectEvent.start_date,
+        end_date: selectEvent.end_date
+      });
     } else {
       setFormValue(null);
     }
@@ -110,8 +120,6 @@ const Calender = () => {
       handleFetchEvents();
     }
   }, [dispatch, projectId]);
-
-  console.log(events);
 
   return (
     <>

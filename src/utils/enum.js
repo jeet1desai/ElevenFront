@@ -461,7 +461,7 @@ export const TextColor = [
     value: '#ad6800'
   },
   {
-    color: 'grey.500',
-    value: '#8c8c8c'
+    color: 'grey.100',
+    value: '#ffffff'
   }
 ];

@@ -109,7 +109,6 @@ const Help = () => {
                   onSubmit={async (values, { resetForm }) => {
                     setLoading(true);
                     try {
-                      console.log(values);
                       resetForm();
                     } catch (err) {
                       setLoading(false);

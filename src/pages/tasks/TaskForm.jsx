@@ -106,7 +106,7 @@ const TaskForm = ({ open, onClose, isEditTaskOpen }) => {
 
         onClose(false);
       } catch (err) {
-        console.log(err);
+        console.error(error);
       }
     }
   });
